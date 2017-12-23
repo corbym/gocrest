@@ -50,7 +50,7 @@ func TestAssertThatFailsTest(testing *testing.T) {
 
 func TestEqualToFailsWithDescriptionTest(testing *testing.T) {
 	gocrest.AssertThat(mockTestingT, 1, gocrest.EqualTo(2))
-	if output != "Expected: value equal to 2\n Actual: 1" {
+	if output != "expected: value equal to 2 but was: 1" {
 		testing.Error("did not get expected description, got " + output)
 	}
 }
@@ -68,7 +68,7 @@ func TestIsNilDoesNotMatch(testing *testing.T) {
 
 func TestIsNilHasDescriptionTest(testing *testing.T) {
 	gocrest.AssertThat(mockTestingT, 1, gocrest.IsNil())
-	if output != "Expected: value equal to <nil>\n Actual: 1" {
+	if output != "expected: value equal to <nil> but was: 1" {
 		testing.Error("did not get expected description, got " + output)
 	}
 }
@@ -77,7 +77,7 @@ func TestContainsFailsWithDescriptionTest(testing *testing.T) {
 	list := []string{"Foo", "Bar"}
 	expectedList := []string{"Baz", "Bing"}
 	gocrest.AssertThat(mockTestingT, list, gocrest.Contains(expectedList))
-	if output != "Expected: something that contains [Baz Bing]\n Actual: [Foo Bar]" {
+	if output != "expected: something that contains [Baz Bing] but was: [Foo Bar]" {
 		testing.Error("did not get expected description, got " + output)
 	}
 }

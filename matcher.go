@@ -13,7 +13,7 @@ type TestingT interface {
 func AssertThat(t TestingT, actual interface{}, m *Matcher) bool {
 	matches := m.matches(actual)
 	if ! matches {
-		t.Errorf("Expected: %s\n Actual: %v", m.describe, actual)
+		t.Errorf("expected: %s but was: %v", m.describe, actual)
 	}
 	return matches
 }
