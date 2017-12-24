@@ -1,6 +1,6 @@
 package gocrest
 
-//Returns the logical not of the matcher given
+//Returns a matcher that returns logical not of the matcher given
 func Not(matcher *Matcher) *Matcher {
 	match := new(Matcher)
 	match.describe = "not(" + matcher.describe + ")"

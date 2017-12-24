@@ -9,6 +9,8 @@ import (
 // Contains finds if x is contained in y.
 // Acts like "ContainsAll", all elements given must be present in actual
 // If "expected" is an array or slice, we assume that actual is the same type
+// For maps, the expected must also be a map and contains is true if both maps contain all key,values in expected.
+// For string, behaves like strings.Contains
 // Will panic if types cannot be converted correctly.
 // returns the Matcher that returns true if found
 func Contains(expected interface{}) *Matcher {

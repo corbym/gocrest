@@ -1,14 +1,29 @@
 # gocrest
 
 A hamcrest-like assertion library for Go.
-## package import
 
-{code}
+## Package import
+
+```
 import (
   gocrest "github.com/corbym/gocrest"
 )
-{code}
+```
+
 ## Example:
-{code}
-		gocrest.AssertThat(mockTestingT, "hi", gocrest.EqualTo("hi"))
-{code}
+```
+gocrest.AssertThat(testing, "hi", gocrest.EqualTo("bye"))
+```
+
+output:
+
+```
+expected: value equal to hi but was: bye
+```
+
+#Matchers so far..
+
+- EqualTo(x)
+- IsNil()
+- Contains(x) -- acts like containsAll
+- Not(m *Matcher) -- logical not of matcher's result
