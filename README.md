@@ -27,3 +27,4 @@ expected: value equal to bye but was: hi
 - IsNil()
 - Contains(x) -- acts like containsAll
 - Not(m *Matcher) -- logical not of matcher's result
+- MatchesPattern(regex string) -- a string regex expression
