@@ -4,6 +4,7 @@ import (
 	"testing"
 	"fmt"
 	"gocrest"
+	"strings"
 )
 
 const failedTest = true
@@ -148,4 +149,37 @@ func TestStringContainsString(testing *testing.T) {
 	actualList := "abcd"
 	expected := "bc"
 	gocrest.AssertThat(testing, actualList, gocrest.Contains(expected))
+}
+
+func TestMatchesPatternMatchesString(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "^blarney.*"
+	gocrest.AssertThat(testing, actual, gocrest.MatchesPattern(expected))
+}
+
+func TestMatchesPatternDoesNotMatchString(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "^123.?.*"
+	gocrest.AssertThat(mockTestingT, actual, gocrest.MatchesPattern(expected))
+	if mockTestingT.testStatus == passedTest {
+		testing.Error("did not fail test")
+	}
+}
+
+func TestMatchesPatternDescription(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "~123.?.*"
+	gocrest.AssertThat(mockTestingT, actual, gocrest.MatchesPattern(expected))
+	if mockTestingT.mockTestOutput != "expected: a value that matches pattern ~123.?.* but was: blarney stone" {
+		testing.Errorf("incorrect description: %s", mockTestingT.mockTestOutput)
+	}
+}
+
+func TestMatchesPatternWithErrorDescription(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "+++"
+	gocrest.AssertThat(mockTestingT, actual, gocrest.MatchesPattern(expected))
+	if !strings.Contains(mockTestingT.mockTestOutput, "error parsing regexp: missing argument to repetition operator: `+`") {
+		testing.Errorf("incorrect description: %s", mockTestingT.mockTestOutput)
+	}
 }
