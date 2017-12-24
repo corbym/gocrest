@@ -1,6 +1,8 @@
 # gocrest
 
-A hamcrest-like assertion library for Go.
+A hamcrest-like assertion library for Go. 
+
+Inspired by [Hamcrest](https://github.com/hamcrest). 
 
 ## Package import
 
