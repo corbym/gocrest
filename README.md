@@ -21,7 +21,7 @@ output:
 expected: value equal to bye but was: hi
 ```
 
-#Matchers so far..
+# Matchers so far..
 
 - EqualTo(x)
 - IsNil()
