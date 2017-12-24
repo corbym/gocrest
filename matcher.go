@@ -10,10 +10,9 @@ type TestingT interface {
 	FailNow()
 }
 
-func AssertThat(t TestingT, actual interface{}, m *Matcher) bool {
+func AssertThat(t TestingT, actual interface{}, m *Matcher) {
 	matches := m.matches(actual)
-	if ! matches {
+	if !matches {
 		t.Errorf("expected: %s but was: %v", m.describe, actual)
 	}
-	return matches
 }
