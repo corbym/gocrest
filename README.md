@@ -18,7 +18,7 @@ gocrest.AssertThat(testing, "hi", gocrest.EqualTo("bye"))
 output:
 
 ```
-expected: value equal to hi but was: bye
+expected: value equal to bye but was: hi
 ```
 
 #Matchers so far..
