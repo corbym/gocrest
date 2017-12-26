@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func MatchesPattern(expected interface{}) (*Matcher) {
+func MatchesPattern(expected interface{}) *Matcher {
 	matcher := new(Matcher)
 	matcher.describe = fmt.Sprintf("a value that matches pattern %v", expected)
 	matcher.matches = func(actual interface{}) bool {

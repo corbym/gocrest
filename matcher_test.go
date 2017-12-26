@@ -204,3 +204,24 @@ func TestMatchesPatternWithErrorDescription(testing *testing.T) {
 		testing.Errorf("incorrect description: %s", mockTestingT.mockTestOutput)
 	}
 }
+
+func TestHasFunctionPasses(testing *testing.T) {
+	type MyType interface {
+		F() string
+	}
+	actual := new(MyType)
+	expected := "F"
+	gocrest.AssertThat(testing, actual, gocrest.HasFunction(expected))
+}
+
+func TestHasFunctionDoesNotPass(testing *testing.T) {
+	type MyType interface {
+		F() string
+	}
+	actual := new(MyType)
+	expected := "E"
+	gocrest.AssertThat(mockTestingT, actual, gocrest.HasFunction(expected))
+	if mockTestingT.testStatus == passedTest {
+		testing.Fail()
+	}
+}
