@@ -77,5 +77,5 @@ func listContains(expectedValue reflect.Value, actualValue reflect.Value) bool {
 			}
 		}
 	}
-	return len(contains) == actualValue.Len()
+	return len(contains) == expectedValue.Len()
 }

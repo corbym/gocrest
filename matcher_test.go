@@ -133,6 +133,27 @@ func TestContainsForString(testing *testing.T) {
 	gocrest.AssertThat(testing, actualList, gocrest.Contains(expected))
 }
 
+func TestContainsFailsForString(testing *testing.T) {
+	actualList := []string{"Foo", "Bar"}
+	expected := "Moo"
+	gocrest.AssertThat(mockTestingT, actualList, gocrest.Contains(expected))
+	if mockTestingT.testStatus == passedTest {
+		testing.Fail()
+	}
+}
+
+func TestContainsForSlice(testing *testing.T) {
+	actualList := []string{"Foo", "Bar", "Bong", "Boom"}
+	expected := []string{"Baz", "Bing", "Bong"}
+	gocrest.AssertThat(testing, actualList[2:2], gocrest.Contains(expected[2:2]))
+}
+
+func TestContainsForList(testing *testing.T) {
+	actualList := []string{"Foo", "Bar", "Bong", "Boom"}
+	expected := []string{"Boom", "Bong", "Bar"}
+	gocrest.AssertThat(testing, actualList, gocrest.Contains(expected))
+}
+
 func TestMapContainsMap(testing *testing.T) {
 	actualList := map[string]string{
 		"bing":  "boop",
