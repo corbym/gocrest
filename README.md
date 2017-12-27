@@ -32,3 +32,4 @@ expected: value equal to bye but was: hi
 - MatchesPattern(regex string) -- a string regex expression
 - HasFunction(string) - checks if a Type has a function (method)
 - AllOf(... *Matcher) - returns true if all matchers match
+- AnyOf(... *Matcher) - return true if any matcher matches
