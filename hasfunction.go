@@ -2,13 +2,26 @@ package gocrest
 
 import (
 	"reflect"
+	"fmt"
 )
 
-func HasFunction(expected interface{}) *Matcher {
+func HasFunctionNamed(expected interface{}) *Matcher {
 	matcher := new(Matcher)
+	matcher.describe = fmt.Sprintf("interface with function %v", expected)
 	matcher.matches = func(actual interface{}) bool {
-		_, ok := reflect.TypeOf(actual).MethodByName(reflect.ValueOf(expected).String())
+		typeOfActual := reflect.TypeOf(actual)
+		matcher.resolvedActual = actualStringValue(typeOfActual)
+		expectedName := reflect.ValueOf(expected).String()
+		_, ok := typeOfActual.Elem().MethodByName(expectedName)
 		return ok
 	}
 	return matcher
+}
+func actualStringValue(actualType reflect.Type) string {
+	description := actualType.Elem().Name() + "{"
+	for x := 0; x < actualType.Elem().NumMethod(); x++ {
+		description += actualType.Elem().Method(x).Name + "()"
+	}
+	description += "}"
+	return description
 }

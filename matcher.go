@@ -1,8 +1,13 @@
 package gocrest
 
+import (
+	"fmt"
+)
+
 type Matcher struct {
-	matches  func(actual interface{}) bool
-	describe string
+	matches        func(actual interface{}) bool
+	describe       string
+	resolvedActual string
 }
 
 type TestingT interface {
@@ -15,6 +20,12 @@ type TestingT interface {
 func AssertThat(t TestingT, actual interface{}, m *Matcher) {
 	matches := m.matches(actual)
 	if !matches {
-		t.Errorf("expected: %s but was: %v", m.describe, actual)
+		t.Errorf("expected: %s but was: %s", m.describe, actualAsString(m, actual))
 	}
+}
+func actualAsString(matcher *Matcher, actual interface{}) string {
+	if matcher.resolvedActual != "" {
+		return matcher.resolvedActual
+	}
+	return fmt.Sprintf("%v", actual)
 }

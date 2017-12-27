@@ -207,11 +207,12 @@ func TestMatchesPatternWithErrorDescription(testing *testing.T) {
 
 func TestHasFunctionPasses(testing *testing.T) {
 	type MyType interface {
+		N() int
 		F() string
 	}
 	actual := new(MyType)
 	expected := "F"
-	gocrest.AssertThat(testing, actual, gocrest.HasFunction(expected))
+	gocrest.AssertThat(testing, actual, gocrest.HasFunctionNamed(expected))
 }
 
 func TestHasFunctionDoesNotPass(testing *testing.T) {
@@ -220,8 +221,21 @@ func TestHasFunctionDoesNotPass(testing *testing.T) {
 	}
 	actual := new(MyType)
 	expected := "E"
-	gocrest.AssertThat(mockTestingT, actual, gocrest.HasFunction(expected))
+	gocrest.AssertThat(mockTestingT, actual, gocrest.HasFunctionNamed(expected))
 	if mockTestingT.testStatus == passedTest {
 		testing.Fail()
+	}
+}
+
+func TestHasFunctionDescribesMismatch(testing *testing.T) {
+	type MyType interface {
+		F() string
+		B() string
+	}
+	actual := new(MyType)
+	expected := "X"
+	gocrest.AssertThat(mockTestingT, actual, gocrest.HasFunctionNamed(expected))
+	if mockTestingT.mockTestOutput != "expected: interface with function X but was: MyType{B()F()}" {
+		testing.Errorf("incorrect description:%s", mockTestingT.mockTestOutput)
 	}
 }
