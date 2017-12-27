@@ -2,24 +2,24 @@ package gocrest
 
 import "fmt"
 
-type MockTestingT struct {
+type StubTestingT struct {
 	failed         bool
 	MockTestOutput string
 }
 
-func (t *MockTestingT) Logf(format string, args ...interface{}) {
+func (t *StubTestingT) Logf(format string, args ...interface{}) {
 	t.MockTestOutput = fmt.Sprintf(format, args...)
 	t.failed = true
 }
 
-func (t *MockTestingT) Errorf(format string, args ...interface{}) {
+func (t *StubTestingT) Errorf(format string, args ...interface{}) {
 	t.MockTestOutput = fmt.Sprintf(format, args...)
 	t.failed = true
 }
 
-func (t *MockTestingT) FailNow() {
+func (t *StubTestingT) FailNow() {
 	t.failed = true
 }
-func (t *MockTestingT) HasFailed() bool {
+func (t *StubTestingT) HasFailed() bool {
 	return t.failed
 }

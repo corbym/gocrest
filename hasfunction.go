@@ -11,7 +11,7 @@ func HasFunctionNamed(expected string) *Matcher {
 	matcher.describe = fmt.Sprintf("interface with function %s", expected)
 	matcher.matches = func(actual interface{}) bool {
 		typeOfActual := reflect.TypeOf(actual)
-		matcher.resolvedActual = actualStringValue(typeOfActual)
+		matcher.actual = actualStringValue(typeOfActual)
 		expectedName := reflect.ValueOf(expected).String()
 		_, ok := typeOfActual.Elem().MethodByName(expectedName)
 		return ok
