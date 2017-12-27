@@ -30,3 +30,5 @@ expected: value equal to bye but was: hi
 - Contains(x) -- acts like containsAll
 - Not(m *Matcher) -- logical not of matcher's result
 - MatchesPattern(regex string) -- a string regex expression
+- HasFunction(string) - checks if a Type has a function (method)
+- AllOf(... *Matcher) - returns true if all matchers match

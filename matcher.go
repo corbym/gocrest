@@ -23,6 +23,7 @@ func AssertThat(t TestingT, actual interface{}, m *Matcher) {
 		t.Errorf("expected: %s but was: %s", m.describe, actualAsString(m, actual))
 	}
 }
+
 func actualAsString(matcher *Matcher, actual interface{}) string {
 	if matcher.resolvedActual != "" {
 		return matcher.resolvedActual
