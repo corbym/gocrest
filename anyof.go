@@ -2,7 +2,7 @@ package gocrest
 
 import "fmt"
 
-//Takes some matchers and checks if all the matchers return true
+//Takes some matchers and checks if at least one of the matchers return true
 //returns a matcher that performs the the test on the input matchers
 func AnyOf(allMatchers ... *Matcher) (*Matcher) {
 	matcher := new(Matcher)
