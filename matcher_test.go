@@ -237,3 +237,24 @@ func TestAllOfHasCorrectDescription(testing *testing.T) {
 		testing.Errorf("incorrect description:%s", mockTestingT.MockTestOutput)
 	}
 }
+
+func TestAnyOfMatches(testing *testing.T) {
+	actual := "abcdef"
+	gocrest.AssertThat(testing, actual, gocrest.AnyOf(gocrest.EqualTo("abcdef"), gocrest.Contains("g")))
+}
+
+func TestAnyOfFailsToMatch(testing *testing.T) {
+	actual := "abc"
+	gocrest.AssertThat(mockTestingT, actual, gocrest.AnyOf(gocrest.EqualTo("efg"), gocrest.Contains("e")))
+	if !mockTestingT.HasFailed() {
+		testing.Fail()
+	}
+}
+
+func TestAnyOfHasCorrectDescription(testing *testing.T) {
+	actual := "abc"
+	gocrest.AssertThat(mockTestingT, actual, gocrest.AnyOf(gocrest.EqualTo("efg"), gocrest.Contains("e")))
+	if mockTestingT.MockTestOutput != "expected: any of (value equal to efg or something that contains e) but was: abc" {
+		testing.Errorf("incorrect description:%s", mockTestingT.MockTestOutput)
+	}
+}
