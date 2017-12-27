@@ -239,3 +239,24 @@ func TestHasFunctionDescribesMismatch(testing *testing.T) {
 		testing.Errorf("incorrect description:%s", mockTestingT.mockTestOutput)
 	}
 }
+
+func TestAllOfMatches(testing *testing.T) {
+	actual := "abcdef"
+	gocrest.AssertThat(testing, actual, gocrest.AllOf(gocrest.EqualTo("abcdef"), gocrest.Contains("e")))
+}
+
+func TestAllOfFailsToMatch(testing *testing.T) {
+	actual := "abc"
+	gocrest.AssertThat(mockTestingT, actual, gocrest.AllOf(gocrest.EqualTo("abc"), gocrest.Contains("e")))
+	if mockTestingT.testStatus == passedTest {
+		testing.Fail()
+	}
+}
+
+func TestAllOfHasCorrectDescription(testing *testing.T) {
+	actual := "abc"
+	gocrest.AssertThat(mockTestingT, actual, gocrest.AllOf(gocrest.EqualTo("abc"), gocrest.Contains("e")))
+	if mockTestingT.mockTestOutput != "expected: all of (value equal to abc and something that contains e) but was: abc" {
+		testing.Errorf("incorrect description:%s", mockTestingT.mockTestOutput)
+	}
+}

@@ -6,11 +6,11 @@ import (
 	"fmt"
 )
 
-func MatchesPattern(expected interface{}) *Matcher {
+func MatchesPattern(expected string) *Matcher {
 	matcher := new(Matcher)
-	matcher.describe = fmt.Sprintf("a value that matches pattern %v", expected)
+	matcher.describe = fmt.Sprintf("a value that matches pattern %s", expected)
 	matcher.matches = func(actual interface{}) bool {
-		compiledExp, err := regexp.Compile(reflect.ValueOf(expected).String())
+		compiledExp, err := regexp.Compile(expected)
 		if err != nil {
 			matcher.describe = err.Error()
 			return false

@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func HasFunctionNamed(expected interface{}) *Matcher {
+func HasFunctionNamed(expected string) *Matcher {
 	matcher := new(Matcher)
-	matcher.describe = fmt.Sprintf("interface with function %v", expected)
+	matcher.describe = fmt.Sprintf("interface with function %s", expected)
 	matcher.matches = func(actual interface{}) bool {
 		typeOfActual := reflect.TypeOf(actual)
 		matcher.resolvedActual = actualStringValue(typeOfActual)
