@@ -85,6 +85,44 @@ func TestGreaterThanFailsWithDescriptionTest(testing *testing.T) {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
+func TestAssertThatTwoValuesAreLessThanOrNot(testing *testing.T) {
+	var equalsItems = []struct {
+		actual     interface{}
+		expected   interface{}
+		shouldFail bool
+	}{
+		{actual: 1, expected: 1, shouldFail: true},
+		{actual: 1, expected: 2, shouldFail: false},
+		{actual: 1.12, expected: 1.12, shouldFail: true},
+		{actual: float32(1.0), expected: float32(1.12), shouldFail: false},
+		{actual: float64(1.0), expected: float64(1.24), shouldFail: false},
+		{actual: uint(0), expected: uint(3), shouldFail: false},
+		{actual: uint16(1), expected: uint16(4), shouldFail: false},
+		{actual: uint32(1), expected: uint32(6), shouldFail: false},
+		{actual: uint64(1), expected: uint64(7), shouldFail: false},
+		{actual: uint64(1), expected: uint64(8), shouldFail: false},
+		{actual: int16(1), expected: int16(9), shouldFail: false},
+		{actual: int32(1), expected: int32(10), shouldFail: false},
+		{actual: int64(1), expected: int64(11), shouldFail: false},
+		{actual: "aaa", expected: "zzz", shouldFail: false},
+		{actual: "zzz", expected: "aaa", shouldFail: true},
+		{actual: complex64(1.0), expected: complex64(1.0), shouldFail: true}, // cannot compare complex types, so fails
+	}
+	for _, test := range equalsItems {
+		stubTestingT = new(gocrest.StubTestingT)
+		gocrest.AssertThat(stubTestingT, test.actual, gocrest.LessThan(test.expected))
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("assertThat(%v, LessThan(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
+
+func TestLessThanFailsWithDescriptionTest(testing *testing.T) {
+	gocrest.AssertThat(stubTestingT, 2, gocrest.LessThan(1))
+	if stubTestingT.MockTestOutput != "expected: value less than 1 but was: 2" {
+		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
+	}
+}
 
 func TestNotReturnsTheOppositeOfGivenMatcher(testing *testing.T) {
 	gocrest.AssertThat(stubTestingT, 1, gocrest.Not(gocrest.EqualTo(2)))
