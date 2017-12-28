@@ -24,6 +24,7 @@ func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
 		{actual: 1.12, expected: 1.12, shouldFail: false},
 		{actual: 1, expected: 2, shouldFail: true},
 		{actual: "hi", expected: "bees", shouldFail: true},
+		{actual: map[string]bool{"hello": true}, expected: map[string]bool{"hello": true}, shouldFail: false},
 	}
 	for _, test := range equalsItems {
 		stubTestingT = new(StubTestingT)
