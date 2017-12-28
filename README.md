@@ -27,17 +27,17 @@ expected: value equal to bye but was: hi
 
 Composed with AllOf:
 
-``` then.AssertThat(t, "abcdef", is.AllOf(gocrest.Contains("abc"), gocrest.LessThan("ghi")))```
+``` then.AssertThat(t, "abcdef", is.AllOf(is.ValueContaining("abc"), is.LessThan("ghi")))```
 
 # Matchers so far..
 
-- EqualTo(x)
-- IsNil()
-- Contains(expected) -- acts like containsAll
-- Not(m *Matcher) -- logical not of matcher's result
-- MatchesPattern(regex string) -- a string regex expression
-- HasFunction(string) - checks if a Type has a function (method)
-- AllOf(... *Matcher) - returns true if all matchers match
-- AnyOf(... *Matcher) - return true if any matcher matches
-- GreaterThan(expected) - checks if actual > expected
-- LessThan(expected)
+- is.EqualTo(x)
+- is.Nil()
+- is.ValueContaining(expected) -- acts like containsAll
+- is.Not(m *Matcher) -- logical not of matcher's result
+- is.MatchForPattern(regex string) -- a string regex expression
+- has.FunctionNamed(string) - checks if a Type has a function (method)
+- is.AllOf(... *Matcher) - returns true if all matchers match
+- is.AnyOf(... *Matcher) - return true if any matcher matches
+- is.GreaterThan(expected) - checks if actual > expected
+- is.LessThan(expected)
