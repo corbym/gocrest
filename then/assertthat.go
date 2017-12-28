@@ -2,18 +2,18 @@ package then
 
 import (
 	"fmt"
-	"gocrest/base"
+	"gocrest"
 )
 
 //AssertThat calls a given matcher and fails the test with a message if the matcher doesn't match.
-func AssertThat(t base.TestingT, actual interface{}, m *base.Matcher) {
+func AssertThat(t gocrest.TestingT, actual interface{}, m *gocrest.Matcher) {
 	matches := m.Matches(actual)
 	if !matches {
 		t.Errorf("expected: %s but was: %s", m.Describe, actualAsString(m, actual))
 	}
 }
 
-func actualAsString(matcher *base.Matcher, actual interface{}) string {
+func actualAsString(matcher *gocrest.Matcher, actual interface{}) string {
 	if matcher.Actual != "" {
 		return matcher.Actual
 	}

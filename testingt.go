@@ -1,4 +1,4 @@
-package base
+package gocrest
 
 type TestingT interface {
 	Logf(format string, args ...interface{})

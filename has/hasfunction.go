@@ -3,12 +3,12 @@ package has
 import (
 	"reflect"
 	"fmt"
-	"gocrest/base"
+	"gocrest"
 )
 // Naive implementation for testing if a Type has a particular method name. Does not check parameters.
 // returns a matcher that will use reflect to check if the actual has the method given by expected
-func FunctionNamed(expected string) *base.Matcher {
-	matcher := new(base.Matcher)
+func FunctionNamed(expected string) *gocrest.Matcher {
+	matcher := new(gocrest.Matcher)
 	matcher.Describe = fmt.Sprintf("interface with function %s", expected)
 	matcher.Matches = func(actual interface{}) bool {
 		typeOfActual := reflect.TypeOf(actual)

@@ -1,8 +1,8 @@
 package is
 
-import "gocrest/base"
+import "gocrest"
 
 //Matches if the expected value is nil
-func Nil() *base.Matcher {
+func Nil() *gocrest.Matcher {
 	return EqualTo(nil)
 }

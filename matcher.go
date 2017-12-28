@@ -1,4 +1,4 @@
-package base
+package gocrest
 
 type Matcher struct {
 	Matches  func(actual interface{}) bool

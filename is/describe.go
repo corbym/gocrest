@@ -2,10 +2,10 @@ package is
 
 import (
 	"fmt"
-	"gocrest/base"
+	"gocrest"
 )
 
-func describe(matchers []*base.Matcher, conjunction string) string {
+func describe(matchers []*gocrest.Matcher, conjunction string) string {
 	var description string
 	for x := 0; x < len(matchers); x++ {
 		description += matchers[x].Describe

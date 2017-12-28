@@ -3,7 +3,7 @@ package is
 import (
 	"reflect"
 	"fmt"
-	"gocrest/base"
+	"gocrest"
 )
 
 // GreaterThan matcher compares two values that are numeric or string values, and when
@@ -11,8 +11,8 @@ import (
 // The matcher will always return false for unknown types.
 // Actual and expected types must be the same underlying type, or the function will panic.
 // Returns a matcher that checks if actual is greater than expected.
-func GreaterThan(expected interface{}) *base.Matcher {
-	matcher := new(base.Matcher)
+func GreaterThan(expected interface{}) *gocrest.Matcher {
+	matcher := new(gocrest.Matcher)
 	matcher.Describe = fmt.Sprintf("value greater than %v", expected)
 	matcher.Matches = func(actual interface{}) bool {
 		actualValue := reflect.ValueOf(actual)

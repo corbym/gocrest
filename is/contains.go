@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"fmt"
 	"strings"
-	"gocrest/base"
+	"gocrest"
 )
 
 // ValueContaining finds if x is contained in y.
@@ -14,8 +14,8 @@ import (
 // For string, behaves like strings.Contains
 // Will panic if types cannot be converted correctly.
 // returns the Matcher that returns true if found
-func ValueContaining(expected interface{}) *base.Matcher {
-	match := new(base.Matcher)
+func ValueContaining(expected interface{}) *gocrest.Matcher {
+	match := new(gocrest.Matcher)
 	match.Describe = fmt.Sprintf("something that contains %v", expected)
 	match.Matches = func(actual interface{}) bool {
 		actualValue := reflect.ValueOf(actual)
