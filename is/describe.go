@@ -1,11 +1,14 @@
-package gocrest
+package is
 
-import "fmt"
+import (
+	"fmt"
+	"gocrest/base"
+)
 
-func describe(matchers []*Matcher, conjunction string) string {
+func describe(matchers []*base.Matcher, conjunction string) string {
 	var description string
 	for x := 0; x < len(matchers); x++ {
-		description += matchers[x].describe
+		description += matchers[x].Describe
 		if x+1 < len(matchers) {
 			description += fmt.Sprintf(" %s ", conjunction)
 		}

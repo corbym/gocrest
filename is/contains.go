@@ -1,22 +1,23 @@
-package gocrest
+package is
 
 import (
 	"reflect"
 	"fmt"
 	"strings"
+	"gocrest/base"
 )
 
-// Contains finds if x is contained in y.
+// ValueContaining finds if x is contained in y.
 // Acts like "ContainsAll", all elements given must be present in actual
 // If "expected" is an array or slice, we assume that actual is the same type
 // For maps, the expected must also be a map and contains is true if both maps contain all key,values in expected.
 // For string, behaves like strings.Contains
 // Will panic if types cannot be converted correctly.
 // returns the Matcher that returns true if found
-func Contains(expected interface{}) *Matcher {
-	match := new(Matcher)
-	match.describe = fmt.Sprintf("something that contains %v", expected)
-	match.matches = func(actual interface{}) bool {
+func ValueContaining(expected interface{}) *base.Matcher {
+	match := new(base.Matcher)
+	match.Describe = fmt.Sprintf("something that contains %v", expected)
+	match.Matches = func(actual interface{}) bool {
 		actualValue := reflect.ValueOf(actual)
 		expectedValue := reflect.ValueOf(expected)
 
@@ -43,7 +44,6 @@ func Contains(expected interface{}) *Matcher {
 }
 
 func mapContains(expected reflect.Value, actual reflect.Value) bool {
-
 	keys := expected.MapKeys()
 	contains := make(map[interface{}]bool)
 	for i := 0; i < len(keys); i++ {

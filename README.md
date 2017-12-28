@@ -9,13 +9,14 @@ Inspired by [Hamcrest](https://github.com/hamcrest).
 
 ```
 import (
-  gocrest "github.com/corbym/gocrest"
+  gocrest then "github.com/corbym/gocrest/then"
+  gocrest is "github.com/corbym/gocrest/is"
 )
 ```
 
 ## Example:
 ```
-gocrest.AssertThat(testing, "hi", gocrest.EqualTo("bye"))
+then.AssertThat(testing, "hi", is.EqualTo("bye"))
 ```
 
 output:
@@ -26,7 +27,7 @@ expected: value equal to bye but was: hi
 
 Composed with AllOf:
 
-``` gocrest.AssertThat(t, "abcdef", gocrest.AllOf(gocrest.Contains("abc"), gocrest.LessThan("ghi")))```
+``` then.AssertThat(t, "abcdef", is.AllOf(gocrest.Contains("abc"), gocrest.LessThan("ghi")))```
 
 # Matchers so far..
 

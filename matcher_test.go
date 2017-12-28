@@ -2,14 +2,16 @@ package gocrest_test
 
 import (
 	"testing"
-	"gocrest"
 	"strings"
+	"gocrest/then"
+	"gocrest/is"
+	"gocrest/has"
 )
 
-var stubTestingT *gocrest.StubTestingT
+var stubTestingT *StubTestingT
 
 func init() {
-	stubTestingT = new(gocrest.StubTestingT)
+	stubTestingT = new(StubTestingT)
 }
 
 func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
@@ -24,8 +26,8 @@ func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
 		{actual: "hi", expected: "bees", shouldFail: true},
 	}
 	for _, test := range equalsItems {
-		stubTestingT = new(gocrest.StubTestingT)
-		gocrest.AssertThat(stubTestingT, test.actual, gocrest.EqualTo(test.expected))
+		stubTestingT = new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, is.EqualTo(test.expected))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, EqualTo(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -33,14 +35,14 @@ func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
 }
 
 func TestEqualToFailsWithDescriptionTest(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 1, gocrest.EqualTo(2))
+	then.AssertThat(stubTestingT, 1, is.EqualTo(2))
 	if stubTestingT.MockTestOutput != "expected: value equal to 2 but was: 1" {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
 
 func TestAssertThatFailsTest(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 1, gocrest.EqualTo(2))
+	then.AssertThat(stubTestingT, 1, is.EqualTo(2))
 	if !stubTestingT.HasFailed() {
 		testing.Error("1 EqualTo 2 did not fail test")
 	}
@@ -71,8 +73,8 @@ func TestAssertThatTwoValuesAreGreaterThanOrNot(testing *testing.T) {
 		{actual: complex64(1.0), expected: complex64(1.0), shouldFail: true}, // cannot compare complex types, so fails
 	}
 	for _, test := range equalsItems {
-		stubTestingT = new(gocrest.StubTestingT)
-		gocrest.AssertThat(stubTestingT, test.actual, gocrest.GreaterThan(test.expected))
+		stubTestingT = new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, is.GreaterThan(test.expected))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, GreaterThan(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -80,7 +82,7 @@ func TestAssertThatTwoValuesAreGreaterThanOrNot(testing *testing.T) {
 }
 
 func TestGreaterThanFailsWithDescriptionTest(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 1, gocrest.GreaterThan(2))
+	then.AssertThat(stubTestingT, 1, is.GreaterThan(2))
 	if stubTestingT.MockTestOutput != "expected: value greater than 2 but was: 1" {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
@@ -109,8 +111,8 @@ func TestAssertThatTwoValuesAreLessThanOrNot(testing *testing.T) {
 		{actual: complex64(1.0), expected: complex64(1.0), shouldFail: true}, // cannot compare complex types, so fails
 	}
 	for _, test := range equalsItems {
-		stubTestingT = new(gocrest.StubTestingT)
-		gocrest.AssertThat(stubTestingT, test.actual, gocrest.LessThan(test.expected))
+		stubTestingT = new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, is.LessThan(test.expected))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, LessThan(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -118,39 +120,39 @@ func TestAssertThatTwoValuesAreLessThanOrNot(testing *testing.T) {
 }
 
 func TestLessThanFailsWithDescriptionTest(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 2, gocrest.LessThan(1))
+	then.AssertThat(stubTestingT, 2, is.LessThan(1))
 	if stubTestingT.MockTestOutput != "expected: value less than 1 but was: 2" {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
 
 func TestNotReturnsTheOppositeOfGivenMatcher(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 1, gocrest.Not(gocrest.EqualTo(2)))
+	then.AssertThat(stubTestingT, 1, is.Not(is.EqualTo(2)))
 	if !stubTestingT.HasFailed() {
 		testing.Error("Not(EqualTo) did not fail the test")
 	}
 }
 
 func TestNotReturnsTheNotDescriptionOfGivenMatcher(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 2, gocrest.Not(gocrest.EqualTo(2)))
+	then.AssertThat(stubTestingT, 2, is.Not(is.EqualTo(2)))
 	if stubTestingT.MockTestOutput != "expected: not(value equal to 2) but was: 2" {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
 
 func TestIsNilMatches(testing *testing.T) {
-	gocrest.AssertThat(testing, nil, gocrest.IsNil())
+	then.AssertThat(testing, nil, is.Nil())
 }
 
 func TestIsNilFails(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 2, gocrest.IsNil())
+	then.AssertThat(stubTestingT, 2, is.Nil())
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
 }
 
 func TestIsNilHasDescriptionTest(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 1, gocrest.IsNil())
+	then.AssertThat(stubTestingT, 1, is.Nil())
 	if stubTestingT.MockTestOutput != "expected: value equal to <nil> but was: 1" {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
@@ -159,7 +161,7 @@ func TestIsNilHasDescriptionTest(testing *testing.T) {
 func TestContainsDescriptionTest(testing *testing.T) {
 	list := []string{"Foo", "Bar"}
 	expectedList := []string{"Baz", "Bing"}
-	gocrest.AssertThat(stubTestingT, list, gocrest.Contains(expectedList))
+	then.AssertThat(stubTestingT, list, is.ValueContaining(expectedList))
 	if stubTestingT.MockTestOutput != "expected: something that contains [Baz Bing] but was: [Foo Bar]" {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
@@ -168,7 +170,7 @@ func TestContainsDescriptionTest(testing *testing.T) {
 func TestContainsFailsForTwoStringArraysTest(testing *testing.T) {
 	actualList := []string{"Foo", "Bar"}
 	expectedList := []string{"Baz", "Bing"}
-	gocrest.AssertThat(stubTestingT, actualList, gocrest.Contains(expectedList))
+	then.AssertThat(stubTestingT, actualList, is.ValueContaining(expectedList))
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
@@ -177,7 +179,7 @@ func TestContainsFailsForTwoStringArraysTest(testing *testing.T) {
 func TestContainsFailsForTwoIntArraysTest(testing *testing.T) {
 	actualList := []int{12, 13}
 	expectedList := []int{14, 15}
-	gocrest.AssertThat(stubTestingT, actualList, gocrest.Contains(expectedList))
+	then.AssertThat(stubTestingT, actualList, is.ValueContaining(expectedList))
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
@@ -186,13 +188,13 @@ func TestContainsFailsForTwoIntArraysTest(testing *testing.T) {
 func TestContainsForString(testing *testing.T) {
 	actualList := []string{"Foo", "Bar"}
 	expected := "Foo"
-	gocrest.AssertThat(testing, actualList, gocrest.Contains(expected))
+	then.AssertThat(testing, actualList, is.ValueContaining(expected))
 }
 
 func TestContainsFailsForString(testing *testing.T) {
 	actualList := []string{"Foo", "Bar"}
 	expected := "Moo"
-	gocrest.AssertThat(stubTestingT, actualList, gocrest.Contains(expected))
+	then.AssertThat(stubTestingT, actualList, is.ValueContaining(expected))
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
@@ -201,13 +203,13 @@ func TestContainsFailsForString(testing *testing.T) {
 func TestContainsForSlice(testing *testing.T) {
 	actualList := []string{"Foo", "Bar", "Bong", "Boom"}
 	expected := []string{"Baz", "Bing", "Bong"}
-	gocrest.AssertThat(testing, actualList[2:2], gocrest.Contains(expected[2:2]))
+	then.AssertThat(testing, actualList[2:2], is.ValueContaining(expected[2:2]))
 }
 
 func TestContainsForList(testing *testing.T) {
 	actualList := []string{"Foo", "Bar", "Bong", "Boom"}
 	expected := []string{"Boom", "Bong", "Bar"}
-	gocrest.AssertThat(testing, actualList, gocrest.Contains(expected))
+	then.AssertThat(testing, actualList, is.ValueContaining(expected))
 }
 
 func TestMapContainsMap(testing *testing.T) {
@@ -219,25 +221,25 @@ func TestMapContainsMap(testing *testing.T) {
 		"bing": "boop",
 	}
 
-	gocrest.AssertThat(testing, actualList, gocrest.Contains(expected))
+	then.AssertThat(testing, actualList, is.ValueContaining(expected))
 }
 
 func TestStringContainsString(testing *testing.T) {
 	actualList := "abcd"
 	expected := "bc"
-	gocrest.AssertThat(testing, actualList, gocrest.Contains(expected))
+	then.AssertThat(testing, actualList, is.ValueContaining(expected))
 }
 
 func TestMatchesPatternMatchesString(testing *testing.T) {
 	actual := "blarney stone"
 	expected := "^blarney.*"
-	gocrest.AssertThat(testing, actual, gocrest.MatchesPattern(expected))
+	then.AssertThat(testing, actual, is.MatchForPattern(expected))
 }
 
 func TestMatchesPatternDoesNotMatchString(testing *testing.T) {
 	actual := "blarney stone"
 	expected := "^123.?.*"
-	gocrest.AssertThat(stubTestingT, actual, gocrest.MatchesPattern(expected))
+	then.AssertThat(stubTestingT, actual, is.MatchForPattern(expected))
 	if !stubTestingT.HasFailed() {
 		testing.Error("did not fail test")
 	}
@@ -246,7 +248,7 @@ func TestMatchesPatternDoesNotMatchString(testing *testing.T) {
 func TestMatchesPatternDescription(testing *testing.T) {
 	actual := "blarney stone"
 	expected := "~123.?.*"
-	gocrest.AssertThat(stubTestingT, actual, gocrest.MatchesPattern(expected))
+	then.AssertThat(stubTestingT, actual, is.MatchForPattern(expected))
 	if stubTestingT.MockTestOutput != "expected: a value that matches pattern ~123.?.* but was: blarney stone" {
 		testing.Errorf("incorrect description: %s", stubTestingT.MockTestOutput)
 	}
@@ -255,7 +257,7 @@ func TestMatchesPatternDescription(testing *testing.T) {
 func TestMatchesPatternWithErrorDescription(testing *testing.T) {
 	actual := "blarney stone"
 	expected := "+++"
-	gocrest.AssertThat(stubTestingT, actual, gocrest.MatchesPattern(expected))
+	then.AssertThat(stubTestingT, actual, is.MatchForPattern(expected))
 	if !strings.Contains(stubTestingT.MockTestOutput, "error parsing regexp: missing argument to repetition operator: `+`") {
 		testing.Errorf("incorrect description: %s", stubTestingT.MockTestOutput)
 	}
@@ -268,7 +270,7 @@ func TestHasFunctionPasses(testing *testing.T) {
 	}
 	actual := new(MyType)
 	expected := "F"
-	gocrest.AssertThat(testing, actual, gocrest.HasFunctionNamed(expected))
+	then.AssertThat(testing, actual, has.FunctionNamed(expected))
 }
 
 func TestHasFunctionDoesNotPass(testing *testing.T) {
@@ -277,7 +279,7 @@ func TestHasFunctionDoesNotPass(testing *testing.T) {
 	}
 	actual := new(MyType)
 	expected := "E"
-	gocrest.AssertThat(stubTestingT, actual, gocrest.HasFunctionNamed(expected))
+	then.AssertThat(stubTestingT, actual, has.FunctionNamed(expected))
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
@@ -290,7 +292,7 @@ func TestHasFunctionDescribesMismatch(testing *testing.T) {
 	}
 	actual := new(MyType)
 	expected := "X"
-	gocrest.AssertThat(stubTestingT, actual, gocrest.HasFunctionNamed(expected))
+	then.AssertThat(stubTestingT, actual, has.FunctionNamed(expected))
 	if stubTestingT.MockTestOutput != "expected: interface with function X but was: MyType{B()F()}" {
 		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
 	}
@@ -298,12 +300,12 @@ func TestHasFunctionDescribesMismatch(testing *testing.T) {
 
 func TestAllOfMatches(testing *testing.T) {
 	actual := "abcdef"
-	gocrest.AssertThat(testing, actual, gocrest.AllOf(gocrest.EqualTo("abcdef"), gocrest.Contains("e")))
+	then.AssertThat(testing, actual, is.AllOf(is.EqualTo("abcdef"), is.ValueContaining("e")))
 }
 
 func TestAllOfFailsToMatch(testing *testing.T) {
 	actual := "abc"
-	gocrest.AssertThat(stubTestingT, actual, gocrest.AllOf(gocrest.EqualTo("abc"), gocrest.Contains("e")))
+	then.AssertThat(stubTestingT, actual, is.AllOf(is.EqualTo("abc"), is.ValueContaining("e")))
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
@@ -311,7 +313,7 @@ func TestAllOfFailsToMatch(testing *testing.T) {
 
 func TestAllOfHasCorrectDescription(testing *testing.T) {
 	actual := "abc"
-	gocrest.AssertThat(stubTestingT, actual, gocrest.AllOf(gocrest.EqualTo("abc"), gocrest.Contains("e")))
+	then.AssertThat(stubTestingT, actual, is.AllOf(is.EqualTo("abc"), is.ValueContaining("e")))
 	if stubTestingT.MockTestOutput != "expected: all of (value equal to abc and something that contains e) but was: abc" {
 		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
 	}
@@ -319,12 +321,12 @@ func TestAllOfHasCorrectDescription(testing *testing.T) {
 
 func TestAnyOfMatches(testing *testing.T) {
 	actual := "abcdef"
-	gocrest.AssertThat(testing, actual, gocrest.AnyOf(gocrest.EqualTo("abcdef"), gocrest.Contains("g")))
+	then.AssertThat(testing, actual, is.AnyOf(is.EqualTo("abcdef"), is.ValueContaining("g")))
 }
 
 func TestAnyOfFailsToMatch(testing *testing.T) {
 	actual := "abc"
-	gocrest.AssertThat(stubTestingT, actual, gocrest.AnyOf(gocrest.EqualTo("efg"), gocrest.Contains("e")))
+	then.AssertThat(stubTestingT, actual, is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")))
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
@@ -332,7 +334,7 @@ func TestAnyOfFailsToMatch(testing *testing.T) {
 
 func TestAnyOfHasCorrectDescription(testing *testing.T) {
 	actual := "abc"
-	gocrest.AssertThat(stubTestingT, actual, gocrest.AnyOf(gocrest.EqualTo("efg"), gocrest.Contains("e")))
+	then.AssertThat(stubTestingT, actual, is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")))
 	if stubTestingT.MockTestOutput != "expected: any of (value equal to efg or something that contains e) but was: abc" {
 		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
 	}

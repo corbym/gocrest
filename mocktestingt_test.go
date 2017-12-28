@@ -1,4 +1,4 @@
-package gocrest
+package gocrest_test
 
 import "fmt"
 
