@@ -24,10 +24,63 @@ func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
 		{actual: "hi", expected: "bees", shouldFail: true},
 	}
 	for _, test := range equalsItems {
+		stubTestingT = new(gocrest.StubTestingT)
 		gocrest.AssertThat(stubTestingT, test.actual, gocrest.EqualTo(test.expected))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, EqualTo(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
+	}
+}
+
+func TestEqualToFailsWithDescriptionTest(testing *testing.T) {
+	gocrest.AssertThat(stubTestingT, 1, gocrest.EqualTo(2))
+	if stubTestingT.MockTestOutput != "expected: value equal to 2 but was: 1" {
+		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestAssertThatFailsTest(testing *testing.T) {
+	gocrest.AssertThat(stubTestingT, 1, gocrest.EqualTo(2))
+	if !stubTestingT.HasFailed() {
+		testing.Error("1 EqualTo 2 did not fail test")
+	}
+}
+
+func TestAssertThatTwoValuesAreGreaterThanOrNot(testing *testing.T) {
+	var equalsItems = []struct {
+		actual     interface{}
+		expected   interface{}
+		shouldFail bool
+	}{
+		{actual: 1, expected: 1, shouldFail: true},
+		{actual: 2, expected: 1, shouldFail: false},
+		{actual: 1.12, expected: 1.12, shouldFail: true},
+		{actual: float32(1.12), expected: float32(1.0), shouldFail: false},
+		{actual: float64(1.24), expected: float64(1.0), shouldFail: false},
+		{actual: uint(3), expected: uint(1), shouldFail: false},
+		{actual: uint16(4), expected: uint16(1), shouldFail: false},
+		{actual: uint32(6), expected: uint32(1), shouldFail: false},
+		{actual: uint64(7), expected: uint64(1), shouldFail: false},
+		{actual: uint64(8), expected: uint64(1), shouldFail: false},
+		{actual: int16(9), expected: int16(1), shouldFail: false},
+		{actual: int32(10), expected: int32(1), shouldFail: false},
+		{actual: int64(11), expected: int64(1), shouldFail: false},
+		{actual: int64(12), expected: int64(1), shouldFail: false},
+		{actual: int64(12), expected: uint64(1), shouldFail: false},
+	}
+	for _, test := range equalsItems {
+		stubTestingT = new(gocrest.StubTestingT)
+		gocrest.AssertThat(stubTestingT, test.actual, gocrest.GreaterThan(test.expected))
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("assertThat(%v, GreaterThan(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
+
+func TestGreaterThanFailsWithDescriptionTest(testing *testing.T) {
+	gocrest.AssertThat(stubTestingT, 1, gocrest.GreaterThan(2))
+	if stubTestingT.MockTestOutput != "expected: value greater than 2 but was: 1" {
+		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
 
@@ -41,20 +94,6 @@ func TestNotReturnsTheOppositeOfGivenMatcher(testing *testing.T) {
 func TestNotReturnsTheNotDescriptionOfGivenMatcher(testing *testing.T) {
 	gocrest.AssertThat(stubTestingT, 2, gocrest.Not(gocrest.EqualTo(2)))
 	if stubTestingT.MockTestOutput != "expected: not(value equal to 2) but was: 2" {
-		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
-	}
-}
-
-func TestAssertThatFailsTest(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 1, gocrest.EqualTo(2))
-	if !stubTestingT.HasFailed() {
-		testing.Error("1 EqualTo 2 did not fail test")
-	}
-}
-
-func TestEqualToFailsWithDescriptionTest(testing *testing.T) {
-	gocrest.AssertThat(stubTestingT, 1, gocrest.EqualTo(2))
-	if stubTestingT.MockTestOutput != "expected: value equal to 2 but was: 1" {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
