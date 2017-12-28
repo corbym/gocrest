@@ -6,7 +6,7 @@ import "fmt"
 func AssertThat(t TestingT, actual interface{}, m *Matcher) {
 	matches := m.matches(actual)
 	if !matches {
-		t.Errorf("expected: %s but was: %s", m.describe, actualAsString(m, actualAsString))
+		t.Errorf("expected: %s but was: %s", m.describe, actualAsString(m, actual))
 	}
 }
 
