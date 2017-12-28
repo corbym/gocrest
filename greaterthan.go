@@ -5,6 +5,11 @@ import (
 	"fmt"
 )
 
+// GreaterThan matcher compares two values that are numeric or string values, and when
+// called returns true if actual > expected. Strings are compared lexicographically with '>'
+// The matcher will always return false for unknown types.
+// Actual and expected types must be the same underlying type, or the function will panic.
+// Returns a matcher that checks if actual is greater than expected.
 func GreaterThan(expected interface{}) *Matcher {
 	matcher := new(Matcher)
 	matcher.describe = fmt.Sprintf("value greater than %v", expected)
@@ -24,9 +29,10 @@ func GreaterThan(expected interface{}) *Matcher {
 			{
 				return actualValue.Uint() > expectedValue.Uint()
 			}
+		case string:
+			return actualValue.String() > expectedValue.String()
 		}
 		return false
 	}
-
 	return matcher
 }

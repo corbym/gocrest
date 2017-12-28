@@ -66,7 +66,9 @@ func TestAssertThatTwoValuesAreGreaterThanOrNot(testing *testing.T) {
 		{actual: int32(10), expected: int32(1), shouldFail: false},
 		{actual: int64(11), expected: int64(1), shouldFail: false},
 		{actual: int64(12), expected: int64(1), shouldFail: false},
-		{actual: int64(12), expected: uint64(1), shouldFail: false},
+		{actual: "zzz", expected: "aaa", shouldFail: false},
+		{actual: "aaa", expected: "zzz", shouldFail: true},
+		{actual: complex64(1.0), expected: complex64(1.0), shouldFail: true}, // cannot compare complex types, so fails
 	}
 	for _, test := range equalsItems {
 		stubTestingT = new(gocrest.StubTestingT)
