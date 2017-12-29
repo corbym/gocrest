@@ -2,7 +2,6 @@ package is
 
 import (
 	"regexp"
-	"reflect"
 	"fmt"
 	"gocrest"
 )
@@ -19,7 +18,7 @@ func MatchForPattern(expected string) *gocrest.Matcher {
 			matcher.Describe = err.Error()
 			return false
 		}
-		return compiledExp.MatchString(reflect.ValueOf(actual).String())
+		return compiledExp.MatchString(actual.(string))
 	}
 	return matcher
 }
