@@ -14,6 +14,5 @@ func (matcher *Matcher) Reason(r string) *Matcher {
 	return matcher
 }
 func (matcher *Matcher) Reasonf(format string, args ... interface{}) *Matcher {
-	matcher.ReasonString = fmt.Sprintf(format, args...)
-	return matcher
+	return matcher.Reason(fmt.Sprintf(format, args...))
 }
