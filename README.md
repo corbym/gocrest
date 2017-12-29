@@ -41,3 +41,4 @@ Composed with AllOf:
 - is.AnyOf(... *Matcher) - return true if any matcher matches
 - is.GreaterThan(expected) - checks if actual > expected
 - is.LessThan(expected)
+- is.Empty() - matches if the actual is "", nil or len(actual)==0
