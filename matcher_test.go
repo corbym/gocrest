@@ -37,7 +37,7 @@ func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
 
 func TestAssertThatEqualToFailsWithDescriptionTest(testing *testing.T) {
 	then.AssertThat(stubTestingT, 1, is.EqualTo(2).Reason("arithmetic is wrong"))
-	if stubTestingT.MockTestOutput != "arithmetic is wrong\nExpected: value equal to 2\n     but: 1" {
+	if stubTestingT.MockTestOutput != "arithmetic is wrong\nExpected: value equal to 2\n     but: 1\n" {
 		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
 	}
 }
@@ -152,7 +152,7 @@ func TestAssertThatTwoValuesAreLessThanOrNot(testing *testing.T) {
 
 func TestLessThanFailsWithDescriptionTest(testing *testing.T) {
 	then.AssertThat(stubTestingT, 2, is.LessThan(1))
-	if stubTestingT.MockTestOutput != "\nExpected: value less than 1\n     but: 2" {
+	if stubTestingT.MockTestOutput != "\nExpected: value less than 1\n     but: 2\n" {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
@@ -166,7 +166,7 @@ func TestNotReturnsTheOppositeOfGivenMatcher(testing *testing.T) {
 
 func TestNotReturnsTheNotDescriptionOfGivenMatcher(testing *testing.T) {
 	then.AssertThat(stubTestingT, 2, is.Not(is.EqualTo(2)))
-	if stubTestingT.MockTestOutput != "\nExpected: not(value equal to 2)\n     but: 2" {
+	if stubTestingT.MockTestOutput != "\nExpected: not(value equal to 2)\n     but: 2\n" {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
