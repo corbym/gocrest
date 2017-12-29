@@ -7,6 +7,7 @@ import (
 
 //AssertThat calls a given matcher and fails the test with a message if the matcher doesn't match.
 func AssertThat(t gocrest.TestingT, actual interface{}, m *gocrest.Matcher) {
+	t.Helper()
 	matches := m.Matches(actual)
 	if !matches {
 		t.Errorf("%s\nExpected: %s"+

@@ -23,3 +23,6 @@ func (t *StubTestingT) FailNow() {
 func (t *StubTestingT) HasFailed() bool {
 	return t.failed
 }
+func (t *StubTestingT) Helper() {
+	//do nothing
+}
