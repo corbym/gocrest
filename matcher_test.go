@@ -42,6 +42,13 @@ func TestAssertThatEqualToFailsWithDescriptionTest(testing *testing.T) {
 	}
 }
 
+func TestAssertThatEqualToFailsWithFormattedReasonTest(testing *testing.T) {
+	then.AssertThat(stubTestingT, 1, is.EqualTo(2).Reasonf("arithmetic %s is wrong", "foo"))
+	if !strings.Contains(stubTestingT.MockTestOutput, "arithmetic foo is wrong") {
+		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
+	}
+}
+
 func TestEmptyStringIsEmptyPasses(testing *testing.T) {
 	var equalsItems = []struct {
 		actual     interface{}
