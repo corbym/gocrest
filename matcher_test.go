@@ -294,6 +294,56 @@ func TestMatchesPatternWithErrorDescription(testing *testing.T) {
 	}
 }
 
+func TestHasPrefixPasses(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "blarney"
+	then.AssertThat(testing, actual, has.Prefix(expected))
+}
+
+func TestHasPrefixDoesNotStartWithString(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "123"
+
+	then.AssertThat(stubTestingT, actual, has.Prefix(expected))
+	if !stubTestingT.HasFailed() {
+		testing.Error("did not fail test")
+	}
+}
+
+func TestHasPrefixHasDescription(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "123"
+	then.AssertThat(stubTestingT, actual, has.Prefix(expected))
+	if !strings.Contains(stubTestingT.MockTestOutput, "value with prefix 123") {
+		testing.Errorf("incorrect description: %s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestHasSuffixPasses(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "stone"
+	then.AssertThat(testing, actual, has.Suffix(expected))
+}
+
+func TestHasSuffixDoesNotEndWithString(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "123"
+
+	then.AssertThat(stubTestingT, actual, has.Suffix(expected))
+	if !stubTestingT.HasFailed() {
+		testing.Error("did not fail test")
+	}
+}
+
+func TestHasSuffixHasDescription(testing *testing.T) {
+	actual := "blarney stone"
+	expected := "123"
+	then.AssertThat(stubTestingT, actual, has.Suffix(expected))
+	if !strings.Contains(stubTestingT.MockTestOutput, "value with suffix 123") {
+		testing.Errorf("incorrect description: %s", stubTestingT.MockTestOutput)
+	}
+}
+
 func TestHasFunctionPasses(testing *testing.T) {
 	type MyType interface {
 		N() int
