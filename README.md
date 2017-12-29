@@ -35,7 +35,7 @@ Composed with AllOf:
 # Matchers so far..
 
 - is.EqualTo(x)
-- is.Nil()
+- is.Nil() - value must be nil
 - is.ValueContaining(expected) -- acts like containsAll
 - is.Not(m *Matcher) -- logical not of matcher's result
 - is.MatchForPattern(regex string) -- a string regex expression
@@ -45,3 +45,10 @@ Composed with AllOf:
 - is.GreaterThan(expected) - checks if actual > expected
 - is.LessThan(expected)
 - is.Empty() - matches if the actual is "", nil or len(actual)==0
+- is.LessThan(x)
+- is.LessThanOrEqualTo(x)
+- is.GreaterThan(x)
+- is.GreaterThanOrEqualTo(x)
+- has.Length(x) - matcher if given value (int or matcher) matches the len of the given
+- has.Prefix(x) - string starts with x
+- has.Suffix(x) - string ends with x

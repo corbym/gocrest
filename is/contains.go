@@ -18,26 +18,21 @@ func ValueContaining(expected interface{}) *gocrest.Matcher {
 	match := new(gocrest.Matcher)
 	match.Describe = fmt.Sprintf("something that contains %v", expected)
 	match.Matches = func(actual interface{}) bool {
-		actualValue := reflect.ValueOf(actual)
-		expectedValue := reflect.ValueOf(expected)
-
-		if expectedValue.Kind() == reflect.String && actualValue.Kind() == reflect.String {
-			return strings.Contains(actualValue.String(), expectedValue.String())
+		expectedAsStr, expectedOk := expected.(string)
+		actualAsStr, actualOk := actual.(string)
+		if expectedOk && actualOk {
+			return strings.Contains(actualAsStr, expectedAsStr)
 		}
 
+		actualValue := reflect.ValueOf(actual)
+		expectedValue := reflect.ValueOf(expected)
 		switch expectedValue.Kind() {
 		case reflect.Array, reflect.Slice:
-			{
-				return listContains(expectedValue, actualValue)
-			}
+			return listContains(expectedValue, actualValue)
 		case reflect.Map:
-			{
-				return mapContains(expectedValue, actualValue)
-			}
+			return mapContains(expectedValue, actualValue)
 		default:
-			{
-				return contains(expected, actualValue)
-			}
+			return contains(expected, actualValue)
 		}
 	}
 	return match

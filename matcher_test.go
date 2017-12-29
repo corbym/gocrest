@@ -14,6 +14,47 @@ func init() {
 	stubTestingT = new(StubTestingT)
 }
 
+func TestHasLengthMatchesOrNot(testing *testing.T) {
+	var hasLengthItems = []struct {
+		actual     interface{}
+		expected   interface{}
+		shouldFail bool
+	}{
+		{actual: "", expected: 0, shouldFail: false},
+		{actual: "a", expected: 1, shouldFail: false},
+		{actual: "1", expected: 1, shouldFail: false},
+		{actual: []string{}, expected: 0, shouldFail: false},
+		{actual: []string{"foo"}, expected: 1, shouldFail: false},
+		{actual: []string{"foo"}, expected: 2, shouldFail: true},
+		{actual: map[string]bool{"hello": true}, expected: 1, shouldFail: false},
+		{actual: map[string]bool{"helloa": true}, expected: is.LessThan(1), shouldFail: true},
+		{actual: map[string]bool{"hellob": true}, expected: is.LessThanOrEqualTo(2), shouldFail: false},
+		{actual: map[string]bool{"helloc": true}, expected: is.GreaterThan(2), shouldFail: true},
+		{actual: map[string]bool{"hellod": true}, expected: is.GreaterThanOrEqualTo(1), shouldFail: false},
+	}
+	for _, test := range hasLengthItems {
+		stubTestingT = new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, has.Length(test.expected))
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("assertThat(%v, has.Length(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
+
+func TestAssertThatHasLengthFailsWithDescriptionTest(testing *testing.T) {
+	then.AssertThat(stubTestingT, "a", has.Length(2))
+	if !strings.Contains(stubTestingT.MockTestOutput, "value with length 2") {
+		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestAssertThatHasLengthFailsWithDescriptionComposedMatcherTest(testing *testing.T) {
+	then.AssertThat(stubTestingT, "a", has.Length(is.GreaterThan(2)))
+	if !strings.Contains(stubTestingT.MockTestOutput, "value with length value greater than 2") {
+		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
+	}
+}
+
 func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
 	var equalsItems = []struct {
 		actual     interface{}
