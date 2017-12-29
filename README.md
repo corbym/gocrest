@@ -9,8 +9,8 @@ Inspired by [Hamcrest](https://github.com/hamcrest).
 
 ```
 import (
-  gocrest then "github.com/corbym/gocrest/then"
-  gocrest is "github.com/corbym/gocrest/is"
+  "github.com/corbym/gocrest/then"
+  "github.com/corbym/gocrest/is"
 )
 ```
 
