@@ -14,6 +14,28 @@ func init() {
 	stubTestingT = new(StubTestingT)
 }
 
+func TestEmptyStringIsEmptyPasses(testing *testing.T) {
+	var equalsItems = []struct {
+		actual     interface{}
+		shouldFail bool
+	}{
+		{actual: "hi", shouldFail: true},
+		{actual: nil, shouldFail: false},
+		{actual: "", shouldFail: false},
+		{actual: map[string]bool{"hello": true}, shouldFail: true},
+		{actual: map[string]bool{}, shouldFail: false},
+		{actual: []string{}, shouldFail: false},
+		{actual: []string{"boo"}, shouldFail: true},
+	}
+	for _, test := range equalsItems {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, is.Empty())
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("assertThat(%v, Empty()) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
+
 func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
 	var equalsItems = []struct {
 		actual     interface{}
