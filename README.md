@@ -1,6 +1,6 @@
 # gocrest
 
-A hamcrest-like assertion library for Go. GoCrest matchers are composable and
+A hamcrest-like assertion library for Go. GoCrest matchers are composable, self-describing and
 can be strung together in a more readable form to create flexible assertions. 
 
 Inspired by [Hamcrest](https://github.com/hamcrest). 
