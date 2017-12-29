@@ -9,8 +9,8 @@ import (
 //returns a matcher that performs the the test on the input matchers
 func AnyOf(allMatchers ... *gocrest.Matcher) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
+	matcher.Describe = fmt.Sprintf("any of (%s)", describe(allMatchers, "or"))
 	matcher.Matches = func(actual interface{}) bool {
-		matcher.Describe = fmt.Sprintf("any of (%s)", describe(allMatchers, "or"))
 		for x := 0; x < len(allMatchers); x++ {
 			if allMatchers[x].Matches(actual) {
 				return true

@@ -100,7 +100,7 @@ func TestAssertThatTwoValuesAreGreaterThanOrNot(testing *testing.T) {
 		{actual: int64(12), expected: int64(1), shouldFail: false},
 		{actual: "zzz", expected: "aaa", shouldFail: false},
 		{actual: "aaa", expected: "zzz", shouldFail: true},
-		{actual: complex64(1.0), expected: complex64(1.0), shouldFail: true}, // cannot compare complex types, so fails
+		{actual: complex64(1.0), expected: complex64(1.0), shouldFail: true},
 	}
 	for _, test := range equalsItems {
 		stubTestingT = new(StubTestingT)
@@ -114,6 +114,50 @@ func TestAssertThatTwoValuesAreGreaterThanOrNot(testing *testing.T) {
 func TestGreaterThanFailsWithDescriptionTest(testing *testing.T) {
 	then.AssertThat(stubTestingT, 1, is.GreaterThan(2))
 	if !strings.Contains(stubTestingT.MockTestOutput, "value greater than 2") {
+		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestAssertThatTwoValuesAreGreaterThanOrEqualToOrNot(testing *testing.T) {
+	var equalsItems = []struct {
+		actual     interface{}
+		expected   interface{}
+		shouldFail bool
+	}{
+		{actual: 1, expected: 1, shouldFail: false},
+		{actual: 2, expected: 1, shouldFail: false},
+		{actual: 1.12, expected: 1.12, shouldFail: false},
+		{actual: 1.0, expected: 1.12, shouldFail: true},
+		{actual: float32(1.12), expected: float32(1.0), shouldFail: false},
+		{actual: float64(1.24), expected: float64(1.0), shouldFail: false},
+		{actual: float64(0.5), expected: float64(1.0), shouldFail: true},
+		{actual: uint(1), expected: uint(1), shouldFail: false},
+		{actual: uint(3), expected: uint(1), shouldFail: false},
+		{actual: uint16(4), expected: uint16(1), shouldFail: false},
+		{actual: uint32(6), expected: uint32(1), shouldFail: false},
+		{actual: uint64(7), expected: uint64(1), shouldFail: false},
+		{actual: uint64(8), expected: uint64(1), shouldFail: false},
+		{actual: int16(9), expected: int16(1), shouldFail: false},
+		{actual: int32(10), expected: int32(1), shouldFail: false},
+		{actual: int64(11), expected: int64(1), shouldFail: false},
+		{actual: int64(12), expected: int64(1), shouldFail: false},
+		{actual: "zzz", expected: "aaa", shouldFail: false},
+		{actual: "aaa", expected: "zzz", shouldFail: true},
+		{actual: "aaa", expected: "aaa", shouldFail: false},
+		{actual: complex64(1.0), expected: complex64(1.0), shouldFail: false},
+	}
+	for _, test := range equalsItems {
+		stubTestingT = new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, is.GreaterThanOrEqualTo(test.expected))
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("assertThat(%v, GreaterThan(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
+
+func TestGreaterThanOrEqualToFailsWithDescriptionTest(testing *testing.T) {
+	then.AssertThat(stubTestingT, 1, is.GreaterThanOrEqualTo(2))
+	if !strings.Contains(stubTestingT.MockTestOutput, "any of (value greater than 2 or value equal to 2)") {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
@@ -139,6 +183,7 @@ func TestAssertThatTwoValuesAreLessThanOrNot(testing *testing.T) {
 		{actual: int64(1), expected: int64(11), shouldFail: false},
 		{actual: "aaa", expected: "zzz", shouldFail: false},
 		{actual: "zzz", expected: "aaa", shouldFail: true},
+		{actual: "aaa", expected: "aaa", shouldFail: true},
 		{actual: complex64(1.0), expected: complex64(1.0), shouldFail: true}, // cannot compare complex types, so fails
 	}
 	for _, test := range equalsItems {
@@ -153,6 +198,48 @@ func TestAssertThatTwoValuesAreLessThanOrNot(testing *testing.T) {
 func TestLessThanFailsWithDescriptionTest(testing *testing.T) {
 	then.AssertThat(stubTestingT, 2, is.LessThan(1))
 	if stubTestingT.MockTestOutput != "\nExpected: value less than 1\n     but: 2\n" {
+		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
+	}
+}
+func TestAssertThatTwoValuesAreLessThanOrEqualTo(testing *testing.T) {
+	var equalsItems = []struct {
+		actual     interface{}
+		expected   interface{}
+		shouldFail bool
+	}{
+		{actual: 1, expected: 1, shouldFail: false},
+		{actual: 1, expected: 2, shouldFail: false},
+		{actual: 1.12, expected: 1.12, shouldFail: false},
+		{actual: 2.3, expected: 1.12, shouldFail: true},
+		{actual: float32(1.0), expected: float32(1.12), shouldFail: false},
+		{actual: float64(1.0), expected: float64(1.24), shouldFail: false},
+		{actual: float64(1.0), expected: float64(1.0), shouldFail: false},
+		{actual: float64(1.0), expected: float64(0.5), shouldFail: true},
+		{actual: uint(0), expected: uint(0), shouldFail: false},
+		{actual: uint16(1), expected: uint16(4), shouldFail: false},
+		{actual: uint32(1), expected: uint32(6), shouldFail: false},
+		{actual: uint64(1), expected: uint64(7), shouldFail: false},
+		{actual: uint64(1), expected: uint64(8), shouldFail: false},
+		{actual: int16(1), expected: int16(9), shouldFail: false},
+		{actual: int32(1), expected: int32(10), shouldFail: false},
+		{actual: int64(1), expected: int64(11), shouldFail: false},
+		{actual: "aaa", expected: "zzz", shouldFail: false},
+		{actual: "zzz", expected: "aaa", shouldFail: true},
+		{actual: "aaa", expected: "aaa", shouldFail: false},
+		{actual: complex64(1.0), expected: complex64(1.0), shouldFail: false},
+	}
+	for _, test := range equalsItems {
+		stubTestingT = new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, is.LessThanOrEqualTo(test.expected))
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("assertThat(%v, LessThan(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
+
+func TestLessThanOrEqualToFailsWithDescriptionTest(testing *testing.T) {
+	then.AssertThat(stubTestingT, 2, is.LessThanOrEqualTo(1))
+	if strings.Contains(stubTestingT.MockTestOutput, "any of (value less than 2 or value equal to 2)") {
 		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
