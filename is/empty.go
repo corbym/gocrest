@@ -17,11 +17,10 @@ func Empty() *gocrest.Matcher {
 		if actual == nil {
 			return true
 		}
-		actualValue := reflect.ValueOf(actual)
-		if actualValue.Kind() == reflect.String {
-			return actualValue.String() == ""
+		if actualValue, ok := actual.(string); ok {
+			return actualValue == ""
 		}
-		if actualValue.Len() == 0 {
+		if reflect.ValueOf(actual).Len() == 0 {
 			return true
 		}
 		return false
