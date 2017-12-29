@@ -11,6 +11,7 @@ Inspired by [Hamcrest](https://github.com/hamcrest).
 import (
   "github.com/corbym/gocrest/then"
   "github.com/corbym/gocrest/is"
+  "github.com/corbym/gocrest/has"
 )
 ```
 
