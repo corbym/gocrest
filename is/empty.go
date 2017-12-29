@@ -12,6 +12,7 @@ import (
 // Returns a matcher that evaluates true if actual is "empty"
 func Empty() *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
+	matcher.Describe = "empty value"
 	matcher.Matches = func(actual interface{}) bool {
 		if actual == nil {
 			return true
