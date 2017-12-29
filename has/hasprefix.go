@@ -14,8 +14,7 @@ func Prefix(expected string) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
 	matcher.Describe = fmt.Sprintf("value with prefix %s", expected)
 	matcher.Matches = func(actual interface{}) bool {
-		actualValue, _ := actual.(string)
-		return strings.HasPrefix(actualValue, expected)
+		return strings.HasPrefix(actual.(string), expected)
 	}
 	return matcher
 }
