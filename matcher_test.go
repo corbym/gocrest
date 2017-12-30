@@ -6,6 +6,7 @@ import (
 	"gocrest/then"
 	"gocrest/is"
 	"gocrest/has"
+	"gocrest"
 )
 
 var stubTestingT *StubTestingT
@@ -42,20 +43,6 @@ func TestHasLengthMatchesOrNot(testing *testing.T) {
 	}
 }
 
-func TestAssertThatHasLengthFailsWithDescriptionTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, "a", has.Length(2))
-	if !strings.Contains(stubTestingT.MockTestOutput, "value with length 2") {
-		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
-	}
-}
-
-func TestAssertThatHasLengthFailsWithDescriptionComposedMatcherTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, "a", has.Length(is.GreaterThan(2)))
-	if !strings.Contains(stubTestingT.MockTestOutput, "value with length value greater than 2") {
-		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
-	}
-}
-
 func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
 	var equalsItems = []struct {
 		actual     interface{}
@@ -74,20 +61,6 @@ func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, EqualTo(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
-	}
-}
-
-func TestAssertThatEqualToFailsWithDescriptionTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, 1, is.EqualTo(2).Reason("arithmetic is wrong"))
-	if stubTestingT.MockTestOutput != "arithmetic is wrong\nExpected: value equal to 2\n     but: 1\n" {
-		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
-	}
-}
-
-func TestAssertThatEqualToFailsWithFormattedReasonTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, 1, is.EqualTo(2).Reasonf("arithmetic %s is wrong", "foo"))
-	if !strings.Contains(stubTestingT.MockTestOutput, "arithmetic foo is wrong") {
-		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
 	}
 }
 
@@ -110,13 +83,6 @@ func TestEmptyStringIsEmptyPasses(testing *testing.T) {
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, Empty()) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.shouldFail, stubTestingT.HasFailed())
 		}
-	}
-}
-
-func TestEmptyFailsWithDescriptionTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, map[string]bool{"foo": true}, is.Empty())
-	if !strings.Contains(stubTestingT.MockTestOutput, "empty value") {
-		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
 
@@ -152,11 +118,10 @@ func TestAssertThatTwoValuesAreGreaterThanOrNot(testing *testing.T) {
 		}
 	}
 }
-
-func TestGreaterThanFailsWithDescriptionTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, 1, is.GreaterThan(2))
-	if !strings.Contains(stubTestingT.MockTestOutput, "value greater than 2") {
-		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
+func TestAssertThatHasLengthFailsWithDescriptionTest(testing *testing.T) {
+	then.AssertThat(stubTestingT, "a", has.Length(2))
+	if !strings.Contains(stubTestingT.MockTestOutput, "value with length 2") {
+		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
 	}
 }
 
@@ -197,13 +162,6 @@ func TestAssertThatTwoValuesAreGreaterThanOrEqualToOrNot(testing *testing.T) {
 	}
 }
 
-func TestGreaterThanOrEqualToFailsWithDescriptionTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, 1, is.GreaterThanOrEqualTo(2))
-	if !strings.Contains(stubTestingT.MockTestOutput, "any of (value greater than 2 or value equal to 2)") {
-		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
-	}
-}
-
 func TestAssertThatTwoValuesAreLessThanOrNot(testing *testing.T) {
 	var equalsItems = []struct {
 		actual     interface{}
@@ -237,13 +195,7 @@ func TestAssertThatTwoValuesAreLessThanOrNot(testing *testing.T) {
 	}
 }
 
-func TestLessThanFailsWithDescriptionTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, 2, is.LessThan(1))
-	if stubTestingT.MockTestOutput != "\nExpected: value less than 1\n     but: 2\n" {
-		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
-	}
-}
-func TestAssertThatTwoValuesAreLessThanOrEqualTo(testing *testing.T) {
+func TestAssertThatTwoValuesAreLessThanOrEqualToPassesOrNot(testing *testing.T) {
 	var equalsItems = []struct {
 		actual     interface{}
 		expected   interface{}
@@ -279,24 +231,10 @@ func TestAssertThatTwoValuesAreLessThanOrEqualTo(testing *testing.T) {
 	}
 }
 
-func TestLessThanOrEqualToFailsWithDescriptionTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, 2, is.LessThanOrEqualTo(1))
-	if strings.Contains(stubTestingT.MockTestOutput, "any of (value less than 2 or value equal to 2)") {
-		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
-	}
-}
-
 func TestNotReturnsTheOppositeOfGivenMatcher(testing *testing.T) {
-	then.AssertThat(stubTestingT, 1, is.Not(is.EqualTo(2)))
+	then.AssertThat(stubTestingT, 1, is.Not(is.EqualTo(1)))
 	if !stubTestingT.HasFailed() {
 		testing.Error("Not(EqualTo) did not fail the test")
-	}
-}
-
-func TestNotReturnsTheNotDescriptionOfGivenMatcher(testing *testing.T) {
-	then.AssertThat(stubTestingT, 2, is.Not(is.EqualTo(2)))
-	if stubTestingT.MockTestOutput != "\nExpected: not(value equal to 2)\n     but: 2\n" {
-		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
 
@@ -308,22 +246,6 @@ func TestIsNilFails(testing *testing.T) {
 	then.AssertThat(stubTestingT, 2, is.Nil())
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
-	}
-}
-
-func TestIsNilHasDescriptionTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, 1, is.Nil())
-	if !strings.Contains(stubTestingT.MockTestOutput, "value equal to <nil>") {
-		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
-	}
-}
-
-func TestContainsDescriptionTest(testing *testing.T) {
-	list := []string{"Foo", "Bar"}
-	expectedList := []string{"Baz", "Bing"}
-	then.AssertThat(stubTestingT, list, is.ValueContaining(expectedList))
-	if !strings.Contains(stubTestingT.MockTestOutput, "something that contains [Baz Bing]") {
-		testing.Errorf("did not get expected description, got %s", stubTestingT.MockTestOutput)
 	}
 }
 
@@ -405,24 +327,6 @@ func TestMatchesPatternDoesNotMatchString(testing *testing.T) {
 	}
 }
 
-func TestMatchesPatternDescription(testing *testing.T) {
-	actual := "blarney stone"
-	expected := "~123.?.*"
-	then.AssertThat(stubTestingT, actual, is.MatchForPattern(expected))
-	if !strings.Contains(stubTestingT.MockTestOutput, "a value that matches pattern ~123.?.*") {
-		testing.Errorf("incorrect description: %s", stubTestingT.MockTestOutput)
-	}
-}
-
-func TestMatchesPatternWithErrorDescription(testing *testing.T) {
-	actual := "blarney stone"
-	expected := "+++"
-	then.AssertThat(stubTestingT, actual, is.MatchForPattern(expected))
-	if !strings.Contains(stubTestingT.MockTestOutput, "error parsing regexp: missing argument to repetition operator: `+`") {
-		testing.Errorf("incorrect description: %s", stubTestingT.MockTestOutput)
-	}
-}
-
 func TestHasPrefixPasses(testing *testing.T) {
 	actual := "blarney stone"
 	expected := "blarney"
@@ -439,15 +343,6 @@ func TestHasPrefixDoesNotStartWithString(testing *testing.T) {
 	}
 }
 
-func TestHasPrefixHasDescription(testing *testing.T) {
-	actual := "blarney stone"
-	expected := "123"
-	then.AssertThat(stubTestingT, actual, has.Prefix(expected))
-	if !strings.Contains(stubTestingT.MockTestOutput, "value with prefix 123") {
-		testing.Errorf("incorrect description: %s", stubTestingT.MockTestOutput)
-	}
-}
-
 func TestHasSuffixPasses(testing *testing.T) {
 	actual := "blarney stone"
 	expected := "stone"
@@ -461,15 +356,6 @@ func TestHasSuffixDoesNotEndWithString(testing *testing.T) {
 	then.AssertThat(stubTestingT, actual, has.Suffix(expected))
 	if !stubTestingT.HasFailed() {
 		testing.Error("did not fail test")
-	}
-}
-
-func TestHasSuffixHasDescription(testing *testing.T) {
-	actual := "blarney stone"
-	expected := "123"
-	then.AssertThat(stubTestingT, actual, has.Suffix(expected))
-	if !strings.Contains(stubTestingT.MockTestOutput, "value with suffix 123") {
-		testing.Errorf("incorrect description: %s", stubTestingT.MockTestOutput)
 	}
 }
 
@@ -495,20 +381,6 @@ func TestHasFunctionDoesNotPass(testing *testing.T) {
 	}
 }
 
-func TestHasFunctionDescribesMismatch(testing *testing.T) {
-	type MyType interface {
-		F() string
-		B() string
-	}
-	actual := new(MyType)
-	expected := "X"
-	then.AssertThat(stubTestingT, actual, has.FunctionNamed(expected))
-	if !strings.Contains(stubTestingT.MockTestOutput, "interface with function X") &&
-		!strings.Contains(stubTestingT.MockTestOutput, "MyType{B()F()}") {
-		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
-	}
-}
-
 func TestHasFieldNamedPasses(testing *testing.T) {
 	type T struct {
 		f int
@@ -530,20 +402,6 @@ func TestHasFieldDoesNotPass(testing *testing.T) {
 	}
 }
 
-func TestHasFieldDescribesMismatch(testing *testing.T) {
-	type T struct {
-		F string
-		B string
-	}
-	actual := new(T)
-	expected := "X"
-	then.AssertThat(stubTestingT, actual, has.FieldNamed(expected))
-	if !strings.Contains(stubTestingT.MockTestOutput, "struct with field X") &&
-		!strings.Contains(stubTestingT.MockTestOutput, "T{F string B string}") {
-		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
-	}
-}
-
 func TestAllOfMatches(testing *testing.T) {
 	actual := "abcdef"
 	then.AssertThat(testing, actual, is.AllOf(is.EqualTo("abcdef"), is.ValueContaining("e")))
@@ -557,14 +415,6 @@ func TestAllOfFailsToMatch(testing *testing.T) {
 	}
 }
 
-func TestAllOfHasCorrectDescription(testing *testing.T) {
-	actual := "abc"
-	then.AssertThat(stubTestingT, actual, is.AllOf(is.EqualTo("abc"), is.ValueContaining("e")))
-	if !strings.Contains(stubTestingT.MockTestOutput, "all of (value equal to abc and something that contains e)") {
-		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
-	}
-}
-
 func TestAnyOfMatches(testing *testing.T) {
 	actual := "abcdef"
 	then.AssertThat(testing, actual, is.AnyOf(is.EqualTo("abcdef"), is.ValueContaining("g")))
@@ -575,14 +425,6 @@ func TestAnyOfFailsToMatch(testing *testing.T) {
 	then.AssertThat(stubTestingT, actual, is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")))
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
-	}
-}
-
-func TestAnyOfHasCorrectDescription(testing *testing.T) {
-	actual := "abc"
-	then.AssertThat(stubTestingT, actual, is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")))
-	if !strings.Contains(stubTestingT.MockTestOutput, "any of (value equal to efg or something that contains e") {
-		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
 	}
 }
 
@@ -604,14 +446,6 @@ func TestHasKeyMatches(testing *testing.T) {
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("unexpected result HasKey: wanted fail was %v but failed %v", test.shouldFail, stubTestingT.HasFailed())
 		}
-	}
-}
-
-func TestHasKeyHasCorrectDescription(testing *testing.T) {
-	actual := map[string]bool{"hi": true}
-	then.AssertThat(stubTestingT, actual, has.Key("foo"))
-	if !strings.Contains(stubTestingT.MockTestOutput, "map has key 'foo'") {
-		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
 	}
 }
 
@@ -637,14 +471,69 @@ func TestHasKeysMatches(testing *testing.T) {
 	}
 }
 
-func TestHasKeysHasCorrectDescription(testing *testing.T) {
-	actual := map[string]bool{"hi": true, "bye": false}
-	then.AssertThat(stubTestingT, actual, has.AllKeys("hi", "foo"))
-	if !strings.Contains(stubTestingT.MockTestOutput, "map has keys '[hi foo]'") {
-		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
-	}
-}
 func TestHasKeysWithVariadic(testing *testing.T) {
 	actual := map[string]bool{"hi": true, "bye": false}
 	then.AssertThat(testing, actual, has.AllKeys("hi", "bye"))
+}
+
+func TestMatcherDescription(testing *testing.T) {
+	var equalsItems = []struct {
+		description string
+		actual      interface{}
+		matcher     *gocrest.Matcher
+		expected    string
+	}{
+		{description: "EqualTo.Reasonf", actual: 1, matcher: is.EqualTo(2).Reasonf("arithmetic %s is wrong", "foo"), expected: "arithmetic foo is wrong"},
+		{description: "EqualTo.Reason", actual: 1, matcher: is.EqualTo(2).Reason("arithmetic is wrong"), expected: "arithmetic is wrong\nExpected: value equal to 2\n     but: 1\n"},
+		{description: "Empty", actual: map[string]bool{"foo": true}, matcher: is.Empty(), expected: "empty value"},
+		{description: "GreaterThan", actual: 1, matcher: is.GreaterThan(2), expected: "value greater than 2"},
+		{description: "GreaterThanOrEqual", actual: 1, matcher: is.GreaterThanOrEqualTo(2), expected: "any of (value greater than 2 or value equal to 2)"},
+		{description: "LessThan", actual: 2, matcher: is.LessThan(1), expected: "value less than 1"},
+		{description: "LessThanOrEqualTo", actual: 2, matcher: is.LessThanOrEqualTo(1), expected: "any of (value less than 1 or value equal to 1)"},
+		{description: "Not", actual: 2, matcher: is.Not(is.EqualTo(2)), expected: "\nExpected: not(value equal to 2)\n     but: 2\n"},
+		{description: "Nil", actual: 1, matcher: is.Nil(), expected: "value equal to <nil>"},
+		{description: "Contains", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining([]string{"Baz", "Bing"}), expected: "something that contains [Baz Bing]"},
+		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
+		{description: "MatchesPattern (invalid regex)", actual: "blarney stone", matcher: is.MatchForPattern("+++"), expected: "error parsing regexp: missing argument to repetition operator: `+`"},
+		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
+		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.ValueContaining("e")), expected: "all of (value equal to abc and something that contains e)"},
+		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")), expected: "any of (value equal to efg or something that contains e)"},
+		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key("foo"), expected: "map has key 'foo'"},
+		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys("hi", "foo"), expected: "map has keys '[hi foo]'"},
+		{description: "LengthOf Composed", actual: "a", matcher: has.Length(is.GreaterThan(2)), expected: "value with length value greater than 2"},
+	}
+	for _, test := range equalsItems {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, test.matcher)
+		if !strings.Contains(stubTestingT.MockTestOutput, test.expected) {
+			testing.Errorf("%s did not fail with expected desc, got: %s", test.description, stubTestingT.MockTestOutput)
+		}
+	}
+}
+
+func TestHasFieldDescribesMismatch(testing *testing.T) {
+	type T struct {
+		F string
+		B string
+	}
+	expected := "X"
+	then.AssertThat(stubTestingT, new(T), has.FieldNamed(expected))
+	if !strings.Contains(stubTestingT.MockTestOutput, "struct with field X") &&
+		!strings.Contains(stubTestingT.MockTestOutput, "T{F string B string}") {
+		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestHasFunctionDescribesMismatch(testing *testing.T) {
+	type MyType interface {
+		F() string
+		B() string
+	}
+	actual := new(MyType)
+	expected := "X"
+	then.AssertThat(stubTestingT, actual, has.FunctionNamed(expected))
+	if !strings.Contains(stubTestingT.MockTestOutput, "interface with function X") &&
+		!strings.Contains(stubTestingT.MockTestOutput, "MyType{B()F()}") {
+		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
 }
