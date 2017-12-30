@@ -52,3 +52,5 @@ Composed with AllOf:
 - has.Length(x) - matcher if given value (int or matcher) matches the len of the given
 - has.Prefix(x) - string starts with x
 - has.Suffix(x) - string ends with x
+- has.Key(x) - map has key x
+- has.AllKeys(T x, T y) (or has.AllKeys([]T{x,y})) - finds key of type T in map
