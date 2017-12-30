@@ -294,6 +294,11 @@ func TestContainsForList(testing *testing.T) {
 	then.AssertThat(testing, actualList, is.ValueContaining(expected))
 }
 
+func TestContainsForVariadic(testing *testing.T) {
+	actualList := []string{"Foo", "Bar", "Bong", "Boom"}
+	then.AssertThat(testing, actualList, is.ValueContaining("Boom", "Bong", "Bar"))
+}
+
 func TestMapContainsMap(testing *testing.T) {
 	actualList := map[string]string{
 		"bing":  "boop",

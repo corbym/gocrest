@@ -10,22 +10,24 @@ import (
 // ValueContaining finds if x is contained in y.
 // Acts like "ContainsAll", all elements given must be present in actual
 // If "expected" is an array or slice, we assume that actual is the same type
+// assertThat([]T, has.ValueContaining(a,b,c)) is also valid if T a, T b and T c
 // For maps, the expected must also be a map and contains is true if both maps contain all key,values in expected.
 // For string, behaves like strings.Contains
 // Will panic if types cannot be converted correctly.
 // returns the Matcher that returns true if found
-func ValueContaining(expected interface{}) *gocrest.Matcher {
+func ValueContaining(expected ... interface{}) *gocrest.Matcher {
 	match := new(gocrest.Matcher)
 	match.Describe = fmt.Sprintf("something that contains %v", expected)
 	match.Matches = func(actual interface{}) bool {
-		expectedAsStr, expectedOk := expected.(string)
+		correctVariadicExpected := correctExpectedValue(expected...)
+		expectedAsStr, expectedOk := correctVariadicExpected.(string)
 		actualAsStr, actualOk := actual.(string)
 		if expectedOk && actualOk {
 			return strings.Contains(actualAsStr, expectedAsStr)
 		}
 
 		actualValue := reflect.ValueOf(actual)
-		expectedValue := reflect.ValueOf(expected)
+		expectedValue := reflect.ValueOf(correctVariadicExpected)
 		switch expectedValue.Kind() {
 		case reflect.Array, reflect.Slice:
 			return listContains(expectedValue, actualValue)
@@ -73,4 +75,11 @@ func listContains(expectedValue reflect.Value, actualValue reflect.Value) bool {
 		}
 	}
 	return len(contains) == expectedValue.Len()
+}
+func correctExpectedValue(expected ...interface{}) interface{} {
+	kind := reflect.ValueOf(expected[0]).Kind()
+	if kind == reflect.Slice || kind == reflect.Map {
+		return expected[0]
+	}
+	return expected
 }
