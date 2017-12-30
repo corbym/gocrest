@@ -476,10 +476,10 @@ func TestHasSuffixHasDescription(testing *testing.T) {
 func TestHasFunctionPasses(testing *testing.T) {
 	type MyType interface {
 		N() int
-		F() string
+		f() string
 	}
 	actual := new(MyType)
-	expected := "F"
+	expected := "f"
 	then.AssertThat(testing, actual, has.FunctionNamed(expected))
 }
 
@@ -511,10 +511,10 @@ func TestHasFunctionDescribesMismatch(testing *testing.T) {
 
 func TestHasFieldNamedPasses(testing *testing.T) {
 	type T struct {
-		F int
+		f int
 	}
 	actual := new(T)
-	expected := "F"
+	expected := "f"
 	then.AssertThat(testing, actual, has.FieldNamed(expected))
 }
 
