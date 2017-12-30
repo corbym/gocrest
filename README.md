@@ -39,7 +39,8 @@ Composed with AllOf:
 - is.ValueContaining(expected) -- acts like containsAll
 - is.Not(m *Matcher) -- logical not of matcher's result
 - is.MatchForPattern(regex string) -- a string regex expression
-- has.FunctionNamed(string) - checks if a Type has a function (method)
+- has.FunctionNamed(string x) - checks if an interface has a function (method)
+- has.FieldNamed(string x) - checks if a struct has a field named x
 - is.AllOf(... *Matcher) - returns true if all matchers match
 - is.AnyOf(... *Matcher) - return true if any matcher matches
 - is.GreaterThan(expected) - checks if actual > expected
