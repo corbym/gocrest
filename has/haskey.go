@@ -7,7 +7,7 @@ import (
 )
 
 // has.Key is a matcher that checks if actual has a key == expected.
-// Panics when actual is not a map.
+// Panics when actual's Kind is not a map.
 // returns a matcher that matches when a map has key == expected
 func Key(expected interface{}) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
@@ -19,7 +19,7 @@ func Key(expected interface{}) *gocrest.Matcher {
 }
 
 // has.AllKeys is a matcher that checks if map actual has all keys == expecteds.
-// Panics when actual is not a map.
+// Panics when actual's Kind is not a map.
 // returns a matcher that matches when a map has all keys == all expected
 func AllKeys(expected ...interface{}) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
