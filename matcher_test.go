@@ -26,6 +26,7 @@ func TestHasLengthMatchesOrNot(testing *testing.T) {
 		{actual: []string{}, expected: 0, shouldFail: false},
 		{actual: []string{"foo"}, expected: 1, shouldFail: false},
 		{actual: []string{"foo"}, expected: 2, shouldFail: true},
+		{actual: []string{"foo", "bar"}, expected: 2, shouldFail: false},
 		{actual: map[string]bool{"hello": true}, expected: 1, shouldFail: false},
 		{actual: map[string]bool{"helloa": true}, expected: is.LessThan(1), shouldFail: true},
 		{actual: map[string]bool{"hellob": true}, expected: is.LessThanOrEqualTo(2), shouldFail: false},
@@ -548,4 +549,67 @@ func TestAnyOfHasCorrectDescription(testing *testing.T) {
 	if !strings.Contains(stubTestingT.MockTestOutput, "any of (value equal to efg or something that contains e") {
 		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
 	}
+}
+
+func TestHasKeyMatches(testing *testing.T) {
+	type T struct{}
+	expectedT := new(T)
+	var equalsItems = []struct {
+		actual     interface{}
+		expected   interface{}
+		shouldFail bool
+	}{
+		{actual: map[string]bool{"hi": true}, expected: "hi", shouldFail: false},
+		{actual: map[*T]bool{expectedT: true}, expected: "hi", shouldFail: true},
+		{actual: map[*T]bool{expectedT: true}, expected: expectedT, shouldFail: false},
+	}
+	for _, test := range equalsItems {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, has.Key(test.expected))
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("unexpected result HasKey: wanted fail was %v but failed %v", test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
+
+func TestHasKeyHasCorrectDescription(testing *testing.T) {
+	actual := map[string]bool{"hi": true}
+	then.AssertThat(stubTestingT, actual, has.Key("foo"))
+	if !strings.Contains(stubTestingT.MockTestOutput, "map has key 'foo'") {
+		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestHasKeysMatches(testing *testing.T) {
+	type T struct{}
+	expectedT := new(T)
+	secondExpectedT := new(T)
+	var equalsItems = []struct {
+		actual     interface{}
+		expected   interface{}
+		shouldFail bool
+	}{
+		{actual: map[string]bool{"hi": true, "bye": true}, expected: []string{"hi", "bye"}, shouldFail: false},
+		{actual: map[*T]bool{expectedT: true, secondExpectedT: true}, expected: []*T{expectedT, secondExpectedT}, shouldFail: false},
+		{actual: map[*T]bool{expectedT: true}, expected: "foo", shouldFail: true},
+	}
+	for _, test := range equalsItems {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, has.AllKeys(test.expected))
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("unexpected result HasKeys(%v): wanted fail was %v but failed %v", test.actual, test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
+
+func TestHasKeysHasCorrectDescription(testing *testing.T) {
+	actual := map[string]bool{"hi": true, "bye": false}
+	then.AssertThat(stubTestingT, actual, has.AllKeys("hi", "foo"))
+	if !strings.Contains(stubTestingT.MockTestOutput, "map has keys '[hi foo]'") {
+		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
+}
+func TestHasKeysWithVariadic(testing *testing.T) {
+	actual := map[string]bool{"hi": true, "bye": false}
+	then.AssertThat(testing, actual, has.AllKeys("hi", "bye"))
 }
