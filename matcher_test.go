@@ -509,6 +509,41 @@ func TestHasFunctionDescribesMismatch(testing *testing.T) {
 	}
 }
 
+func TestHasFieldNamedPasses(testing *testing.T) {
+	type T struct {
+		F int
+	}
+	actual := new(T)
+	expected := "F"
+	then.AssertThat(testing, actual, has.FieldNamed(expected))
+}
+
+func TestHasFieldDoesNotPass(testing *testing.T) {
+	type T struct {
+		F int
+	}
+	actual := new(T)
+	expected := "E"
+	then.AssertThat(stubTestingT, actual, has.FieldNamed(expected))
+	if !stubTestingT.HasFailed() {
+		testing.Fail()
+	}
+}
+
+func TestHasFieldDescribesMismatch(testing *testing.T) {
+	type T struct {
+		F string
+		B string
+	}
+	actual := new(T)
+	expected := "X"
+	then.AssertThat(stubTestingT, actual, has.FieldNamed(expected))
+	if !strings.Contains(stubTestingT.MockTestOutput, "struct with field X") &&
+		!strings.Contains(stubTestingT.MockTestOutput, "T{F string B string}") {
+		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
+}
+
 func TestAllOfMatches(testing *testing.T) {
 	actual := "abcdef"
 	then.AssertThat(testing, actual, is.AllOf(is.EqualTo("abcdef"), is.ValueContaining("e")))
