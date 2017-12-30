@@ -311,6 +311,14 @@ func TestMapContainsMap(testing *testing.T) {
 	then.AssertThat(testing, actualList, is.ValueContaining(expected))
 }
 
+func TestMapContainsValues(testing *testing.T) {
+	actualList := map[string]string{
+		"bing":  "boop",
+		"bling": "bling",
+	}
+	then.AssertThat(testing, actualList, is.ValueContaining("bling", "boop"))
+}
+
 func TestStringContainsString(testing *testing.T) {
 	actualList := "abcd"
 	expected := "bc"
@@ -490,19 +498,19 @@ func TestMatcherDescription(testing *testing.T) {
 	}{
 		{description: "EqualTo.Reasonf", actual: 1, matcher: is.EqualTo(2).Reasonf("arithmetic %s is wrong", "foo"), expected: "arithmetic foo is wrong"},
 		{description: "EqualTo.Reason", actual: 1, matcher: is.EqualTo(2).Reason("arithmetic is wrong"), expected: "arithmetic is wrong\nExpected: value equal to 2\n     but: 1\n"},
+		{description: "Not", actual: 2, matcher: is.Not(is.EqualTo(2)), expected: "\nExpected: not(value equal to 2)\n     but: 2\n"},
 		{description: "Empty", actual: map[string]bool{"foo": true}, matcher: is.Empty(), expected: "empty value"},
 		{description: "GreaterThan", actual: 1, matcher: is.GreaterThan(2), expected: "value greater than 2"},
 		{description: "GreaterThanOrEqual", actual: 1, matcher: is.GreaterThanOrEqualTo(2), expected: "any of (value greater than 2 or value equal to 2)"},
 		{description: "LessThan", actual: 2, matcher: is.LessThan(1), expected: "value less than 1"},
 		{description: "LessThanOrEqualTo", actual: 2, matcher: is.LessThanOrEqualTo(1), expected: "any of (value less than 1 or value equal to 1)"},
-		{description: "Not", actual: 2, matcher: is.Not(is.EqualTo(2)), expected: "\nExpected: not(value equal to 2)\n     but: 2\n"},
 		{description: "Nil", actual: 1, matcher: is.Nil(), expected: "value equal to <nil>"},
-		{description: "Contains", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining([]string{"Baz", "Bing"}), expected: "something that contains [Baz Bing]"},
+		{description: "ValueContaining", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining([]string{"Baz", "Bing"}), expected: "something that contains [Baz Bing]"},
 		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
 		{description: "MatchesPattern (invalid regex)", actual: "blarney stone", matcher: is.MatchForPattern("+++"), expected: "error parsing regexp: missing argument to repetition operator: `+`"},
 		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
-		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.ValueContaining("e")), expected: "all of (value equal to abc and something that contains e)"},
-		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")), expected: "any of (value equal to efg or something that contains e)"},
+		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.ValueContaining("e", "f")), expected: "all of (value equal to abc and something that contains [e f])"},
+		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")), expected: "any of (value equal to efg or something that contains [e])"},
 		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key("foo"), expected: "map has key 'foo'"},
 		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys("hi", "foo"), expected: "map has keys '[hi foo]'"},
 		{description: "LengthOf Composed", actual: "a", matcher: has.Length(is.GreaterThan(2)), expected: "value with length value greater than 2"},
