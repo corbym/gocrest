@@ -3,7 +3,7 @@ package is
 import (
 	"reflect"
 	"fmt"
-	"gocrest"
+	"github.com/corbym/gocrest"
 )
 
 // LessThan matcher compares two values that are numeric or string values, and when

@@ -1,6 +1,6 @@
 package is
 
-import "gocrest"
+import "github.com/corbym/gocrest"
 
 // Short hand matcher for anyOf(lessThan(x), equalTo(x))
 // returns a matcher matching if actual <= expected (using deepEquals)

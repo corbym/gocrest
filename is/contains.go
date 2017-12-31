@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"fmt"
 	"strings"
-	"gocrest"
+	"github.com/corbym/gocrest"
 )
 
 // ValueContaining finds if x is contained in y.

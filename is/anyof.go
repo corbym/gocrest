@@ -2,7 +2,7 @@ package is
 
 import (
 	"fmt"
-	"gocrest"
+	"github.com/corbym/gocrest"
 )
 
 //Takes some matchers and checks if at least one of the matchers return true

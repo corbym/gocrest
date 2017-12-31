@@ -2,7 +2,7 @@ package is
 
 import (
 	"fmt"
-	"gocrest"
+	"github.com/corbym/gocrest"
 )
 
 func describe(matchers []*gocrest.Matcher, conjunction string) string {

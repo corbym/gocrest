@@ -2,7 +2,7 @@ package then
 
 import (
 	"fmt"
-	"gocrest"
+	"github.com/corbym/gocrest"
 )
 
 //AssertThat calls a given matcher and fails the test with a message if the matcher doesn't match.

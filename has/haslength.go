@@ -1,7 +1,7 @@
 package has
 
 import (
-	"gocrest"
+	"github.com/corbym/gocrest"
 	"reflect"
 	"fmt"
 )

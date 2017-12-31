@@ -1,6 +1,6 @@
 package is
 
-import "gocrest"
+import "github.com/corbym/gocrest"
 
 //Matches if the expected value is nil
 func Nil() *gocrest.Matcher {

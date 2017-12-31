@@ -1,7 +1,7 @@
 package is
 
 import (
-	"gocrest"
+	"github.com/corbym/gocrest"
 )
 
 //Returns a matcher that returns logical not of the matcher given

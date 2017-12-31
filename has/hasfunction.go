@@ -3,7 +3,7 @@ package has
 import (
 	"reflect"
 	"fmt"
-	"gocrest"
+	"github.com/corbym/gocrest"
 )
 // Naive implementation for testing if a Type has a particular method name. Does not check parameters.
 // returns a matcher that will use reflect to check if the actual has the method given by expected

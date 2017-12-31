@@ -3,7 +3,7 @@ package is
 import (
 	"regexp"
 	"fmt"
-	"gocrest"
+	"github.com/corbym/gocrest"
 )
 
 // Matches if actual string matches the expected regex
