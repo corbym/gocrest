@@ -2,8 +2,8 @@ package is
 
 import "github.com/corbym/gocrest"
 
-// Short hand matcher for anyOf(greaterThan(x), equalTo(x))
-// returns a matcher matching if actual >= expected (using deepEquals)
+//GreaterThanOrEqualTo is a short hand matcher for anyOf(greaterThan(x), equalTo(x))
+//Returns a matcher matching if actual >= expected (using deepEquals).
 func GreaterThanOrEqualTo(expected interface{}) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
 	matcher.Matches = func(actual interface{}) bool {

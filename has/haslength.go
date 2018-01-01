@@ -6,9 +6,9 @@ import (
 	"reflect"
 )
 
-// has.Length can be called with arrays, maps, *gocrest.Matcher and strings but not numeric types.
-// has.Length(is.GreaterThan(x)) is a valid call.
-// Returns a matcher that matches if the length matches the given criteria
+//Length can be called with arrays, maps, *gocrest.Matcher and strings but not numeric types.
+//has.Length(is.GreaterThan(x)) is a valid call.
+//Returns a matcher that matches if the length matches the given criteria
 func Length(expected interface{}) *gocrest.Matcher {
 	const description = "value with length %v"
 	matcher := new(gocrest.Matcher)

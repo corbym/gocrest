@@ -6,9 +6,9 @@ import (
 	"reflect"
 )
 
-// has.Key is a matcher that checks if actual has a key == expected.
-// Panics when actual's Kind is not a map.
-// returns a matcher that matches when a map has key == expected
+//Key is a matcher that checks if actual has a key == expected.
+//Panics when actual's Kind is not a map.
+//Returns a matcher that matches when a map has key == expected
 func Key(expected interface{}) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
 	matcher.Describe = fmt.Sprintf("map has key '%s'", expected)
