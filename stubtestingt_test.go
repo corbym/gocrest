@@ -1,6 +1,7 @@
 package gocrest_test
 
 import "fmt"
+
 //StubTestingT stubs the testing.T interface for testing.
 //It provides information on whether tests failed, and their output.
 type StubTestingT struct {
