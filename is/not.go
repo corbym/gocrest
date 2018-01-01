@@ -3,6 +3,7 @@ package is
 import (
 	"github.com/corbym/gocrest"
 )
+
 //Not negates the given matcher.
 //Returns a matcher that returns logical not of the matcher given.
 func Not(matcher *gocrest.Matcher) *gocrest.Matcher {
