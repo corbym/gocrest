@@ -1,10 +1,10 @@
 package is
 
 import (
-	"reflect"
 	"fmt"
-	"strings"
 	"github.com/corbym/gocrest"
+	"reflect"
+	"strings"
 )
 
 // ValueContaining finds if x is contained in y.
@@ -16,7 +16,7 @@ import (
 // For string, behaves like strings.Contains
 // Will panic if types cannot be converted correctly.
 // returns the Matcher that returns true if found
-func ValueContaining(expected ... interface{}) *gocrest.Matcher {
+func ValueContaining(expected ...interface{}) *gocrest.Matcher {
 	match := new(gocrest.Matcher)
 	correctVariadicExpected := correctExpectedValue(expected...)
 	match.Describe = fmt.Sprintf("something that contains %v", correctVariadicExpected)

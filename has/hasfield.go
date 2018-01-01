@@ -1,9 +1,9 @@
 package has
 
 import (
-	"reflect"
 	"fmt"
 	"github.com/corbym/gocrest"
+	"reflect"
 )
 
 // Naive implementation for testing if a struct has a particular field name. Does not check type.

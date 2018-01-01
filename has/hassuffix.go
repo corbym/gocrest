@@ -1,9 +1,9 @@
 package has
 
 import (
+	"fmt"
 	"github.com/corbym/gocrest"
 	"strings"
-	"fmt"
 )
 
 //has.Suffix returns a matcher that matches if the given string is suffixed with the expected string

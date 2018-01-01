@@ -1,9 +1,9 @@
 package is
 
 import (
-	"regexp"
 	"fmt"
 	"github.com/corbym/gocrest"
+	"regexp"
 )
 
 // Matches if actual string matches the expected regex

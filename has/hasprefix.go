@@ -1,9 +1,9 @@
 package has
 
 import (
+	"fmt"
 	"github.com/corbym/gocrest"
 	"strings"
-	"fmt"
 )
 
 //has.Prefix returns a matcher that matches if the given string is prefixed with the expected string

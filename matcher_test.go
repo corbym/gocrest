@@ -1,12 +1,12 @@
 package gocrest_test
 
 import (
-	"testing"
-	"strings"
-	"github.com/corbym/gocrest/then"
-	"github.com/corbym/gocrest/is"
-	"github.com/corbym/gocrest/has"
 	"github.com/corbym/gocrest"
+	"github.com/corbym/gocrest/has"
+	"github.com/corbym/gocrest/is"
+	"github.com/corbym/gocrest/then"
+	"strings"
+	"testing"
 )
 
 var stubTestingT *StubTestingT

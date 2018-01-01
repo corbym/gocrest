@@ -13,6 +13,6 @@ func (matcher *Matcher) Reason(r string) *Matcher {
 	matcher.ReasonString = r
 	return matcher
 }
-func (matcher *Matcher) Reasonf(format string, args ... interface{}) *Matcher {
+func (matcher *Matcher) Reasonf(format string, args ...interface{}) *Matcher {
 	return matcher.Reason(fmt.Sprintf(format, args...))
 }

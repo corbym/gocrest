@@ -1,9 +1,9 @@
 package has
 
 import (
+	"fmt"
 	"github.com/corbym/gocrest"
 	"reflect"
-	"fmt"
 )
 
 // has.Length can be called with arrays, maps, *gocrest.Matcher and strings but not numeric types.

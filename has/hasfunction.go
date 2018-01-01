@@ -1,10 +1,11 @@
 package has
 
 import (
-	"reflect"
 	"fmt"
 	"github.com/corbym/gocrest"
+	"reflect"
 )
+
 // Naive implementation for testing if a Type has a particular method name. Does not check parameters.
 // returns a matcher that will use reflect to check if the actual has the method given by expected
 func FunctionNamed(expected string) *gocrest.Matcher {
