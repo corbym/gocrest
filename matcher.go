@@ -8,7 +8,8 @@ type Matcher struct {
 	Matches func(actual interface{}) bool
 	// Describe describes the matcher (e.g. "a value EqualTo(foo)"
 	Describe string
-	// Actual is used if the matcher needs to resolve the string description of the matcher.
+	// Actual is used by then.AssertThat if the matcher
+	// needs to resolve the string description of the actual.
 	// This is usually if the actual is a complex type.
 	Actual string
 	// ReasonString is a comment on why the matcher did not match.
