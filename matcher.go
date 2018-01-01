@@ -12,7 +12,8 @@ type Matcher struct {
 	// needs to resolve the string description of the actual.
 	// This is usually if the actual is a complex type.
 	Actual string
-	// ReasonString is a comment on why the matcher did not match.
+	// ReasonString is a comment on why the matcher did not match, and set by the caller not the matcher.
+	// Usually, this is set by the helper function, e.g. FooMatcher("foo").Reason("foo didn't foobar")
 	ReasonString string
 }
 
