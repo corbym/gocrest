@@ -18,9 +18,9 @@ func Key(expected interface{}) *gocrest.Matcher {
 	return matcher
 }
 
-// has.AllKeys is a matcher that checks if map actual has all keys == expecteds.
+//AllKeys is a matcher that checks if map actual has all keys == expecteds.
 // Panics when actual's Kind is not a map.
-// returns a matcher that matches when a map has all keys == all expected
+//Returns a matcher that matches when a map has all keys == all expected.
 func AllKeys(expected ...interface{}) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
 	matcher.Describe = fmt.Sprintf("map has keys '%s'", expected)
