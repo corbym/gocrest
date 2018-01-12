@@ -8,7 +8,7 @@ Inspired by [Hamcrest](https://github.com/hamcrest).
 [![Build status](https://travis-ci.org/corbym/gocrest.svg?branch=master)](https://github.com/corbym/gocrest)
 [![Go Report Card](https://goreportcard.com/badge/github.com/corbym/gocrest)](https://goreportcard.com/report/github.com/corbym/gocrest)
 [![GoDoc](https://godoc.org/github.com/corbym/gocrest?status.svg)](http://godoc.org/github.com/corbym/gocrest)
-
+[![BCH compliance](https://bettercodehub.com/edge/badge/corbym/gocrest?branch=master)](https://bettercodehub.com/)
 ## Package import
 
 ```
