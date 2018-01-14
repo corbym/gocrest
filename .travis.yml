@@ -3,10 +3,10 @@ language: go
 go:
   - 1.9.x
   - master
-
+before_install:
+  - go get github.com/mattn/goveralls
 script:
-  - go test -v -race ./...
-
+  - $GOPATH/bin/goveralls -service=travis-ci
 matrix:
   allow_failures:
     - go: master
