@@ -11,7 +11,7 @@ func AssertThat(t gocrest.TestingT, actual interface{}, m *gocrest.Matcher) {
 	matches := m.Matches(actual)
 	if !matches {
 		t.Errorf("%s\nExpected: %s"+
-			"\n     but: %s\n",
+			"\n     but: <%s>\n",
 			m.ReasonString,
 			m.Describe,
 			actualAsString(m, actual),

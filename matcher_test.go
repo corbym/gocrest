@@ -514,6 +514,7 @@ func TestMatcherDescription(testing *testing.T) {
 		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key("foo"), expected: "map has key 'foo'"},
 		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys("hi", "foo"), expected: "map has keys '[hi foo]'"},
 		{description: "LengthOf Composed", actual: "a", matcher: has.Length(is.GreaterThan(2)), expected: "value with length value greater than 2"},
+		{description: "EqualToIgnoringWhitespace", actual: "a b c", matcher: is.EqualToIgnoringWhitespace("b c d"), expected: "ignoring whitespace value equal to <b c d>"},
 	}
 	for _, test := range equalsItems {
 		stubTestingT := new(StubTestingT)
@@ -548,5 +549,24 @@ func TestHasFunctionDescribesMismatch(testing *testing.T) {
 	if !strings.Contains(stubTestingT.MockTestOutput, "interface with function X") &&
 		!strings.Contains(stubTestingT.MockTestOutput, "MyType{B()F()}") {
 		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestEqualToIgnoringWhitespace(t *testing.T) {
+	var ignoreWhitespaceItems = []struct {
+		actual     string
+		expected   string
+		shouldFail bool
+	}{
+		{actual: "a bc", expected: "a bc", shouldFail: false},
+		{actual: "a b c", expected: "a bc", shouldFail: false},
+		{actual: "abc", expected: "a", shouldFail: true},
+		{actual: "abc \n", expected: "a", shouldFail: true},
+		{actual: "%^&*abc \n\t\t", expected: "%^&*abc\n", shouldFail: false},
+	}
+	for _, test := range ignoreWhitespaceItems {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, is.EqualToIgnoringWhitespace(test.expected))
+		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reasonf("<%s>, should Fail(%v) for <%s>", test.actual, test.shouldFail, test.expected))
 	}
 }
