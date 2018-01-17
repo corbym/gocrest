@@ -13,7 +13,7 @@ import (
 //Returns a matcher that checks if actual is greater than expected.
 func GreaterThan(expected interface{}) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
-	matcher.Describe = fmt.Sprintf("value greater than %v", expected)
+	matcher.Describe = fmt.Sprintf("value greater than <%v>", expected)
 	matcher.Matches = func(actual interface{}) bool {
 		actualValue := reflect.ValueOf(actual)
 		expectedValue := reflect.ValueOf(expected)

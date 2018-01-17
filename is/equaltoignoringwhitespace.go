@@ -4,6 +4,7 @@ import (
 	"github.com/corbym/gocrest"
 	"strings"
 )
+
 //EqualToIgnoringWhitespace tests whether two strings have identical content without any whitespace
 // comparison. For example:
 //
@@ -19,7 +20,7 @@ func EqualToIgnoringWhitespace(expected string) (matcher *gocrest.Matcher) {
 		actualFields := strings.Join(strings.Fields(actualString), "")
 
 		equalToMatcher := EqualTo(expectedFields)
-		matcher.Describe = "ignoring whitespace " + equalToMatcher.Describe
+		matcher.Describe = "ignoring whitespace value equal to <" + expected + ">"
 		isEqualTo := equalToMatcher.Matches(actualFields)
 		return isEqualTo
 	}
