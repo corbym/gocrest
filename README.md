@@ -40,6 +40,7 @@ Composed with AllOf:
 # Matchers so far..
 
 - is.EqualTo(x)
+- is.EqualToIgnoringWhitespace(string) - compares two strings without comparing their whitespace characters.
 - is.Nil() - value must be nil
 - is.ValueContaining(expected) -- acts like containsAll
 - is.Not(m *Matcher) -- logical not of matcher's result
@@ -60,3 +61,5 @@ Composed with AllOf:
 - has.Suffix(x) - string ends with x
 - has.Key(x) - map has key x
 - has.AllKeys(T x, T y) (or has.AllKeys([]T{x,y})) - finds key of type T in map
+
+For more comprehensive documentation see [godoc](http://godoc.org/github.com/corbym/gocrest).
