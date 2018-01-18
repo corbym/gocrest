@@ -503,7 +503,7 @@ func TestMatcherDescription(t *testing.T) {
 		{description: "GreaterThan", actual: 1, matcher: is.GreaterThan(2), expected: "value greater than <2>"},
 		{description: "GreaterThanOrEqual", actual: 1, matcher: is.GreaterThanOrEqualTo(2), expected: "any of (value greater than <2> or value equal to <2>)"},
 		{description: "LessThan", actual: 2, matcher: is.LessThan(1), expected: "value less than <1>"},
-		{description: "LessThanOrEqualTo", actual: 2, matcher: is.LessThanOrEqualTo(1), expected: "any of (value less than <1> or value equal to <1>)"}	,
+		{description: "LessThanOrEqualTo", actual: 2, matcher: is.LessThanOrEqualTo(1), expected: "any of (value less than <1> or value equal to <1>)"},
 		{description: "Nil", actual: 1, matcher: is.Nil(), expected: "value equal to <<nil>>"},
 		{description: "ValueContaining", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining([]string{"Baz", "Bing"}), expected: "something that contains [Baz Bing]"},
 		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
