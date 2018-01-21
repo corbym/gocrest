@@ -10,7 +10,9 @@ func Not(matcher *gocrest.Matcher) *gocrest.Matcher {
 	match := new(gocrest.Matcher)
 	match.Describe = "not(" + matcher.Describe + ")"
 	match.Matches = func(actual interface{}) bool {
-		return !matcher.Matches(actual)
+		matches := !matcher.Matches(actual)
+		match.Actual = matcher.Actual
+		return matches
 	}
 	return match
 }

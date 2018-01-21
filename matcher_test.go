@@ -238,6 +238,13 @@ func TestNotReturnsTheOppositeOfGivenMatcher(testing *testing.T) {
 	}
 }
 
+func TestNotReturnsTheSubMatcherActual(testing *testing.T) {
+	not := is.Not(has.Length(1))
+	not.Matches("a")
+	then.AssertThat(testing, not.Actual,
+		is.EqualTo("length was 1"))
+}
+
 func TestIsNilMatches(testing *testing.T) {
 	then.AssertThat(testing, nil, is.Nil())
 }
