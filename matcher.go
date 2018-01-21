@@ -31,6 +31,8 @@ func (matcher *Matcher) Reasonf(format string, args ...interface{}) *Matcher {
 	return matcher.Reason(fmt.Sprintf(format, args...))
 }
 
+//AppendActual appends an actual string to the matcher's actual description. This is useful if you want
+// to preseve sub-matchers actual values. See is.AllOf() matcher for an example.
 func (matcher *Matcher) AppendActual(actualAsString string) {
 	matcher.Actual += " " + actualAsString
 	matcher.Actual = strings.TrimSpace(matcher.Actual)
