@@ -10,13 +10,20 @@ import (
 func AnyOf(allMatchers ...*gocrest.Matcher) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
 	matcher.Describe = fmt.Sprintf("any of (%s)", describe(allMatchers, "or"))
-	matcher.Matches = func(actual interface{}) bool {
+	matcher.Matches = anyMatcherMatches(allMatchers, matcher)
+	return matcher
+}
+
+func anyMatcherMatches(allMatchers []*gocrest.Matcher, anyOf *gocrest.Matcher) func(actual interface{}) bool {
+	return func(actual interface{}) bool {
+		matches := false
+		anyOf.AppendActual(fmt.Sprintf("actual <%v>", actual))
 		for x := 0; x < len(allMatchers); x++ {
 			if allMatchers[x].Matches(actual) {
-				return true
+				matches = true
 			}
+			anyOf.AppendActual(allMatchers[x].Actual)
 		}
-		return false
+		return matches
 	}
-	return matcher
 }

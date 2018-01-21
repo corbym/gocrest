@@ -1,6 +1,9 @@
 package gocrest
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 //Matcher provides the structure for matcher operations.
 type Matcher struct {
@@ -26,4 +29,9 @@ func (matcher *Matcher) Reason(r string) *Matcher {
 //Reasonf allows a formatted reason for the mismatch.
 func (matcher *Matcher) Reasonf(format string, args ...interface{}) *Matcher {
 	return matcher.Reason(fmt.Sprintf(format, args...))
+}
+
+func (matcher *Matcher) AppendActual(actualAsString string) {
+	matcher.Actual += " " + actualAsString
+	matcher.Actual = strings.TrimSpace(matcher.Actual)
 }

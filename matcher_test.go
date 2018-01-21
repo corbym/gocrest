@@ -245,6 +245,20 @@ func TestNotReturnsTheSubMatcherActual(testing *testing.T) {
 		is.EqualTo("length was 1"))
 }
 
+func TestAnyofReturnsTheSubMatcherActual(testing *testing.T) {
+	anyOf := is.AnyOf(has.Length(1), is.EqualTo("a"))
+	anyOf.Matches("a")
+	then.AssertThat(testing, anyOf.Actual,
+		is.EqualTo("actual <a> length was 1"))
+}
+
+func TestAllofReturnsTheSubMatcherActual(testing *testing.T) {
+	anyOf := is.AllOf(has.Length(1), is.EqualTo("a"))
+	anyOf.Matches("a")
+	then.AssertThat(testing, anyOf.Actual,
+		is.EqualTo("actual <a> length was 1"))
+}
+
 func TestIsNilMatches(testing *testing.T) {
 	then.AssertThat(testing, nil, is.Nil())
 }

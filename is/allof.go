@@ -9,14 +9,23 @@ import (
 //Returns a matcher that performs the the test on the input matchers.
 func AllOf(allMatchers ...*gocrest.Matcher) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
-	matcher.Matches = func(actual interface{}) bool {
-		matcher.Describe = fmt.Sprintf("all of (%s)", describe(allMatchers, "and"))
+	matcher.Describe = fmt.Sprintf("all of (%s)", describe(allMatchers, "and"))
+	matcher.Matches = matchAll(allMatchers, matcher)
+	return matcher
+}
+
+func matchAll(allMatchers []*gocrest.Matcher, allOf *gocrest.Matcher) func(actual interface{}) bool {
+	return func(actual interface{}) bool {
+		var actualStrings []string
+		matches := true
+		allOf.AppendActual(fmt.Sprintf("actual <%v>", actual))
 		for x := 0; x < len(allMatchers); x++ {
 			if !allMatchers[x].Matches(actual) {
-				return false
+				matches = false
 			}
+			allOf.AppendActual(allMatchers[x].Actual)
+			actualStrings = append(actualStrings, allMatchers[x].Actual)
 		}
-		return true
+		return matches
 	}
-	return matcher
 }
