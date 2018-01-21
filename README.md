@@ -21,7 +21,7 @@ import (
 ```
 
 ## Example:
-```
+```go
 then.AssertThat(testing, "hi", is.EqualTo("bye").Reason("we are going"))
 ```
 
@@ -29,8 +29,8 @@ output:
 
 ```
 we are going
-Expected: value equal to bye
-     but: hi
+Expected: value equal to <bye>
+     but: <hi>
 ```
 
 Composed with AllOf:
