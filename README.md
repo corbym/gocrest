@@ -35,7 +35,9 @@ Expected: value equal to <bye>
 
 Composed with AllOf:
 
-``` then.AssertThat(t, "abcdef", is.AllOf(is.ValueContaining("abc"), is.LessThan("ghi")))```
+```go
+then.AssertThat(t, "abcdef", is.AllOf(is.ValueContaining("abc"), is.LessThan("ghi")))
+```
 
 # Matchers so far..
 
