@@ -21,6 +21,7 @@ func TestHasLengthMatchesOrNot(testing *testing.T) {
 		expected   interface{}
 		shouldFail bool
 	}{
+		{actual: nil, expected: nil, shouldFail: true},
 		{actual: "", expected: 0, shouldFail: false},
 		{actual: "a", expected: 1, shouldFail: false},
 		{actual: "1", expected: 1, shouldFail: false},

@@ -14,6 +14,9 @@ func Length(expected interface{}) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
 	matcher.Describe = fmt.Sprintf(description, expected)
 	matcher.Matches = func(actual interface{}) bool {
+		if actual == nil {
+			return false
+		}
 		lenOfActual := reflect.ValueOf(actual).Len()
 		matcher.Actual = fmt.Sprintf("length was %d", lenOfActual)
 		typeMatcher, ok := expected.(*gocrest.Matcher)
