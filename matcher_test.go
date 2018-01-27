@@ -518,6 +518,8 @@ func TestMatcherDescription(t *testing.T) {
 		matcher     *gocrest.Matcher
 		expected    string
 	}{
+		{description: "has type T", actual: t, matcher: has.TypeName("string"), expected: "has type <string>"},
+		{description: "has type T matcher", actual: t, matcher: has.TypeName(is.EqualTo("string")), expected: "has type value equal to <string>"},
 		{description: "EqualTo.Reasonf", actual: 1, matcher: is.EqualTo(2).Reasonf("arithmetic %s is wrong", "foo"), expected: "arithmetic foo is wrong"},
 		{description: "EqualTo.Reason", actual: 1, matcher: is.EqualTo(2).Reason("arithmetic is wrong"), expected: "arithmetic is wrong\nExpected: value equal to <2>\n     but: <1>\n"},
 		{description: "Not", actual: 2, matcher: is.Not(is.EqualTo(2)), expected: "\nExpected: not(value equal to <2>)\n     but: <2>\n"},
@@ -592,5 +594,42 @@ func TestEqualToIgnoringWhitespace(t *testing.T) {
 		stubTestingT := new(StubTestingT)
 		then.AssertThat(stubTestingT, test.actual, is.EqualToIgnoringWhitespace(test.expected))
 		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reasonf("<%s>, should Fail(%v) for <%s>", test.actual, test.shouldFail, test.expected))
+	}
+}
+
+type private struct {
+}
+type Foo struct {
+}
+
+func TestTypeName(t *testing.T) {
+	pri := new(private)
+	priAnd := &private{}
+	pubAnd := &Foo{}
+	pub := new(Foo)
+
+	tests := []struct {
+		actual     interface{}
+		expected   string
+		shouldFail bool
+	}{
+		{t, "*testing.T", false},
+		{t, "foob", true},
+		{pri, "*gocrest_test.private", false},
+		{priAnd, "*gocrest_test.private", false},
+		{private{}, "gocrest_test.private", false},
+		{pub, "*gocrest_test.Foo", false},
+		{pubAnd, "*gocrest_test.Foo", false},
+		{&pubAnd, "**gocrest_test.Foo", false},
+		{Foo{}, "gocrest_test.Foo", false},
+		{"foo", "string", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.expected, func(t *testing.T) {
+			stubTestingT := new(StubTestingT)
+			then.AssertThat(stubTestingT, tt.actual, has.TypeName(tt.expected))
+
+			then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(tt.shouldFail).Reason(stubTestingT.MockTestOutput))
+		})
 	}
 }
