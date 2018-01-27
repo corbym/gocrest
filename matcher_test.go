@@ -518,6 +518,8 @@ func TestMatcherDescription(t *testing.T) {
 		matcher     *gocrest.Matcher
 		expected    string
 	}{
+		{description: "is true", actual: false, matcher: is.True(), expected: "is true"},
+		{description: "is false", actual: true, matcher: is.False(), expected: "is false"},
 		{description: "has type T", actual: t, matcher: has.TypeName("string"), expected: "has type <string>"},
 		{description: "has type T matcher", actual: t, matcher: has.TypeName(is.EqualTo("string")), expected: "has type value equal to <string>"},
 		{description: "EqualTo.Reasonf", actual: 1, matcher: is.EqualTo(2).Reasonf("arithmetic %s is wrong", "foo"), expected: "arithmetic foo is wrong"},
