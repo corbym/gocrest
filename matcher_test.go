@@ -341,9 +341,21 @@ func TestMapContainsValues(testing *testing.T) {
 	then.AssertThat(testing, actualList, is.ValueContaining("bling", "boop"))
 }
 
-func TestStringContainsString(testing *testing.T) {
+func TestStringContains_String(testing *testing.T) {
 	actualList := "abcd"
 	expected := "bc"
+	then.AssertThat(testing, actualList, is.ValueContaining(expected))
+}
+
+func TestValueContaining_PanicsWithUnknownType(testing *testing.T) {
+	defer func() {
+		recover := recover()
+		then.AssertThat(testing, recover, is.Not(is.Nil()))
+	}()
+	expected := "abcd"
+	actualList := make(chan string, 3)
+	actualList <- "abc"
+
 	then.AssertThat(testing, actualList, is.ValueContaining(expected))
 }
 

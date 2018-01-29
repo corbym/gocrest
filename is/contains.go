@@ -37,7 +37,7 @@ func ValueContaining(expected ...interface{}) *gocrest.Matcher {
 			}
 			return mapContains(expectedValue, actualValue)
 		default:
-			return contains(expected, actualValue)
+			panic("cannot determine type of variadic actual, " + actualValue.String())
 		}
 	}
 	return match
@@ -69,15 +69,6 @@ func mapContains(expected reflect.Value, actual reflect.Value) bool {
 		}
 	}
 	return len(contains) == len(expected.MapKeys())
-}
-
-func contains(value interface{}, list reflect.Value) bool {
-	for i := 0; i < list.Len(); i++ {
-		if list.Index(i).Interface() == value {
-			return true
-		}
-	}
-	return false
 }
 
 func listContains(expectedValue reflect.Value, actualValue reflect.Value) bool {
