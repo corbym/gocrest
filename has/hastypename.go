@@ -6,7 +6,7 @@ import (
 )
 
 //TypeName returns true if the expected matches the actual Type's Name. Expected can be a matcher or a string.
-// E.g. has.TypeName(EqualTo("pkg.Type)) would be true with `type Type struct{}` in package name 'pkg'.
+// E.g. has.TypeName(EqualTo("pkg.Type)) would be true with instance of `type Type struct{}` in package name 'pkg'.
 func TypeName(expected interface{}) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
 	matcher.Matches = func(actual interface{}) bool {
