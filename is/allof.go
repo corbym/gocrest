@@ -16,7 +16,6 @@ func AllOf(allMatchers ...*gocrest.Matcher) *gocrest.Matcher {
 
 func matchAll(allMatchers []*gocrest.Matcher, allOf *gocrest.Matcher) func(actual interface{}) bool {
 	return func(actual interface{}) bool {
-		var actualStrings []string
 		matches := true
 		allOf.AppendActual(fmt.Sprintf("actual <%v>", actual))
 		for x := 0; x < len(allMatchers); x++ {
@@ -24,7 +23,6 @@ func matchAll(allMatchers []*gocrest.Matcher, allOf *gocrest.Matcher) func(actua
 				matches = false
 			}
 			allOf.AppendActual(allMatchers[x].Actual)
-			actualStrings = append(actualStrings, allMatchers[x].Actual)
 		}
 		return matches
 	}
