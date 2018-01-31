@@ -2,6 +2,7 @@ package is
 
 import "github.com/corbym/gocrest"
 
+//True returns true if the actual matches true
 func True() *gocrest.Matcher {
 	return &gocrest.Matcher{
 		Describe: "is true",
