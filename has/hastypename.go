@@ -24,7 +24,6 @@ func TypeName(expected interface{}) *gocrest.Matcher {
 			matcher.Describe += "<" + expected.(string) + ">"
 			return actualTypeName == expected
 		}
-		return false
 	}
 	return matcher
 }
