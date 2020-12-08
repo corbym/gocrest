@@ -7,6 +7,8 @@ import (
 	"github.com/corbym/gocrest"
 )
 
+// Checks wether each element of the array/slice matches each exptectation passed to ElementsWith
+// Panics if the actual is not an array/slice
 func ElementsWith(expects ...*gocrest.Matcher) *gocrest.Matcher {
 	match := new(gocrest.Matcher)
 	match.Matches = func(actual interface{}) bool {

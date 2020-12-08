@@ -7,9 +7,14 @@ import (
 	"github.com/corbym/gocrest"
 )
 
+// Type that can be passed to StructWithValues. Mapps Struct field names to a matcher
 type StructMatchers map[string]*gocrest.Matcher
 
-func StructWithValues(expects map[string]*gocrest.Matcher) *gocrest.Matcher {
+// Checks wether the actual struct matches all expectations passed as StructMatchers.
+// This method can be used to check single struct fields in different ways or omit checking some struct fields at all.
+// Panics if the actual value is not a struct.
+// Panics if Structmatchers contains a key that can not be found in the actual struct.
+func StructWithValues(expects StructMatchers) *gocrest.Matcher {
 	match := new(gocrest.Matcher)
 	match.Matches = func(actual interface{}) bool {
 
@@ -30,7 +35,7 @@ func StructWithValues(expects map[string]*gocrest.Matcher) *gocrest.Matcher {
 	return match
 }
 
-func valuesMatch(expects map[string]*gocrest.Matcher, actualValue reflect.Value) (string, string) {
+func valuesMatch(expects StructMatchers, actualValue reflect.Value) (string, string) {
 	for key, expect := range expects {
 		v := actualValue.FieldByName(key)
 
