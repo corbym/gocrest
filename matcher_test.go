@@ -693,6 +693,31 @@ func TestElementsWith(t *testing.T) {
 		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
 	}
 }
+func TestElementsWithPanic(t *testing.T) {
+	tests := []struct {
+		actual   interface{}
+		expected []*gocrest.Matcher
+	}{
+		{
+			actual: "not a slice",
+			expected: []*gocrest.Matcher{
+				is.Empty(),
+			},
+		},
+	}
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic")
+		}
+	}()
+
+	for _, test := range tests {
+		stubTestingT := new(StubTestingT)
+
+		then.AssertThat(stubTestingT, test.actual, has.ElementsWith(test.expected...))
+	}
+}
 
 func TestStructValues(t *testing.T) {
 	tests := []struct {
@@ -767,6 +792,12 @@ func TestStructValuesPanic(t *testing.T) {
 			}{},
 			expected: has.StructMatchers{
 				"Id2": is.Empty(),
+			},
+		},
+		{
+			actual: "not a struct",
+			expected: has.StructMatchers{
+				"Id": is.Empty(),
 			},
 		},
 	}
