@@ -772,6 +772,17 @@ func TestStructValues(t *testing.T) {
 			},
 			shouldFail: true,
 		},
+		{
+			actual: struct {
+				Id  string
+				Id2 string
+			}{},
+			expected: has.StructMatchers{
+				"Id":  is.EqualTo("Id"),
+				"Id2": is.EqualTo("something"),
+			},
+			shouldFail: false,
+		},
 	}
 	for _, test := range tests {
 		stubTestingT := new(StubTestingT)
@@ -792,6 +803,14 @@ func TestStructValuesPanic(t *testing.T) {
 			}{},
 			expected: has.StructMatchers{
 				"Id2": is.Empty(),
+			},
+		},
+		{
+			actual: struct {
+				id string
+			}{},
+			expected: has.StructMatchers{
+				"id": is.Empty(),
 			},
 		},
 		{
