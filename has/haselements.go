@@ -11,16 +11,28 @@ import (
 // Panics if the actual is not an array/slice
 func ElementsWith(expects ...*gocrest.Matcher) *gocrest.Matcher {
 	match := new(gocrest.Matcher)
+	match.Describe = fmt.Sprintf("elements to match all of (%s)", describe(expects, "and"))
+
+	for _, e := range expects {
+		match.AppendActual(e.Actual)
+	}
+
 	match.Matches = func(actual interface{}) bool {
 
 		actualValue := reflect.ValueOf(actual)
 		switch actualValue.Kind() {
 		case reflect.Array, reflect.Slice:
-			reason, actual := elementsMatch(expects, actualValue)
+			for i := 0; i < actualValue.Len(); i++ {
+				for _, expect := range expects {
+					result := expect.Matches(actualValue.Index(i).Interface())
 
-			match.Describe = reason
-			match.Actual = actual
-			return reason == "" && actual == ""
+					if !result {
+						return false
+					}
+				}
+			}
+
+			return true
 
 		default:
 			panic("cannot determine type of variadic actual, " + actualValue.String())
@@ -30,22 +42,13 @@ func ElementsWith(expects ...*gocrest.Matcher) *gocrest.Matcher {
 	return match
 }
 
-func elementsMatch(expects []*gocrest.Matcher, actualValue reflect.Value) (string, string) {
-	for i := 0; i < actualValue.Len(); i++ {
-		for j, expect := range expects {
-			result := expect.Matches(actualValue.Index(i).Interface())
-
-			actual := expect.Actual
-
-			if actual == "" {
-				actual = actualValue.Index(i).String()
-			}
-
-			if !result {
-				return fmt.Sprintf("expect[%v]: %v", j, expect.Describe), fmt.Sprintf("actual[%v]: <%v>", i, actual)
-			}
+func describe(matchers []*gocrest.Matcher, conjunction string) string {
+	var description string
+	for x := 0; x < len(matchers); x++ {
+		description += matchers[x].Describe
+		if x+1 < len(matchers) {
+			description += fmt.Sprintf(" %s ", conjunction)
 		}
 	}
-
-	return "", ""
+	return description
 }
