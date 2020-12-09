@@ -781,7 +781,7 @@ func TestStructValues(t *testing.T) {
 				"Id":  is.EqualTo("Id"),
 				"Id2": is.EqualTo("something"),
 			},
-			shouldFail: false,
+			shouldFail: true,
 		},
 	}
 	for _, test := range tests {
