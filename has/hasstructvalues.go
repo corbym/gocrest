@@ -10,7 +10,7 @@ import (
 // Type that can be passed to StructWithValues. Mapps Struct field names to a matcher
 type StructMatchers map[string]*gocrest.Matcher
 
-// Checks wether the actual struct matches all expectations passed as StructMatchers.
+// Checks whether the actual struct matches all expectations passed as StructMatchers.
 // This method can be used to check single struct fields in different ways or omit checking some struct fields at all.
 // Panics if the actual value is not a struct.
 // Panics if Structmatchers contains a key that can not be found in the actual struct.
