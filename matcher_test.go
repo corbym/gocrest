@@ -649,7 +649,7 @@ func TestTypeName(t *testing.T) {
 	}
 }
 
-func TestElementsWith(t *testing.T) {
+func TestEveryElement(t *testing.T) {
 	tests := []struct {
 		actual     interface{}
 		expected   []*gocrest.Matcher
@@ -688,12 +688,12 @@ func TestElementsWith(t *testing.T) {
 	}
 	for _, test := range tests {
 		stubTestingT := new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, has.ElementsWith(test.expected...))
+		then.AssertThat(stubTestingT, test.actual, has.EveryElement(test.expected...))
 
 		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
 	}
 }
-func TestElementsWithPanic(t *testing.T) {
+func TestEveryElementPanic(t *testing.T) {
 	tests := []struct {
 		actual   interface{}
 		expected []*gocrest.Matcher
@@ -715,7 +715,7 @@ func TestElementsWithPanic(t *testing.T) {
 	for _, test := range tests {
 		stubTestingT := new(StubTestingT)
 
-		then.AssertThat(stubTestingT, test.actual, has.ElementsWith(test.expected...))
+		then.AssertThat(stubTestingT, test.actual, has.EveryElement(test.expected...))
 	}
 }
 

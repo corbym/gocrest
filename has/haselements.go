@@ -9,7 +9,7 @@ import (
 
 // Checks whether every element of the array/slice matches each expectation passed
 // Panics if the actual is not an array/slice
-func ElementsWith(expects ...*gocrest.Matcher) *gocrest.Matcher {
+func EveryElement(expects ...*gocrest.Matcher) *gocrest.Matcher {
 	match := new(gocrest.Matcher)
 	match.Describe = fmt.Sprintf("elements to match all of (%s)", describe(expects, "and"))
 
