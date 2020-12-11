@@ -321,6 +321,11 @@ func TestContainsForVariadic(testing *testing.T) {
 	then.AssertThat(testing, actualList, is.ValueContaining("Boom", "Bong", "Bar"))
 }
 
+func TestContainsForVariadicMatchers(testing *testing.T) {
+	actualList := []string{"Foo", "Bar", "Bong", "Boom"}
+	then.AssertThat(testing, actualList, is.ValueContaining(is.EqualTo("Boom"), has.Suffix("ng"), has.Prefix("Ba")))
+}
+
 func TestMapContainsMap(testing *testing.T) {
 	actualList := map[string]string{
 		"bing":  "boop",
@@ -339,6 +344,14 @@ func TestMapContainsValues(testing *testing.T) {
 		"bling": "bling",
 	}
 	then.AssertThat(testing, actualList, is.ValueContaining("bling", "boop"))
+}
+
+func TestMapContainsValuesMatching(testing *testing.T) {
+	actualList := map[string]string{
+		"bing":  "boop",
+		"bling": "bling",
+	}
+	then.AssertThat(testing, actualList, is.ValueContaining(is.EqualTo("bling"), is.EqualTo("boop")))
 }
 
 func TestStringContains_String(testing *testing.T) {
@@ -544,6 +557,7 @@ func TestMatcherDescription(t *testing.T) {
 		{description: "LessThanOrEqualTo", actual: 2, matcher: is.LessThanOrEqualTo(1), expected: "any of (value less than <1> or value equal to <1>)"},
 		{description: "Nil", actual: 1, matcher: is.Nil(), expected: "value equal to <<nil>>"},
 		{description: "ValueContaining", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining([]string{"Baz", "Bing"}), expected: "something that contains [Baz Bing]"},
+		{description: "ValueContaining", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining(is.EqualTo("Baz"), is.EqualTo("Bing")), expected: "something that contains value equal to <Baz> and value equal to <Bing>"},
 		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
 		{description: "MatchesPattern (invalid regex)", actual: "blarney stone", matcher: is.MatchForPattern("+++"), expected: "error parsing regexp: missing argument to repetition operator: `+`"},
 		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
