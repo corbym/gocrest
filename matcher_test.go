@@ -547,8 +547,8 @@ func TestMatcherDescription(t *testing.T) {
 		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
 		{description: "MatchesPattern (invalid regex)", actual: "blarney stone", matcher: is.MatchForPattern("+++"), expected: "error parsing regexp: missing argument to repetition operator: `+`"},
 		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
-		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.ValueContaining("e", "f")), expected: "all of (value equal to <abc> and something that contains [e f])"},
-		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")), expected: "any of (value equal to <efg> or something that contains [e])"},
+		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.ValueContaining("e", "f")), expected: "all of (value equal to <abc> and something that contains <e> and <f>)"},
+		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")), expected: "any of (value equal to <efg> or something that contains <e>)"},
 		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key("foo"), expected: "map has key 'foo'"},
 		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys("hi", "foo"), expected: "map has keys '[hi foo]'"},
 		{description: "LengthOf Composed", actual: "a", matcher: has.Length(is.GreaterThan(2)), expected: "value with length value greater than <2>"},
@@ -559,7 +559,7 @@ func TestMatcherDescription(t *testing.T) {
 			stubTestingT := new(StubTestingT)
 			then.AssertThat(stubTestingT, test.actual, test.matcher)
 			if !strings.Contains(stubTestingT.MockTestOutput, test.expected) {
-				innerT.Errorf("%s did not fail with expected desc, got: %s", test.description, stubTestingT.MockTestOutput)
+				innerT.Errorf("%s did not fail with expected desc <%s>, got: %s", test.description, test.expected, stubTestingT.MockTestOutput)
 			}
 		})
 	}

@@ -9,7 +9,7 @@ import (
 //Returns a matcher that performs the the test on the input matchers.
 func AllOf(allMatchers ...*gocrest.Matcher) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
-	matcher.Describe = fmt.Sprintf("all of (%s)", describe(allMatchers, "and"))
+	matcher.Describe = fmt.Sprintf("all of (%s)", describe("and", allMatchers))
 	matcher.Matches = matchAll(allMatchers, matcher)
 	return matcher
 }

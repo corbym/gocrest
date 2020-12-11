@@ -7,6 +7,7 @@ import (
 )
 
 //EqualTo checks if two values are equal. Uses DeepEqual (could be slow).
+//Like DeepEquals, if the types are not the same the matcher returns false.
 //Returns a matcher that will return true if two values are equal.
 func EqualTo(expected interface{}) *gocrest.Matcher {
 	match := new(gocrest.Matcher)

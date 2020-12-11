@@ -24,5 +24,5 @@ func EqualToIgnoringWhitespace(expected string) (matcher *gocrest.Matcher) {
 		isEqualTo := equalToMatcher.Matches(actualFields)
 		return isEqualTo
 	}
-	return
+	return matcher
 }
