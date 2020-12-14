@@ -1,12 +1,13 @@
 package gocrest_test
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/corbym/gocrest"
 	"github.com/corbym/gocrest/has"
 	"github.com/corbym/gocrest/is"
 	"github.com/corbym/gocrest/then"
-	"strings"
-	"testing"
 )
 
 var stubTestingT *StubTestingT
@@ -659,5 +660,190 @@ func TestTypeName(t *testing.T) {
 
 			then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(tt.shouldFail).Reason(stubTestingT.MockTestOutput))
 		})
+	}
+}
+
+func TestEveryElement(t *testing.T) {
+	tests := []struct {
+		actual     interface{}
+		expected   []*gocrest.Matcher
+		shouldFail bool
+	}{
+		{
+			actual:     []string{"test1", "test2"},
+			expected:   []*gocrest.Matcher{is.EqualTo("test1"), is.EqualTo("test2")},
+			shouldFail: false,
+		},
+		{
+			actual:     []int{1, 2},
+			expected:   []*gocrest.Matcher{is.EqualTo(1), is.EqualTo(2)},
+			shouldFail: false,
+		},
+		{
+			actual:     []string{"test1", "test2"},
+			expected:   []*gocrest.Matcher{is.EqualTo("test1"), is.EqualTo("nottest")},
+			shouldFail: true,
+		},
+		{
+			actual: []int{1, 2},
+			expected: []*gocrest.Matcher{
+				is.EqualTo(1),
+			},
+			shouldFail: true,
+		},
+		{
+			actual: []int{1},
+			expected: []*gocrest.Matcher{
+				is.EqualTo(1),
+				is.EqualTo(2),
+			},
+			shouldFail: true,
+		},
+	}
+	for _, test := range tests {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, has.EveryElement(test.expected...))
+
+		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
+	}
+}
+func TestEveryElementPanic(t *testing.T) {
+	tests := []struct {
+		actual   interface{}
+		expected []*gocrest.Matcher
+	}{
+		{
+			actual: "not a slice",
+			expected: []*gocrest.Matcher{
+				is.Empty(),
+			},
+		},
+	}
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic")
+		}
+	}()
+
+	for _, test := range tests {
+		stubTestingT := new(StubTestingT)
+
+		then.AssertThat(stubTestingT, test.actual, has.EveryElement(test.expected...))
+	}
+}
+
+func TestStructValues(t *testing.T) {
+	tests := []struct {
+		actual     interface{}
+		expected   has.StructMatchers
+		shouldFail bool
+	}{
+		{
+			actual: struct {
+				Id string
+			}{Id: "Id"},
+			expected: has.StructMatchers{
+				"Id": has.Prefix("Id"),
+			},
+			shouldFail: false,
+		},
+		{
+			actual: struct {
+				Id  string
+				Id2 string
+			}{Id: "Id", Id2: "Id2"},
+			expected: has.StructMatchers{
+				"Id": has.Prefix("Id"),
+			},
+			shouldFail: false,
+		},
+		{
+			actual: struct {
+				Id string
+			}{},
+			expected: has.StructMatchers{
+				"Id": is.Empty(),
+			},
+			shouldFail: false,
+		},
+		{
+			actual: struct {
+				Id string
+			}{},
+			expected: has.StructMatchers{
+				"Id": is.EqualTo("something"),
+			},
+			shouldFail: true,
+		},
+		{
+			actual: struct {
+				Id  string
+				Id2 string
+			}{},
+			expected: has.StructMatchers{
+				"Id2": is.EqualTo("something"),
+			},
+			shouldFail: true,
+		},
+		{
+			actual: struct {
+				Id  string
+				Id2 string
+			}{},
+			expected: has.StructMatchers{
+				"Id":  is.EqualTo("Id"),
+				"Id2": is.EqualTo("something"),
+			},
+			shouldFail: true,
+		},
+	}
+	for _, test := range tests {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, has.StructWithValues(test.expected))
+
+		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
+	}
+}
+
+func TestStructValuesPanic(t *testing.T) {
+	tests := []struct {
+		actual   interface{}
+		expected has.StructMatchers
+	}{
+		{
+			actual: struct {
+				Id string
+			}{},
+			expected: has.StructMatchers{
+				"Id2": is.Empty(),
+			},
+		},
+		{
+			actual: struct {
+				id string
+			}{},
+			expected: has.StructMatchers{
+				"id": is.Empty(),
+			},
+		},
+		{
+			actual: "not a struct",
+			expected: has.StructMatchers{
+				"Id": is.Empty(),
+			},
+		},
+	}
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic")
+		}
+	}()
+
+	for _, test := range tests {
+		stubTestingT := new(StubTestingT)
+
+		then.AssertThat(stubTestingT, test.actual, has.StructWithValues(test.expected))
 	}
 }
