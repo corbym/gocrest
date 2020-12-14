@@ -25,7 +25,7 @@ func EveryElement(expects ...*gocrest.Matcher) *gocrest.Matcher {
 		case reflect.Array, reflect.Slice:
 
 			if actualValue.Len() != len(expects) {
-				panic(fmt.Sprintf("cannot match expectations (length %v) to actuals (length %v)", len(expects), actualValue.Len()))
+				return false
 			}
 
 			for i := 0; i < actualValue.Len(); i++ {

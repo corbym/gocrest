@@ -670,6 +670,21 @@ func TestEveryElement(t *testing.T) {
 			expected:   []*gocrest.Matcher{is.EqualTo("test1"), is.EqualTo("nottest")},
 			shouldFail: true,
 		},
+		{
+			actual: []int{1, 2},
+			expected: []*gocrest.Matcher{
+				is.EqualTo(1),
+			},
+			shouldFail: true,
+		},
+		{
+			actual: []int{1},
+			expected: []*gocrest.Matcher{
+				is.EqualTo(1),
+				is.EqualTo(2),
+			},
+			shouldFail: true,
+		},
 	}
 	for _, test := range tests {
 		stubTestingT := new(StubTestingT)
@@ -687,19 +702,6 @@ func TestEveryElementPanic(t *testing.T) {
 			actual: "not a slice",
 			expected: []*gocrest.Matcher{
 				is.Empty(),
-			},
-		},
-		{
-			actual: []int{1, 2},
-			expected: []*gocrest.Matcher{
-				is.EqualTo(1),
-			},
-		},
-		{
-			actual: []int{1},
-			expected: []*gocrest.Matcher{
-				is.EqualTo(1),
-				is.EqualTo(2),
 			},
 		},
 	}
