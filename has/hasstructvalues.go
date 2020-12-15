@@ -43,7 +43,6 @@ func StructWithValues(expects StructMatchers) *gocrest.Matcher {
 			}
 			return true
 		}
-		print("panic panic")
 		panic("cannot determine type of variadic actual, " + actualValue.String())
 	}
 
