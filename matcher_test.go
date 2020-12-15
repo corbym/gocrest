@@ -8,6 +8,7 @@ import (
 	"github.com/corbym/gocrest/has"
 	"github.com/corbym/gocrest/is"
 	"github.com/corbym/gocrest/then"
+	"sync"
 )
 
 var stubTestingT *StubTestingT
@@ -709,7 +710,7 @@ func TestEveryElement(t *testing.T) {
 }
 func TestEveryElementPanic(t *testing.T) {
 	tests := []struct {
-		actual   interface{}
+		actual   string
 		expected []*gocrest.Matcher
 	}{
 		{
@@ -721,9 +722,8 @@ func TestEveryElementPanic(t *testing.T) {
 	}
 
 	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("The code did not panic")
-		}
+		recover := recover()
+		then.AssertThat(t, recover, is.Not(is.Nil()))
 	}()
 
 	for _, test := range tests {
@@ -806,6 +806,18 @@ func TestStructValues(t *testing.T) {
 	}
 }
 
+func TestStructValuesPanicsWithStringActual(t *testing.T) {
+	actual := "not a struct"
+	expected := has.StructMatchers{
+		"Id": is.Empty(),
+	}
+	defer func() {
+		recover := recover()
+		then.AssertThat(t, recover, is.Not(is.Nil()))
+	}()
+	then.AssertThat(stubTestingT, actual, has.StructWithValues(expected))
+}
+
 func TestStructValuesPanic(t *testing.T) {
 	tests := []struct {
 		actual   interface{}
@@ -826,19 +838,12 @@ func TestStructValuesPanic(t *testing.T) {
 			expected: has.StructMatchers{
 				"id": is.Empty(),
 			},
-		},
-		{
-			actual: "not a struct",
-			expected: has.StructMatchers{
-				"Id": is.Empty(),
-			},
-		},
+		}
 	}
 
 	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("The code did not panic")
-		}
+		recover := recover()
+		then.AssertThat(t, recover, is.Not(is.Nil()))
 	}()
 
 	for _, test := range tests {

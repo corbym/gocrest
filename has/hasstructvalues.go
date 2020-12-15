@@ -41,12 +41,10 @@ func StructWithValues(expects StructMatchers) *gocrest.Matcher {
 					return false
 				}
 			}
-
 			return true
-
-		default:
-			panic("cannot determine type of variadic actual, " + actualValue.String())
 		}
+		print("panic panic")
+		panic("cannot determine type of variadic actual, " + actualValue.String())
 	}
 
 	return match
