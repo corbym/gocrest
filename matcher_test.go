@@ -838,7 +838,7 @@ func TestStructValuesPanic(t *testing.T) {
 			expected: has.StructMatchers{
 				"id": is.Empty(),
 			},
-		}
+		},
 	}
 
 	defer func() {
