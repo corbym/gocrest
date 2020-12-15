@@ -8,7 +8,7 @@ import (
 
 //Suffix returns a matcher that matches if the given string is suffixed with the expected string.
 //Panics if the actual is not a string.
-//Uses strings.Suffix(act,exp) to evaluate strings.
+//Uses strings.HasSuffix(act,exp) to evaluate strings.
 //Returns a matcher that returns true if the above conditions are met.
 func Suffix(expected string) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
