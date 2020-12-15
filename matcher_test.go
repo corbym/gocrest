@@ -8,7 +8,6 @@ import (
 	"github.com/corbym/gocrest/has"
 	"github.com/corbym/gocrest/is"
 	"github.com/corbym/gocrest/then"
-	"sync"
 )
 
 var stubTestingT *StubTestingT
