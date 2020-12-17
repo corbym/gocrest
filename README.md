@@ -63,5 +63,7 @@ then.AssertThat(t, "abcdef", is.AllOf(is.ValueContaining("abc"), is.LessThan("gh
 - has.Suffix(x) - string ends with x
 - has.Key(x) - map has key x
 - has.AllKeys(T x, T y) (or has.AllKeys([]T{x,y})) - finds key of type T in map
+- has.EveryElement(x1...xn) - checks if actual[i] matches corresponding expectation (x[i])
+- has.StructWithValues(map[string]*gocrest.Matcher) - checks if actual[key] matches corresponding expectation (x[key])
 
 For more comprehensive documentation see [godoc](http://godoc.org/github.com/corbym/gocrest).
