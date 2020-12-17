@@ -556,7 +556,7 @@ func TestMatcherDescription(t *testing.T) {
 		{description: "GreaterThanOrEqual", actual: 1, matcher: is.GreaterThanOrEqualTo(2), expected: "any of (value greater than <2> or value equal to <2>)"},
 		{description: "LessThan", actual: 2, matcher: is.LessThan(1), expected: "value less than <1>"},
 		{description: "LessThanOrEqualTo", actual: 2, matcher: is.LessThanOrEqualTo(1), expected: "any of (value less than <1> or value equal to <1>)"},
-		{description: "Nil", actual: 1, matcher: is.Nil(), expected: "value equal to <<nil>>"},
+		{description: "Nil", actual: 1, matcher: is.Nil(), expected: "value that is <nil>"},
 		{description: "ValueContaining", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining([]string{"Baz", "Bing"}), expected: "something that contains [Baz Bing]"},
 		{description: "ValueContaining", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining(is.EqualTo("Baz"), is.EqualTo("Bing")), expected: "something that contains value equal to <Baz> and value equal to <Bing>"},
 		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
@@ -661,6 +661,16 @@ func TestTypeName(t *testing.T) {
 			then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(tt.shouldFail).Reason(stubTestingT.MockTestOutput))
 		})
 	}
+}
+
+func TestNilArrayInterface(t *testing.T) {
+	actual := nilResponse()
+
+	then.AssertThat(t, actual, is.Nil())
+}
+
+func nilResponse() []interface{} {
+	return nil
 }
 
 func TestEveryElement(t *testing.T) {

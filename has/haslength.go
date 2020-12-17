@@ -19,10 +19,11 @@ func Length(expected interface{}) *gocrest.Matcher {
 		}
 		lenOfActual := reflect.ValueOf(actual).Len()
 		matcher.Actual = fmt.Sprintf("length was %d", lenOfActual)
-		typeMatcher, ok := expected.(*gocrest.Matcher)
-		if ok {
-			matcher.Describe = fmt.Sprintf(description, typeMatcher.Describe)
-			return typeMatcher.Matches(lenOfActual)
+		switch expected.(type) {
+		case *gocrest.Matcher:
+			m := expected.(*gocrest.Matcher)
+			matcher.Describe = fmt.Sprintf(description, m.Describe)
+			return m.Matches(lenOfActual)
 		}
 		return lenOfActual == expected
 	}
