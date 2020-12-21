@@ -26,6 +26,11 @@ func (matcher *Matcher) Reason(r string) *Matcher {
 	return matcher
 }
 
+//Describes the Matcher to conform to the Stringer interface
+func (matcher *Matcher) String() string {
+	return matcher.Describe
+}
+
 //Reasonf allows a formatted reason for the mismatch.
 func (matcher *Matcher) Reasonf(format string, args ...interface{}) *Matcher {
 	return matcher.Reason(fmt.Sprintf(format, args...))

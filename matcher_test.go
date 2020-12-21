@@ -861,3 +861,7 @@ func TestStructValuesPanic(t *testing.T) {
 		then.AssertThat(stubTestingT, test.actual, has.StructWithValues(test.expected))
 	}
 }
+
+func TestConformsToStringer(t *testing.T) {
+	then.AssertThat(t, is.Nil().String(), is.EqualTo("value that is <nil>"))
+}
