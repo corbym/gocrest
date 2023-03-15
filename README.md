@@ -5,7 +5,7 @@ can be strung together in a more readable form to create flexible assertions.
 
 Inspired by [Hamcrest](https://github.com/hamcrest). 
 
-[![Build status](https://travis-ci.com/corbym/gocrest.svg?branch=master)](https://travis-ci.com)
+[![Build](https://github.com/corbym/gocrest/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/corbym/gocrest/actions/workflows/build.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/corbym/gocrest)](https://goreportcard.com/report/github.com/corbym/gocrest)
 [![GoDoc](https://godoc.org/github.com/corbym/gocrest?status.svg)](http://godoc.org/github.com/corbym/gocrest)
 [![Coverage Status](https://coveralls.io/repos/github/corbym/gocrest/badge.svg?branch=master)](https://coveralls.io/github/corbym/gocrest?branch=master)
