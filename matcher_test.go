@@ -579,7 +579,7 @@ func TestMatcherDescription(t *testing.T) {
 		})
 	}
 }
-func TestAllOfDescription(testing *testing.T) {
+func TestAllOfDescribesOnlyMismatches(testing *testing.T) {
 	stubTestingT := new(StubTestingT)
 	then.AssertThat(stubTestingT, "abc", is.AllOf(
 		is.EqualTo("abc"),
