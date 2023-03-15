@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-//EqualToIgnoringWhitespace tests whether two strings have identical content without any whitespace
+// EqualToIgnoringWhitespace tests whether two strings have identical content without any whitespace
 // comparison. For example:
 //
 // "a bc" is EqualToIgnoringWhitespace when compared with "a   b c"

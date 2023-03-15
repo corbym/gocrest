@@ -6,7 +6,7 @@ import (
 	"reflect"
 )
 
-//Nil matches if the actual value is nil
+// Nil matches if the actual value is nil
 func Nil() *gocrest.Matcher {
 	match := new(gocrest.Matcher)
 	match.Describe = "value that is <nil>"

@@ -6,11 +6,11 @@ import (
 	"reflect"
 )
 
-//LessThan matcher compares two values that are numeric or string values, and when
+// LessThan matcher compares two values that are numeric or string values, and when
 // called returns true if actual < expected. Strings are compared lexicographically with '<'.
 // The matcher will always return false for unknown types.
 // Actual and expected types must be the same underlying type, or the function will panic.
-//Returns a matcher that checks if actual is greater than expected.
+// Returns a matcher that checks if actual is greater than expected.
 func LessThan(expected interface{}) *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
 	matcher.Describe = fmt.Sprintf("value less than <%v>", expected)

@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-//ValueContaining finds if x is contained in y.
+// ValueContaining finds if x is contained in y.
 // Acts like "ContainsAll", all elements given must be present (or must match) in actual in the same order as the expected values.
 // If "expected" is an array or slice, we assume that actual is the same type.
 // assertThat([]T, has.ValueContaining(a,b,c)) is also valid if variadic a,b,c are all type T (or matchers of T).
@@ -15,7 +15,7 @@ import (
 // both maps contain all key,values in expected or all variadic values are equal (or matchers match) respectively.
 // For string, behaves like strings.Contains.
 // Will panic if types cannot be converted correctly.
-//Returns the Matcher that returns true if found.
+// Returns the Matcher that returns true if found.
 func ValueContaining(expected ...interface{}) *gocrest.Matcher {
 	match := new(gocrest.Matcher)
 	correctVariadicExpected := correctExpectedValue(expected...)

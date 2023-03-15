@@ -5,11 +5,11 @@ import (
 	"reflect"
 )
 
-//Empty matches if the actual is "empty".
+// Empty matches if the actual is "empty".
 // 'string' values are empty if they are "", maps, arrays and slices are empty if len(actual) is 0.
 // Pointers and interfaces are empty when nil.
 // Other types (int, float, bool) will cause the function to panic.
-//Returns a matcher that evaluates true if actual is "empty".
+// Returns a matcher that evaluates true if actual is "empty".
 func Empty() *gocrest.Matcher {
 	matcher := new(gocrest.Matcher)
 	matcher.Describe = "empty value"
