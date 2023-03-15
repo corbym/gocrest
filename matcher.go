@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-//Matcher provides the structure for matcher operations.
+// Matcher provides the structure for matcher operations.
 type Matcher struct {
 	// Matches returns true if the function matches.
 	Matches func(actual interface{}) bool
@@ -20,24 +20,24 @@ type Matcher struct {
 	ReasonString string
 }
 
-//Reason for the mismatch.
+// Reason for the mismatch.
 func (matcher *Matcher) Reason(r string) *Matcher {
 	matcher.ReasonString = r
 	return matcher
 }
 
-//Describes the Matcher to conform to the Stringer interface
+// Describes the Matcher to conform to the Stringer interface
 func (matcher *Matcher) String() string {
 	return matcher.Describe
 }
 
-//Reasonf allows a formatted reason for the mismatch.
+// Reasonf allows a formatted reason for the mismatch.
 func (matcher *Matcher) Reasonf(format string, args ...interface{}) *Matcher {
 	return matcher.Reason(fmt.Sprintf(format, args...))
 }
 
-//AppendActual appends an actual string to the matcher's actual description. This is useful if you want
-// to preseve sub-matchers actual values. See is.AllOf() matcher for an example.
+// AppendActual appends an actual string to the matcher's actual description. This is useful if you want
+// to preserve sub-matchers actual values. See is.AllOf() matcher for an example.
 func (matcher *Matcher) AppendActual(actualAsString string) {
 	matcher.Actual += " " + actualAsString
 	matcher.Actual = strings.TrimSpace(matcher.Actual)

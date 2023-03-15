@@ -7,7 +7,7 @@ import (
 	"github.com/corbym/gocrest"
 )
 
-// Checks whether the nth element of the array/slice matches the nth expectation passed
+// EveryElement Checks whether the nth element of the array/slice matches the nth expectation passed
 // Panics if the actual is not an array/slice
 // Panics if the count of the expectations does not match the array's/slice's length
 func EveryElement(expects ...*gocrest.Matcher) *gocrest.Matcher {

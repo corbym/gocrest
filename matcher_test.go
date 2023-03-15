@@ -562,7 +562,7 @@ func TestMatcherDescription(t *testing.T) {
 		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
 		{description: "MatchesPattern (invalid regex)", actual: "blarney stone", matcher: is.MatchForPattern("+++"), expected: "error parsing regexp: missing argument to repetition operator: `+`"},
 		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
-		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.ValueContaining("e", "f")), expected: "all of (value equal to <abc> and something that contains <e> and <f>)"},
+		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.ValueContaining("e", "f")), expected: "something that contains <e> and <f>"},
 		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")), expected: "any of (value equal to <efg> or something that contains <e>)"},
 		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key("foo"), expected: "map has key 'foo'"},
 		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys("hi", "foo"), expected: "map has keys '[hi foo]'"},
@@ -579,7 +579,17 @@ func TestMatcherDescription(t *testing.T) {
 		})
 	}
 }
-
+func TestAllOfDescription(testing *testing.T) {
+	stubTestingT := new(StubTestingT)
+	then.AssertThat(stubTestingT, "abc", is.AllOf(
+		is.EqualTo("abc"),
+		is.ValueContaining("e", "f"),
+		is.Empty(),
+	))
+	if !strings.Contains(stubTestingT.MockTestOutput, "Expected: something that contains <e> and <f> and empty value\n") {
+		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
+}
 func TestHasFieldDescribesMismatch(testing *testing.T) {
 	type T struct {
 		F string
