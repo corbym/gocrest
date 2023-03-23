@@ -41,15 +41,22 @@ then.AssertThat(t, "abcdef", is.AllOf(is.ValueContaining("abc"), is.LessThan("gh
 Asynchronous Matching (v1.0.7 onwards):
 
 ```go
-  //Reader
-  then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
+  	//Reader
+  	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
 		then.AssertThat(eventually, by.Reading(slowReader, 1024), is.EqualTo([]byte("abcdefghijklmnopqrstuv")))
 	})
 ```
 ```go
-  //channels
+  	//channels
 	then.Eventually(t, time.Second*5, time.Second, func(eventually gocrest.TestingT) {
 		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
+	})
+```
+```go
+	// multiple assertions
+	then.WithinTenSeconds(t, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
+		then.AssertThat(eventually, by.Channelling(channelTwo), is.EqualTo("11").Reason("This is unreachable"))
 	})
 ```
 # Matchers so far..
