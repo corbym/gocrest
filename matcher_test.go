@@ -894,25 +894,29 @@ func (s DelayedReader) Read(p []byte) (int, error) {
 func TestEventuallyWithDelayedReader(t *testing.T) {
 	slowReader := DelayedReader{
 		R: bytes.NewBuffer([]byte("abcdefghijklmnopqrstuv")),
-		D: time.Second * 3,
+		D: time.Second,
 	}
 	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
 		then.AssertThat(eventually, by.Reading(slowReader, 1024), is.EqualTo([]byte("abcdefghijklmnopqrstuv")))
 	})
 }
-func TestEventuallyChannel(t *testing.T) {
-	channel := make(chan int, 1)
-	go func() {
-		for i := 0; i < 10; i++ {
-			time.Sleep(time.Second)
-			channel <- i
-		}
-	}()
+func TestEventuallyChannels(t *testing.T) {
+	channel := firstTestChannel()
 	then.Eventually(t, time.Second*5, time.Second, func(eventually gocrest.TestingT) {
-		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3))
+		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
 	})
 }
-
+func TestEventuallyChannelsShouldFail(t *testing.T) {
+	channel := firstTestChannel()
+	channelTwo := secondTestChannel()
+	stubbedTesting := new(StubTestingT)
+	then.WithinTenSeconds(stubbedTesting, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
+		then.AssertThat(eventually, by.Channelling(channelTwo), is.EqualTo("11").Reason("This is unreachable"))
+	})
+	then.AssertThat(t, stubbedTesting.failed, is.EqualTo(true))
+	then.AssertThat(t, stubbedTesting.MockTestOutput, is.ValueContaining("This is unreachable"))
+}
 func TestEventuallyChannelInterface(t *testing.T) {
 	type MyType struct {
 		F string
@@ -922,7 +926,7 @@ func TestEventuallyChannelInterface(t *testing.T) {
 	channel := make(chan *MyType, 1)
 	go func() {
 		for i := 0; i < 10; i++ {
-			time.Sleep(time.Second)
+			time.Sleep(time.Millisecond * 500)
 			m := new(MyType)
 			m.F = fmt.Sprintf("hi - %d", i)
 			m.B = fmt.Sprintf("bye - %d", i)
@@ -935,4 +939,26 @@ func TestEventuallyChannelInterface(t *testing.T) {
 			"B": is.EqualTo("bye - 3"),
 		}))
 	})
+}
+
+func firstTestChannel() chan int {
+	channel := make(chan int, 1)
+	go func() {
+		for i := 0; i < 10; i++ {
+			time.Sleep(time.Second)
+			channel <- i
+		}
+	}()
+	return channel
+}
+
+func secondTestChannel() chan string {
+	channelTwo := make(chan string, 1)
+	go func() {
+		for i := 0; i < 10; i++ {
+			time.Sleep(time.Second)
+			channelTwo <- fmt.Sprintf("%d", i)
+		}
+	}()
+	return channelTwo
 }
