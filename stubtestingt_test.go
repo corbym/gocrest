@@ -18,7 +18,12 @@ func (t *StubTestingT) Errorf(format string, args ...interface{}) {
 	t.MockTestOutput = fmt.Sprintf(format, args...)
 	t.failed = true
 }
-
+func (t *StubTestingT) Failed() bool {
+	return t.failed
+}
+func (t *StubTestingT) Fail() {
+	t.failed = true
+}
 func (t *StubTestingT) FailNow() {
 	t.failed = true
 }

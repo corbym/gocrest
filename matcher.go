@@ -9,7 +9,7 @@ import (
 type Matcher struct {
 	// Matches returns true if the function matches.
 	Matches func(actual interface{}) bool
-	// Describe describes the matcher (e.g. "a value EqualTo(foo)"
+	// Describe describes the matcher (e.g. "a value EqualTo(foo)" - foo being the expected value)
 	Describe string
 	// Actual is used by then.AssertThat if the matcher
 	// needs to resolve the string description of the actual.

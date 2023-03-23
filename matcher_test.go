@@ -1,13 +1,17 @@
 package gocrest_test
 
 import (
-	"strings"
-	"testing"
-
+	"bytes"
+	"fmt"
 	"github.com/corbym/gocrest"
+	"github.com/corbym/gocrest/by"
 	"github.com/corbym/gocrest/has"
 	"github.com/corbym/gocrest/is"
 	"github.com/corbym/gocrest/then"
+	"io"
+	"strings"
+	"testing"
+	"time"
 )
 
 var stubTestingT *StubTestingT
@@ -24,6 +28,7 @@ func TestHasLengthMatchesOrNot(testing *testing.T) {
 	}{
 		{actual: nil, expected: nil, shouldFail: true},
 		{actual: "", expected: 0, shouldFail: false},
+		{actual: "a", expected: 1, shouldFail: false},
 		{actual: "a", expected: 1, shouldFail: false},
 		{actual: "1", expected: 1, shouldFail: false},
 		{actual: []string{}, expected: 0, shouldFail: false},
@@ -874,4 +879,60 @@ func TestStructValuesPanic(t *testing.T) {
 
 func TestConformsToStringer(t *testing.T) {
 	then.AssertThat(t, is.Nil().String(), is.EqualTo("value that is <nil>"))
+}
+
+type DelayedReader struct {
+	R io.Reader
+	D time.Duration
+}
+
+func (s DelayedReader) Read(p []byte) (int, error) {
+	time.Sleep(s.D)
+	return s.R.Read(p)
+}
+
+func TestEventuallyWithDelayedReader(t *testing.T) {
+	slowReader := DelayedReader{
+		R: bytes.NewBuffer([]byte("abcdefghijklmnopqrstuv")),
+		D: time.Second * 3,
+	}
+	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Reading(slowReader, 1024), is.EqualTo([]byte("abcdefghijklmnopqrstuv")))
+	})
+}
+func TestEventuallyChannel(t *testing.T) {
+	channel := make(chan int, 1)
+	go func() {
+		for i := 0; i < 10; i++ {
+			time.Sleep(time.Second)
+			channel <- i
+		}
+	}()
+	then.Eventually(t, time.Second*5, time.Second, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3))
+	})
+}
+
+func TestEventuallyChannelInterface(t *testing.T) {
+	type MyType struct {
+		F string
+		B string
+	}
+
+	channel := make(chan *MyType, 1)
+	go func() {
+		for i := 0; i < 10; i++ {
+			time.Sleep(time.Second)
+			m := new(MyType)
+			m.F = fmt.Sprintf("hi - %d", i)
+			m.B = fmt.Sprintf("bye - %d", i)
+			channel <- m
+		}
+	}()
+	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Channelling(channel), has.StructWithValues(has.StructMatchers{
+			"F": is.EqualTo("hi - 3"),
+			"B": is.EqualTo("bye - 3"),
+		}))
+	})
 }

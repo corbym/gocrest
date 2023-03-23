@@ -4,6 +4,8 @@ package gocrest
 type TestingT interface {
 	Logf(format string, args ...interface{})
 	Errorf(format string, args ...interface{})
+	Failed() bool
+	Fail()
 	FailNow()
 	Helper()
 }
