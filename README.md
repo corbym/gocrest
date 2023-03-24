@@ -38,7 +38,7 @@ Composed with AllOf:
 then.AssertThat(t, "abcdef", is.AllOf(is.ValueContaining("abc"), is.LessThan("ghi")))
 ```
 
-Asynchronous Matching (v1.0.7 onwards):
+Asynchronous Matching (v1.0.8 onwards):
 
 ```go
   	//Reader
