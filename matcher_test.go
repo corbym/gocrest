@@ -906,16 +906,20 @@ func TestEventuallyChannels(t *testing.T) {
 		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
 	})
 }
+
+// TestEventuallyChannelsShouldFail: TODO: report on only failing assertions - at present, all assertions will be reported.
 func TestEventuallyChannelsShouldFail(t *testing.T) {
 	channel := firstTestChannel()
 	channelTwo := secondTestChannel()
 	stubbedTesting := new(StubTestingT)
 	then.WithinTenSeconds(stubbedTesting, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Channelling(channelTwo), is.EqualTo("11").Reason("This is going to fail"))
 		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
-		then.AssertThat(eventually, by.Channelling(channelTwo), is.EqualTo("11").Reason("This is unreachable"))
 	})
 	then.AssertThat(t, stubbedTesting.failed, is.EqualTo(true))
-	then.AssertThat(t, stubbedTesting.MockTestOutput, is.ValueContaining("This is unreachable"))
+	then.AssertThat(t, stubbedTesting.MockTestOutput, is.AllOf(
+		is.ValueContaining("This is going to fail"),
+	))
 }
 func TestEventuallyChannelInterface(t *testing.T) {
 	type MyType struct {
@@ -925,6 +929,7 @@ func TestEventuallyChannelInterface(t *testing.T) {
 
 	channel := make(chan *MyType, 1)
 	go func() {
+		defer close(channel)
 		for i := 0; i < 10; i++ {
 			time.Sleep(time.Millisecond * 500)
 			m := new(MyType)
@@ -944,6 +949,7 @@ func TestEventuallyChannelInterface(t *testing.T) {
 func firstTestChannel() chan int {
 	channel := make(chan int, 1)
 	go func() {
+		defer close(channel)
 		for i := 0; i < 10; i++ {
 			time.Sleep(time.Second)
 			channel <- i
@@ -955,6 +961,7 @@ func firstTestChannel() chan int {
 func secondTestChannel() chan string {
 	channelTwo := make(chan string, 1)
 	go func() {
+		defer close(channelTwo)
 		for i := 0; i < 10; i++ {
 			time.Sleep(time.Second)
 			channelTwo <- fmt.Sprintf("%d", i)

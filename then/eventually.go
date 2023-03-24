@@ -3,29 +3,53 @@ package then
 import (
 	"fmt"
 	"github.com/corbym/gocrest"
+	"strings"
 	"sync"
 	"time"
 )
 
-type RecordingTestingT struct {
-	gocrest.TestingT
+type FailureLog struct {
 	TestOutput string
 	failed     bool
 }
-
-func (t *RecordingTestingT) Logf(format string, args ...interface{}) {
-	t.TestOutput = fmt.Sprintf(format, args...)
+type RecordingTestingT struct {
+	sync.Mutex
+	gocrest.TestingT
+	failures []FailureLog
 }
 
 func (t *RecordingTestingT) Errorf(format string, args ...interface{}) {
-	t.TestOutput = fmt.Sprintf(format, args...)
-	t.failed = true
+	t.Lock()
+	defer t.Unlock()
+	t.failures = append(t.failures, FailureLog{
+		fmt.Sprintf(format, args...),
+		true,
+	})
 }
 func (t *RecordingTestingT) Fail() {
-	t.failed = true
+	t.Errorf("Unknown call to Fail")
 }
 func (t *RecordingTestingT) FailNow() {
-	t.failed = true
+	t.Errorf("Unknown call to FailNow")
+}
+func (t *RecordingTestingT) FailedTestOutputs() []string {
+	t.Lock()
+	defer t.Unlock()
+	var logs []string
+	for _, failure := range t.failures {
+		logs = append(logs, failure.TestOutput)
+	}
+	return logs
+}
+func (t *RecordingTestingT) Failing() bool {
+	t.Lock()
+	defer t.Unlock()
+	for _, failure := range t.failures {
+		if failure.failed {
+			return true
+		}
+	}
+	return false
 }
 
 type Latest struct {
@@ -54,20 +78,21 @@ func Eventually(t gocrest.TestingT, waitFor time.Duration, tick time.Duration, a
 	for tick := ticker.C; ; {
 		select {
 		case <-timer.C:
-			t.Errorf(latestValue.Get().TestOutput)
+			latestRecordingT := latestValue.Get()
+			t.Errorf("Eventually Failed: \n" + strings.Join(latestRecordingT.FailedTestOutputs(), "\n"))
 			return
 		case <-tick:
 			tick = nil
 			go func() {
 				recordedTesting := RecordingTestingT{
 					TestingT: t,
-					failed:   false,
+					failures: []FailureLog{},
 				}
 				assertions(&recordedTesting)
 				channel <- recordedTesting
 			}()
 		case value := <-channel:
-			if !value.failed {
+			if !value.Failing() {
 				return
 			}
 			latestValue.latestValue = value
