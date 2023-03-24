@@ -907,7 +907,6 @@ func TestEventuallyChannels(t *testing.T) {
 	})
 }
 
-// TestEventuallyChannelsShouldFail: TODO: report on only failing assertions - at present, all assertions will be reported.
 func TestEventuallyChannelsShouldFail(t *testing.T) {
 	channel := firstTestChannel()
 	channelTwo := secondTestChannel()
@@ -919,6 +918,7 @@ func TestEventuallyChannelsShouldFail(t *testing.T) {
 	then.AssertThat(t, stubbedTesting.failed, is.EqualTo(true))
 	then.AssertThat(t, stubbedTesting.MockTestOutput, is.AllOf(
 		is.ValueContaining("This is going to fail"),
+		is.Not(is.ValueContaining("should not fail")),
 	))
 }
 func TestEventuallyChannelInterface(t *testing.T) {

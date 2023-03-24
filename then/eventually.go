@@ -53,14 +53,36 @@ func (t *RecordingTestingT) Failing() bool {
 }
 
 type Latest struct {
-	mu          sync.Mutex
+	sync.Mutex
 	latestValue RecordingTestingT
 }
 
 func (l *Latest) Get() RecordingTestingT {
-	l.mu.Lock()
-	defer l.mu.Unlock()
+	l.Lock()
+	defer l.Unlock()
 	return l.latestValue
+}
+func (l *Latest) Merge(updated RecordingTestingT) RecordingTestingT {
+	l.Lock()
+	defer l.Unlock()
+	var mergedFailures []FailureLog
+	for i, failure := range l.latestValue.failures {
+		if failure.failed {
+			if i < len(updated.failures) {
+				mergedFailures = append(mergedFailures, updated.failures[i])
+			}
+		} else {
+			mergedFailures = append(mergedFailures, failure)
+		}
+	}
+	if l.latestValue.failures == nil {
+		mergedFailures = updated.failures
+	}
+	merged := RecordingTestingT{
+		failures: mergedFailures,
+		TestingT: l.latestValue.TestingT,
+	}
+	return merged
 }
 func Eventually(t gocrest.TestingT, waitFor time.Duration, tick time.Duration, assertions func(eventually gocrest.TestingT)) {
 
@@ -95,7 +117,7 @@ func Eventually(t gocrest.TestingT, waitFor time.Duration, tick time.Duration, a
 			if !value.Failing() {
 				return
 			}
-			latestValue.latestValue = value
+			latestValue.latestValue = latestValue.Merge(value)
 			tick = ticker.C
 		}
 	}
