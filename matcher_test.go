@@ -32,7 +32,7 @@ func TestLengthMatches(testing *testing.T) {
 	}{
 		actual: nil,
 	}
-	then.AssertThat(testing, values.actual, is.Nil[string, *string]())
+	then.AssertThat(testing, values.actual, is.Nil[*string]())
 }
 func TestHasLengthStringMatchesOrNot(testing *testing.T) {
 	var hasLengthItems = []struct {
@@ -429,12 +429,12 @@ func TestAllofReturnsTheSubMatcherActual(testing *testing.T) {
 }
 
 func TestIsNilMatches(testing *testing.T) {
-	then.AssertThat(testing, nil, is.Nil[any, any]())
+	then.AssertThat(testing, nil, is.Nil[any]())
 }
 
 func TestIsNilFails(testing *testing.T) {
 	var actual = 2
-	then.AssertThat(stubTestingT, &actual, is.Nil[int, *int]())
+	then.AssertThat(stubTestingT, &actual, is.Nil[*int]())
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
@@ -765,8 +765,8 @@ func TestArrayContainsMatcherDescription(t *testing.T) {
 		matcher     *gocrest.Matcher[[]string]
 		expected    string
 	}{
-		{description: "ArrayContaining", actual: []string{"Foo", "Bar"}, matcher: is.ArrayContaining("Baz", "Bing"), expected: "something that contains [Baz Bing]"},
-		{description: "ValueContainArrayMatching", actual: []string{"Foo", "Bar"}, matcher: is.ArrayMatching(is.EqualTo("Baz"), is.EqualTo("Bing")), expected: "something that contains value equal to <Baz> and value equal to <Bing>"},
+		{description: "ArrayContaining", actual: []string{"Foo", "Bar"}, matcher: is.ArrayContaining("Baz", "Bing"), expected: "something that contains <Baz> and <Bing>"},
+		{description: "ValueContainArrayMatching", actual: []string{"Foo", "Bar"}, matcher: is.ArrayMatching(is.EqualTo("Baz"), is.EqualTo("Bing")), expected: "something that contains <value equal to <Baz>> and <value equal to <Bing>>"},
 	}
 	for _, test := range equalsItems {
 		t.Run(test.description, func(innerT *testing.T) {
@@ -788,8 +788,8 @@ func TestStringMatchersDescription(t *testing.T) {
 		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
 		{description: "MatchesPattern (invalid regex)", actual: "blarney stone", matcher: is.MatchForPattern("+++"), expected: "error parsing regexp: missing argument to repetition operator: `+`"},
 		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
-		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.StringContaining("e", "f")), expected: "something that contains <e> and <f>"},
-		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.StringContaining("e")), expected: "any of (value equal to <efg> or something that contains <e>)"},
+		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.StringContaining("e", "f")), expected: "something that contains [e f]"},
+		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.StringContaining("e")), expected: "any of (value equal to <efg> or something that contains [e])"},
 		{description: "LengthOf Composed", actual: "a", matcher: has.LengthMatching[string](is.GreaterThan(2)), expected: "value with length value greater than <2>"},
 		{description: "EqualToIgnoringWhitespace", actual: "a b c", matcher: is.EqualToIgnoringWhitespace("b c d"), expected: "ignoring whitespace value equal to <b c d>"},
 	}
@@ -811,7 +811,7 @@ func TestAllOfDescribesOnlyMismatches(testing *testing.T) {
 		is.StringContaining("e", "f"),
 		is.Empty[string, string, string](),
 	))
-	if !strings.Contains(stubTestingT.MockTestOutput, "Expected: something that contains <e> and <f> and empty value\n") {
+	if !strings.Contains(stubTestingT.MockTestOutput, "Expected: something that contains [e f] and empty value\n") {
 		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
 	}
 }
@@ -902,7 +902,7 @@ func TestTypeName(t *testing.T) {
 func TestNilArrayInterface(t *testing.T) {
 	actual := nilResponse()
 
-	then.AssertThat(t, actual, is.Nil[any, []any]())
+	then.AssertThat(t, actual, is.Nil[[]any]())
 }
 
 func nilResponse() []any {
@@ -1050,7 +1050,7 @@ func TestEveryIntElement(t *testing.T) {
 //}
 
 func TestConformsToStringer(t *testing.T) {
-	then.AssertThat(t, is.Nil[any, any]().String(), is.EqualTo("value that is <nil>"))
+	then.AssertThat(t, is.Nil[any]().String(), is.EqualTo("value that is <nil>"))
 }
 
 type DelayedReader struct {

@@ -7,7 +7,7 @@ import (
 )
 
 // Nil matches if the actual value is nil
-func Nil[T any, A *T | any]() *gocrest.Matcher[A] {
+func Nil[A any]() *gocrest.Matcher[A] {
 	match := new(gocrest.Matcher[A])
 	match.Describe = "value that is <nil>"
 	match.Matches = func(actual A) bool {
