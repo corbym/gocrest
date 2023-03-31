@@ -7,13 +7,13 @@ import (
 
 // TypeName returns true if the expected matches the actual Type's Name. Expected can be a matcher or a string.
 // E.g. has.TypeName(EqualTo("pkg.Type")) would be true with instance of `type Type struct{}` in package name 'pkg'.
-func TypeName[A any](expected interface{}) *gocrest.Matcher[A] {
+func TypeName[A any](expected string) *gocrest.Matcher[A] {
 	matcher := new(gocrest.Matcher[A])
 	matcher.Matches = func(actual A) bool {
 		actualTypeName := reflect.TypeOf(actual).String()
 		matcher.Actual = actualTypeName
 		matcher.Describe = "has type "
-		matcher.Describe += "<" + expected.(string) + ">"
+		matcher.Describe += "<" + expected + ">"
 		return actualTypeName == expected
 
 	}

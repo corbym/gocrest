@@ -1,12 +1,17 @@
 package gocrest_test
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/corbym/gocrest"
+	"github.com/corbym/gocrest/by"
 	"github.com/corbym/gocrest/has"
 	"github.com/corbym/gocrest/is"
 	"github.com/corbym/gocrest/then"
+	"io"
 	"strings"
 	"testing"
+	"time"
 )
 
 var stubTestingT *StubTestingT
@@ -27,7 +32,7 @@ func TestLengthMatches(testing *testing.T) {
 	}{
 		actual: nil,
 	}
-	then.AssertThat(testing, values.actual, is.Nil[string]())
+	then.AssertThat(testing, values.actual, is.Nil[string, *string]())
 }
 func TestHasLengthStringMatchesOrNot(testing *testing.T) {
 	var hasLengthItems = []struct {
@@ -424,12 +429,12 @@ func TestAllofReturnsTheSubMatcherActual(testing *testing.T) {
 }
 
 func TestIsNilMatches(testing *testing.T) {
-	then.AssertThat(testing, nil, is.Nil[any]())
+	then.AssertThat(testing, nil, is.Nil[any, any]())
 }
 
 func TestIsNilFails(testing *testing.T) {
 	var actual = 2
-	then.AssertThat(stubTestingT, &actual, is.Nil[int]())
+	then.AssertThat(stubTestingT, &actual, is.Nil[int, *int]())
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
@@ -659,247 +664,305 @@ func TestHasKeyMatches(testing *testing.T) {
 	}
 }
 
-//
-//func TestHasKeysMatches(testing *testing.T) {
-//	type T struct{}
-//	expectedT := new(T)
-//	secondExpectedT := new(T)
-//	var equalsItems = []struct {
-//		actual     interface{}
-//		expected   interface{}
-//		shouldFail bool
-//	}{
-//		{actual: map[string]bool{"hi": true, "bye": true}, expected: []string{"hi", "bye"}, shouldFail: false},
-//		{actual: map[*T]bool{expectedT: true, secondExpectedT: true}, expected: []*T{expectedT, secondExpectedT}, shouldFail: false},
-//		{actual: map[*T]bool{expectedT: true}, expected: "foo", shouldFail: true},
-//	}
-//	for _, test := range equalsItems {
-//		stubTestingT := new(StubTestingT)
-//		then.AssertThat(stubTestingT, test.actual, has.AllKeys(test.expected))
-//		if stubTestingT.HasFailed() != test.shouldFail {
-//			testing.Errorf("unexpected result HasKeys(%v): wanted fail was %v but failed %v", test.actual, test.shouldFail, stubTestingT.HasFailed())
-//		}
-//	}
-//}
-//
-//func TestHasKeysWithVariadic(testing *testing.T) {
-//	actual := map[string]bool{"hi": true, "bye": false}
-//	then.AssertThat(testing, actual, has.AllKeys("hi", "bye"))
-//}
-//
-//func TestMatcherDescription(t *testing.T) {
-//	var equalsItems = []struct {
-//		description string
-//		actual      interface{}
-//		matcher     *gocrest.Matcher
-//		expected    string
-//	}{
-//		{description: "is true", actual: false, matcher: is.True(), expected: "is true"},
-//		{description: "is false", actual: true, matcher: is.False(), expected: "is false"},
-//		{description: "has type T", actual: t, matcher: has.TypeName("string"), expected: "has type <string>"},
-//		{description: "has type T matcher", actual: t, matcher: has.TypeName(is.EqualTo("string")), expected: "has type value equal to <string>"},
-//		{description: "EqualTo.Reasonf", actual: 1, matcher: is.EqualTo(2).Reasonf("arithmetic %s is wrong", "foo"), expected: "arithmetic foo is wrong"},
-//		{description: "EqualTo.Reason", actual: 1, matcher: is.EqualTo(2).Reason("arithmetic is wrong"), expected: "arithmetic is wrong\nExpected: value equal to <2>\n     but: <1>\n"},
-//		{description: "Not", actual: 2, matcher: is.Not(is.EqualTo(2)), expected: "\nExpected: not(value equal to <2>)\n     but: <2>\n"},
-//		{description: "Empty", actual: map[string]bool{"foo": true}, matcher: is.Empty(), expected: "empty value"},
-//		{description: "GreaterThan", actual: 1, matcher: is.GreaterThan(2), expected: "value greater than <2>"},
-//		{description: "GreaterThanOrEqual", actual: 1, matcher: is.GreaterThanOrEqualTo(2), expected: "any of (value greater than <2> or value equal to <2>)"},
-//		{description: "LessThan", actual: 2, matcher: is.LessThan(1), expected: "value less than <1>"},
-//		{description: "LessThanOrEqualTo", actual: 2, matcher: is.LessThanOrEqualTo(1), expected: "any of (value less than <1> or value equal to <1>)"},
-//		{description: "Nil", actual: 1, matcher: is.Nil(), expected: "value that is <nil>"},
-//		{description: "ValueContaining", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining([]string{"Baz", "Bing"}), expected: "something that contains [Baz Bing]"},
-//		{description: "ValueContaining", actual: []string{"Foo", "Bar"}, matcher: is.ValueContaining(is.EqualTo("Baz"), is.EqualTo("Bing")), expected: "something that contains value equal to <Baz> and value equal to <Bing>"},
-//		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
-//		{description: "MatchesPattern (invalid regex)", actual: "blarney stone", matcher: is.MatchForPattern("+++"), expected: "error parsing regexp: missing argument to repetition operator: `+`"},
-//		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
-//		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.ValueContaining("e", "f")), expected: "something that contains <e> and <f>"},
-//		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.ValueContaining("e")), expected: "any of (value equal to <efg> or something that contains <e>)"},
-//		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key("foo"), expected: "map has key 'foo'"},
-//		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys("hi", "foo"), expected: "map has keys '[hi foo]'"},
-//		{description: "LengthOf Composed", actual: "a", matcher: has.Length(is.GreaterThan(2)), expected: "value with length value greater than <2>"},
-//		{description: "EqualToIgnoringWhitespace", actual: "a b c", matcher: is.EqualToIgnoringWhitespace("b c d"), expected: "ignoring whitespace value equal to <b c d>"},
-//	}
-//	for _, test := range equalsItems {
-//		t.Run(test.description, func(innerT *testing.T) {
-//			stubTestingT := new(StubTestingT)
-//			then.AssertThat(stubTestingT, test.actual, test.matcher)
-//			if !strings.Contains(stubTestingT.MockTestOutput, test.expected) {
-//				innerT.Errorf("%s did not fail with expected desc <%s>, got: %s", test.description, test.expected, stubTestingT.MockTestOutput)
-//			}
-//		})
-//	}
-//}
-//func TestAllOfDescribesOnlyMismatches(testing *testing.T) {
-//	stubTestingT := new(StubTestingT)
-//	then.AssertThat(stubTestingT, "abc", is.AllOf(
-//		is.EqualTo("abc"),
-//		is.ValueContaining("e", "f"),
-//		is.Empty(),
-//	))
-//	if !strings.Contains(stubTestingT.MockTestOutput, "Expected: something that contains <e> and <f> and empty value\n") {
-//		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
-//	}
-//}
-//func TestHasFieldDescribesMismatch(testing *testing.T) {
-//	type T struct {
-//		F string
-//		B string
-//	}
-//	expected := "X"
-//	then.AssertThat(stubTestingT, new(T), has.FieldNamed(expected))
-//	if !strings.Contains(stubTestingT.MockTestOutput, "struct with field X") &&
-//		!strings.Contains(stubTestingT.MockTestOutput, "T{F string B string}") {
-//		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
-//	}
-//}
-//
-//func TestHasFunctionDescribesMismatch(testing *testing.T) {
-//	type MyType interface {
-//		F() string
-//		B() string
-//	}
-//	actual := new(MyType)
-//	expected := "X"
-//	then.AssertThat(stubTestingT, actual, has.FunctionNamed(expected))
-//	if !strings.Contains(stubTestingT.MockTestOutput, "interface with function X") &&
-//		!strings.Contains(stubTestingT.MockTestOutput, "MyType{B()F()}") {
-//		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
-//	}
-//}
-//
-//func TestEqualToIgnoringWhitespace(t *testing.T) {
-//	var ignoreWhitespaceItems = []struct {
-//		actual     string
-//		expected   string
-//		shouldFail bool
-//	}{
-//		{actual: "a bc", expected: "a bc", shouldFail: false},
-//		{actual: "a b c", expected: "a bc", shouldFail: false},
-//		{actual: "abc", expected: "a", shouldFail: true},
-//		{actual: "abc \n", expected: "a", shouldFail: true},
-//		{actual: "%^&*abc \n\t\t", expected: "%^&*abc\n", shouldFail: false},
-//	}
-//	for _, test := range ignoreWhitespaceItems {
-//		stubTestingT := new(StubTestingT)
-//		then.AssertThat(stubTestingT, test.actual, is.EqualToIgnoringWhitespace(test.expected))
-//		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reasonf("<%s>, should Fail(%v) for <%s>", test.actual, test.shouldFail, test.expected))
-//	}
-//}
-//
-//type private struct {
-//}
-//type Foo struct {
-//}
-//
-//func TestTypeName(t *testing.T) {
-//	pri := new(private)
-//	priAnd := &private{}
-//	pubAnd := &Foo{}
-//	pub := new(Foo)
-//
-//	tests := []struct {
-//		actual     interface{}
-//		expected   string
-//		shouldFail bool
-//	}{
-//		{t, "*testing.T", false},
-//		{t, "foob", true},
-//		{pri, "*gocrest_test.private", false},
-//		{priAnd, "*gocrest_test.private", false},
-//		{private{}, "gocrest_test.private", false},
-//		{pub, "*gocrest_test.Foo", false},
-//		{pubAnd, "*gocrest_test.Foo", false},
-//		{&pubAnd, "**gocrest_test.Foo", false},
-//		{Foo{}, "gocrest_test.Foo", false},
-//		{"foo", "string", false},
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.expected, func(t *testing.T) {
-//			stubTestingT := new(StubTestingT)
-//			then.AssertThat(stubTestingT, tt.actual, has.TypeName(tt.expected))
-//
-//			then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(tt.shouldFail).Reason(stubTestingT.MockTestOutput))
-//		})
-//	}
-//}
-//
-//func TestNilArrayInterface(t *testing.T) {
-//	actual := nilResponse()
-//
-//	then.AssertThat(t, actual, is.Nil())
-//}
-//
-//func nilResponse() []interface{} {
-//	return nil
-//}
-//
-//func TestEveryElement(t *testing.T) {
-//	tests := []struct {
-//		actual     []any
-//		expected   []*gocrest.Matcher[[]string]
-//		shouldFail bool
-//	}{
-//		{
-//			actual:     []string{"test1", "test2"},
-//			expected:   []*gocrest.Matcher[[]string]{is.EqualTo[string]("test1"), is.EqualTo[string]("test2")},
-//			shouldFail: false,
-//		},
-//		{
-//			actual:     []int{1, 2},
-//			expected:   []*gocrest.Matcher[int]{is.EqualTo[int](1), is.EqualTo[int](2)},
-//			shouldFail: false,
-//		},
-//		{
-//			actual:     []string{"test1", "test2"},
-//			expected:   []*gocrest.Matcher[string]{is.EqualTo[string]("test1"), is.EqualTo[string]("nottest")},
-//			shouldFail: true,
-//		},
-//		{
-//			actual: []int{1, 2},
-//			expected: []*gocrest.Matcher{
-//				is.EqualTo(1),
-//			},
-//			shouldFail: true,
-//		},
-//		{
-//			actual: []int{1},
-//			expected: []*gocrest.Matcher{
-//				is.EqualTo(1),
-//				is.EqualTo(2),
-//			},
-//			shouldFail: true,
-//		},
-//	}
-//	for _, test := range tests {
-//		stubTestingT := new(StubTestingT)
-//		then.AssertThat(stubTestingT, test.actual, has.EveryElement[string](test.expected...))
-//
-//		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
-//	}
-//}
-//func TestEveryElementPanic(t *testing.T) {
-//	tests := []struct {
-//		actual   string
-//		expected []*gocrest.Matcher[string]
-//	}{
-//		{
-//			actual: "not a slice",
-//			expected: []*gocrest.Matcher[string]{
-//				is.Empty[string](),
-//			},
-//		},
-//	}
-//
-//	defer func() {
-//		recover := recover()
-//		then.AssertThat(t, recover, is.Not[any](is.Nil[any]()))
-//	}()
-//
-//	for _, test := range tests {
-//		stubTestingT := new(StubTestingT)
-//		then.AssertThat(stubTestingT, test.actual, has.EveryElement[string](test.expected...))
-//	}
-//}
+func TestHasKeysMatches(testing *testing.T) {
+	then.AssertThat(testing, map[string]bool{"hi": true, "bye": true}, has.AllKeys[string, bool, map[string]bool]("hi", "bye"))
+	type T struct{}
+	expectedT := new(T)
+	secondExpectedT := new(T)
+	then.AssertThat(testing, map[*T]bool{expectedT: true, secondExpectedT: true}, has.AllKeys[*T, bool, map[*T]bool](expectedT, secondExpectedT))
+}
+
+func TestBoolMatcherDescription(t *testing.T) {
+	var equalsItems = []struct {
+		description string
+		actual      bool
+		matcher     *gocrest.Matcher[bool]
+		expected    string
+	}{
+		{description: "is true", actual: false, matcher: is.True(), expected: "is true"},
+		{description: "is false", actual: true, matcher: is.False(), expected: "is false"},
+	}
+	for _, test := range equalsItems {
+		t.Run(test.description, func(innerT *testing.T) {
+			stubTestingT := new(StubTestingT)
+			then.AssertThat(stubTestingT, test.actual, test.matcher)
+			if !strings.Contains(stubTestingT.MockTestOutput, test.expected) {
+				innerT.Errorf("%s did not fail with expected desc <%s>, got: %s", test.description, test.expected, stubTestingT.MockTestOutput)
+			}
+		})
+	}
+}
+func TestTypeNameMatcherDescription(t *testing.T) {
+	var equalsItems = []struct {
+		description string
+		actual      *testing.T
+		matcher     *gocrest.Matcher[*testing.T]
+		expected    string
+	}{
+		{description: "has type T", actual: t, matcher: has.TypeName[*testing.T]("string"), expected: "has type <string>"},
+		{description: "has type T matcher", actual: t, matcher: has.TypeNameMatches[*testing.T](is.EqualTo("string")), expected: "has type value equal to <string>"},
+	}
+	for _, test := range equalsItems {
+		t.Run(test.description, func(innerT *testing.T) {
+			stubTestingT := new(StubTestingT)
+			then.AssertThat(stubTestingT, test.actual, test.matcher)
+			if !strings.Contains(stubTestingT.MockTestOutput, test.expected) {
+				innerT.Errorf("%s did not fail with expected desc <%s>, got: %s", test.description, test.expected, stubTestingT.MockTestOutput)
+			}
+		})
+	}
+}
+func TestSizeMatcherDescription(t *testing.T) {
+	var equalsItems = []struct {
+		description string
+		actual      int
+		matcher     *gocrest.Matcher[int]
+		expected    string
+	}{
+		{description: "EqualTo.Reasonf", actual: 1, matcher: is.EqualTo(2).Reasonf("arithmetic %s is wrong", "foo"), expected: "arithmetic foo is wrong"},
+		{description: "EqualTo.Reason", actual: 1, matcher: is.EqualTo(2).Reason("arithmetic is wrong"), expected: "arithmetic is wrong\nExpected: value equal to <2>\n     but: <1>\n"},
+		{description: "Not", actual: 2, matcher: is.Not(is.EqualTo(2)), expected: "\nExpected: not(value equal to <2>)\n     but: <2>\n"},
+		{description: "GreaterThan", actual: 1, matcher: is.GreaterThan(2), expected: "value greater than <2>"},
+		{description: "GreaterThanOrEqual", actual: 1, matcher: is.GreaterThanOrEqualTo(2), expected: "any of (value greater than <2> or value equal to <2>)"},
+		{description: "LessThan", actual: 2, matcher: is.LessThan(1), expected: "value less than <1>"},
+		{description: "LessThanOrEqualTo", actual: 2, matcher: is.LessThanOrEqualTo(1), expected: "any of (value less than <1> or value equal to <1>)"},
+	}
+	for _, test := range equalsItems {
+		t.Run(test.description, func(innerT *testing.T) {
+			stubTestingT := new(StubTestingT)
+			then.AssertThat(stubTestingT, test.actual, test.matcher)
+			if !strings.Contains(stubTestingT.MockTestOutput, test.expected) {
+				innerT.Errorf("%s did not fail with expected desc <%s>, got: %s", test.description, test.expected, stubTestingT.MockTestOutput)
+			}
+		})
+	}
+}
+func TestSizeMapMatcherDescription(t *testing.T) {
+	var equalsItems = []struct {
+		description string
+		actual      map[string]bool
+		matcher     *gocrest.Matcher[map[string]bool]
+		expected    string
+	}{
+		{description: "Empty", actual: map[string]bool{"foo": true}, matcher: is.Empty[string, bool, map[string]bool](), expected: "empty value"},
+		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key[string, bool, map[string]bool]("foo"), expected: "map has key 'foo'"},
+		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys[string, bool, map[string]bool]("hi", "foo"), expected: "map has keys '[hi foo]'"},
+	}
+	for _, test := range equalsItems {
+		t.Run(test.description, func(innerT *testing.T) {
+			stubTestingT := new(StubTestingT)
+			then.AssertThat(stubTestingT, test.actual, test.matcher)
+			if !strings.Contains(stubTestingT.MockTestOutput, test.expected) {
+				innerT.Errorf("%s did not fail with expected desc <%s>, got: %s", test.description, test.expected, stubTestingT.MockTestOutput)
+			}
+		})
+	}
+}
+func TestArrayContainsMatcherDescription(t *testing.T) {
+	var equalsItems = []struct {
+		description string
+		actual      []string
+		matcher     *gocrest.Matcher[[]string]
+		expected    string
+	}{
+		{description: "ArrayContaining", actual: []string{"Foo", "Bar"}, matcher: is.ArrayContaining("Baz", "Bing"), expected: "something that contains [Baz Bing]"},
+		{description: "ValueContainArrayMatching", actual: []string{"Foo", "Bar"}, matcher: is.ArrayMatching(is.EqualTo("Baz"), is.EqualTo("Bing")), expected: "something that contains value equal to <Baz> and value equal to <Bing>"},
+	}
+	for _, test := range equalsItems {
+		t.Run(test.description, func(innerT *testing.T) {
+			stubTestingT := new(StubTestingT)
+			then.AssertThat(stubTestingT, test.actual, test.matcher)
+			if !strings.Contains(stubTestingT.MockTestOutput, test.expected) {
+				innerT.Errorf("%s did not fail with expected desc <%s>, got: %s", test.description, test.expected, stubTestingT.MockTestOutput)
+			}
+		})
+	}
+}
+func TestStringMatchersDescription(t *testing.T) {
+	var equalsItems = []struct {
+		description string
+		actual      string
+		matcher     *gocrest.Matcher[string]
+		expected    string
+	}{
+		{description: "MatchesPattern", actual: "blarney stone", matcher: is.MatchForPattern("~123.?.*"), expected: "a value that matches pattern ~123.?.*"},
+		{description: "MatchesPattern (invalid regex)", actual: "blarney stone", matcher: is.MatchForPattern("+++"), expected: "error parsing regexp: missing argument to repetition operator: `+`"},
+		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
+		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.StringContaining("e", "f")), expected: "something that contains <e> and <f>"},
+		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.StringContaining("e")), expected: "any of (value equal to <efg> or something that contains <e>)"},
+		{description: "LengthOf Composed", actual: "a", matcher: has.LengthMatching[string](is.GreaterThan(2)), expected: "value with length value greater than <2>"},
+		{description: "EqualToIgnoringWhitespace", actual: "a b c", matcher: is.EqualToIgnoringWhitespace("b c d"), expected: "ignoring whitespace value equal to <b c d>"},
+	}
+	for _, test := range equalsItems {
+		t.Run(test.description, func(innerT *testing.T) {
+			stubTestingT := new(StubTestingT)
+			then.AssertThat(stubTestingT, test.actual, test.matcher)
+			if !strings.Contains(stubTestingT.MockTestOutput, test.expected) {
+				innerT.Errorf("%s did not fail with expected desc <%s>, got: %s", test.description, test.expected, stubTestingT.MockTestOutput)
+			}
+		})
+	}
+}
+
+func TestAllOfDescribesOnlyMismatches(testing *testing.T) {
+	stubTestingT := new(StubTestingT)
+	then.AssertThat(stubTestingT, "abc", is.AllOf(
+		is.EqualTo("abc"),
+		is.StringContaining("e", "f"),
+		is.Empty[string, string, string](),
+	))
+	if !strings.Contains(stubTestingT.MockTestOutput, "Expected: something that contains <e> and <f> and empty value\n") {
+		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestHasFieldDescribesMismatch(testing *testing.T) {
+	type T struct {
+		F string
+		B string
+	}
+	expected := "X"
+	then.AssertThat(stubTestingT, new(T), has.FieldNamed[*T](expected))
+	if !strings.Contains(stubTestingT.MockTestOutput, "struct with field X") &&
+		!strings.Contains(stubTestingT.MockTestOutput, "T{F string B string}") {
+		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestHasFunctionDescribesMismatch(testing *testing.T) {
+	type MyType interface {
+		F() string
+		B() string
+	}
+	actual := new(MyType)
+	expected := "X"
+	then.AssertThat(stubTestingT, actual, has.FunctionNamed[*MyType](expected))
+	if !strings.Contains(stubTestingT.MockTestOutput, "interface with function X") &&
+		!strings.Contains(stubTestingT.MockTestOutput, "MyType{B()F()}") {
+		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
+	}
+}
+
+func TestEqualToIgnoringWhitespace(t *testing.T) {
+	var ignoreWhitespaceItems = []struct {
+		actual     string
+		expected   string
+		shouldFail bool
+	}{
+		{actual: "a bc", expected: "a bc", shouldFail: false},
+		{actual: "a b c", expected: "a bc", shouldFail: false},
+		{actual: "abc", expected: "a", shouldFail: true},
+		{actual: "abc \n", expected: "a", shouldFail: true},
+		{actual: "%^&*abc \n\t\t", expected: "%^&*abc\n", shouldFail: false},
+	}
+	for _, test := range ignoreWhitespaceItems {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, is.EqualToIgnoringWhitespace(test.expected))
+		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reasonf("<%s>, should Fail(%v) for <%s>", test.actual, test.shouldFail, test.expected))
+	}
+}
+
+type private struct {
+}
+type Foo struct {
+}
+
+func TestTypeName(t *testing.T) {
+	pri := new(private)
+	priAnd := &private{}
+	pubAnd := &Foo{}
+	pub := new(Foo)
+
+	tests := []struct {
+		actual     interface{}
+		expected   string
+		shouldFail bool
+	}{
+		{t, "*testing.T", false},
+		{t, "foob", true},
+		{pri, "*gocrest_test.private", false},
+		{priAnd, "*gocrest_test.private", false},
+		{private{}, "gocrest_test.private", false},
+		{pub, "*gocrest_test.Foo", false},
+		{pubAnd, "*gocrest_test.Foo", false},
+		{&pubAnd, "**gocrest_test.Foo", false},
+		{Foo{}, "gocrest_test.Foo", false},
+		{"foo", "string", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.expected, func(t *testing.T) {
+			stubTestingT := new(StubTestingT)
+			then.AssertThat(stubTestingT, tt.actual, has.TypeName[any](tt.expected))
+
+			then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(tt.shouldFail).Reason(stubTestingT.MockTestOutput))
+		})
+	}
+}
+
+func TestNilArrayInterface(t *testing.T) {
+	actual := nilResponse()
+
+	then.AssertThat(t, actual, is.Nil[any, []any]())
+}
+
+func nilResponse() []any {
+	return nil
+}
+
+func TestEveryStringElement(t *testing.T) {
+	tests := []struct {
+		actual     []string
+		expected   []*gocrest.Matcher[string]
+		shouldFail bool
+	}{
+		{
+			actual:     []string{"test1", "test2"},
+			expected:   []*gocrest.Matcher[string]{is.EqualTo("test1"), is.EqualTo("test2")},
+			shouldFail: false,
+		},
+	}
+	for _, test := range tests {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, has.EveryElement[string](test.expected...))
+
+		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
+	}
+}
+func TestEveryIntElement(t *testing.T) {
+	tests := []struct {
+		actual     []int
+		expected   []*gocrest.Matcher[int]
+		shouldFail bool
+	}{
+		{
+			actual:     []int{1, 2},
+			expected:   []*gocrest.Matcher[int]{is.EqualTo(1), is.EqualTo(2)},
+			shouldFail: false,
+		},
+		{
+			actual: []int{1, 2},
+			expected: []*gocrest.Matcher[int]{
+				is.EqualTo(1),
+			},
+			shouldFail: true,
+		},
+		{
+			actual: []int{1},
+			expected: []*gocrest.Matcher[int]{
+				is.EqualTo(1),
+				is.EqualTo(2),
+			},
+			shouldFail: true,
+		},
+	}
+	for _, test := range tests {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, has.EveryElement[int](test.expected...))
+
+		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
+	}
+}
+
 //
 //func TestStructValues(t *testing.T) {
 //	tests := []struct {
@@ -985,86 +1048,54 @@ func TestHasKeyMatches(testing *testing.T) {
 //	}()
 //	then.AssertThat(stubTestingT, actual, has.StructWithValues(expected))
 //}
-//
-//func TestStructValuesPanic(t *testing.T) {
-//	tests := []struct {
-//		actual   interface{}
-//		expected has.StructMatchers
-//	}{
-//		{
-//			actual: struct {
-//				Id string
-//			}{},
-//			expected: has.StructMatchers{
-//				"Id2": is.Empty(),
-//			},
-//		},
-//		{
-//			actual: struct {
-//				id string
-//			}{},
-//			expected: has.StructMatchers{
-//				"id": is.Empty(),
-//			},
-//		},
-//	}
-//
-//	defer func() {
-//		recover := recover()
-//		then.AssertThat(t, recover, is.Not(is.Nil()))
-//	}()
-//
-//	for _, test := range tests {
-//		stubTestingT := new(StubTestingT)
-//
-//		then.AssertThat(stubTestingT, test.actual, has.StructWithValues(test.expected))
-//	}
-//}
-//
-//func TestConformsToStringer(t *testing.T) {
-//	then.AssertThat(t, is.Nil().String(), is.EqualTo("value that is <nil>"))
-//}
-//
-//type DelayedReader struct {
-//	R io.Reader
-//	D time.Duration
-//}
-//
-//func (s DelayedReader) Read(p []byte) (int, error) {
-//	time.Sleep(s.D)
-//	return s.R.Read(p)
-//}
-//
-//func TestEventuallyWithDelayedReader(t *testing.T) {
-//	slowReader := DelayedReader{
-//		R: bytes.NewBuffer([]byte("abcdefghijklmnopqrstuv")),
-//		D: time.Second,
-//	}
-//	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
-//		then.AssertThat(eventually, by.Reading(slowReader, 1024), is.EqualTo([]byte("abcdefghijklmnopqrstuv")))
-//	})
-//}
-//func TestEventuallyChannels(t *testing.T) {
-//	channel := firstTestChannel()
-//	then.Eventually(t, time.Second*5, time.Second, func(eventually gocrest.TestingT) {
-//		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
-//	})
-//}
-//
-//func TestEventuallyChannelsShouldFail(t *testing.T) {
-//	channel := firstTestChannel()
-//	channelTwo := secondTestChannel()
-//	stubbedTesting := new(StubTestingT)
-//	then.WithinTenSeconds(stubbedTesting, func(eventually gocrest.TestingT) {
-//		then.AssertThat(eventually, by.Channelling(channelTwo), is.EqualTo("11").Reason("This is going to fail"))
-//		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
-//	})
-//	then.AssertThat(t, stubbedTesting.failed, is.EqualTo(true))
-//	then.AssertThat(t, stubbedTesting.MockTestOutput, is.AllOf(
-//		is.StringContaining("This is going to fail"),
-//		is.Not(is.StringContaining("should not fail")),
-//	))
-//}
+
+func TestConformsToStringer(t *testing.T) {
+	then.AssertThat(t, is.Nil[any, any]().String(), is.EqualTo("value that is <nil>"))
+}
+
+type DelayedReader struct {
+	R io.Reader
+	D time.Duration
+}
+
+func (s DelayedReader) Read(p []byte) (int, error) {
+	time.Sleep(s.D)
+	return s.R.Read(p)
+}
+
+func TestEventuallyWithDelayedReader(t *testing.T) {
+	slowReader := DelayedReader{
+		R: bytes.NewBuffer([]byte("abcdefghijklmnopqrstuv")),
+		D: time.Second,
+	}
+	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Reading(slowReader, 1024), is.EqualTo([]byte("abcdefghijklmnopqrstuv")))
+	})
+}
+
+func TestEventuallyChannels(t *testing.T) {
+	channel := firstTestChannel()
+	then.Eventually(t, time.Second*5, time.Second, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
+	})
+}
+
+func TestEventuallyChannelsShouldFail(t *testing.T) {
+	channel := firstTestChannel()
+	channelTwo := secondTestChannel()
+	stubbedTesting := new(StubTestingT)
+	then.WithinTenSeconds(stubbedTesting, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Channelling(channelTwo), is.EqualTo("11").Reason("This is going to fail"))
+		then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
+	})
+	then.AssertThat(t, stubbedTesting.failed, is.EqualTo(true))
+	then.AssertThat(t, stubbedTesting.MockTestOutput, is.AllOf(
+		is.StringContaining("This is going to fail"),
+		is.Not(is.StringContaining("should not fail")),
+	))
+}
+
+//TODO: uncomment and fix StructWithValues
 //func TestEventuallyChannelInterface(t *testing.T) {
 //	type MyType struct {
 //		F string
@@ -1089,36 +1120,36 @@ func TestHasKeyMatches(testing *testing.T) {
 //		}))
 //	})
 //}
-//func TestCallingFunctionEventually(t *testing.T) {
-//	function := func(a string) string {
-//		time.Sleep(time.Second)
-//		return a
-//	}
-//	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
-//		then.AssertThat(eventually, by.Calling[string, string](function, "hi"), is.EqualTo("hi"))
-//	})
-//}
-//
-//func firstTestChannel() chan int {
-//	channel := make(chan int, 1)
-//	go func() {
-//		defer close(channel)
-//		for i := 0; i < 10; i++ {
-//			time.Sleep(time.Second)
-//			channel <- i
-//		}
-//	}()
-//	return channel
-//}
-//
-//func secondTestChannel() chan string {
-//	channelTwo := make(chan string, 1)
-//	go func() {
-//		defer close(channelTwo)
-//		for i := 0; i < 10; i++ {
-//			time.Sleep(time.Second)
-//			channelTwo <- fmt.Sprintf("%d", i)
-//		}
-//	}()
-//	return channelTwo
-//}
+
+func TestCallingFunctionEventually(t *testing.T) {
+	function := func(a string) string {
+		time.Sleep(time.Second)
+		return a
+	}
+	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Calling[string, string](function, "hi"), is.EqualTo("hi"))
+	})
+}
+func firstTestChannel() chan int {
+	channel := make(chan int, 1)
+	go func() {
+		defer close(channel)
+		for i := 0; i < 10; i++ {
+			time.Sleep(time.Second)
+			channel <- i
+		}
+	}()
+	return channel
+}
+
+func secondTestChannel() chan string {
+	channelTwo := make(chan string, 1)
+	go func() {
+		defer close(channelTwo)
+		for i := 0; i < 10; i++ {
+			time.Sleep(time.Second)
+			channelTwo <- fmt.Sprintf("%d", i)
+		}
+	}()
+	return channelTwo
+}

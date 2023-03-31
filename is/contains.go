@@ -6,11 +6,16 @@ import (
 	"strings"
 )
 
-func StringContaining(expected string) *gocrest.Matcher[string] {
+func StringContaining(expected ...string) *gocrest.Matcher[string] {
 	match := new(gocrest.Matcher[string])
 	match.Describe = fmt.Sprintf("something that contains %v", expected)
 	match.Matches = func(actual string) bool {
-		return strings.Contains(actual, expected)
+		for i := 0; i < len(expected); i++ {
+			if !strings.Contains(actual, expected[i]) {
+				return false
+			}
+		}
+		return true
 	}
 	return match
 }
