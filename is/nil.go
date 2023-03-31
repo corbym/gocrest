@@ -7,12 +7,12 @@ import (
 )
 
 // Nil matches if the actual value is nil
-func Nil() *gocrest.Matcher {
-	match := new(gocrest.Matcher)
+func Nil[T any, A *T]() *gocrest.Matcher[A] {
+	match := new(gocrest.Matcher[A])
 	match.Describe = "value that is <nil>"
-	match.Matches = func(actual interface{}) bool {
+	match.Matches = func(actual A) bool {
 		match.Actual = fmt.Sprintf("%v", actual)
-		if actual == nil {
+		if any(actual) == nil {
 			return true
 		}
 		switch reflect.TypeOf(actual).Kind() {

@@ -6,7 +6,7 @@ import (
 )
 
 // AssertThat calls a given matcher and fails the test with a message if the matcher doesn't match.
-func AssertThat(t gocrest.TestingT, actual interface{}, m *gocrest.Matcher) {
+func AssertThat[A any](t gocrest.TestingT, actual A, m *gocrest.Matcher[A]) {
 	t.Helper()
 	matches := m.Matches(actual)
 	if !matches {
@@ -19,7 +19,7 @@ func AssertThat(t gocrest.TestingT, actual interface{}, m *gocrest.Matcher) {
 	}
 }
 
-func actualAsString(matcher *gocrest.Matcher, actual interface{}) string {
+func actualAsString[A any](matcher *gocrest.Matcher[A], actual A) string {
 	if matcher.Actual != "" {
 		return matcher.Actual
 	}

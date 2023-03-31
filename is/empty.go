@@ -2,7 +2,6 @@ package is
 
 import (
 	"github.com/corbym/gocrest"
-	"reflect"
 )
 
 // Empty matches if the actual is "empty".
@@ -10,20 +9,11 @@ import (
 // Pointers and interfaces are empty when nil.
 // Other types (int, float, bool) will cause the function to panic.
 // Returns a matcher that evaluates true if actual is "empty".
-func Empty() *gocrest.Matcher {
-	matcher := new(gocrest.Matcher)
+func Empty[K comparable, T any, A string | []T | map[K]T]() *gocrest.Matcher[A] {
+	matcher := new(gocrest.Matcher[A])
 	matcher.Describe = "empty value"
-	matcher.Matches = func(actual interface{}) bool {
-		if actual == nil {
-			return true
-		}
-		if actualValue, ok := actual.(string); ok {
-			return actualValue == ""
-		}
-		if reflect.ValueOf(actual).Len() == 0 {
-			return true
-		}
-		return false
+	matcher.Matches = func(actual A) bool {
+		return len(actual) == 0
 	}
 	return matcher
 }

@@ -2,51 +2,39 @@ package has
 
 import (
 	"fmt"
-	"reflect"
-
 	"github.com/corbym/gocrest"
 )
 
 // EveryElement Checks whether the nth element of the array/slice matches the nth expectation passed
 // Panics if the actual is not an array/slice
 // Panics if the count of the expectations does not match the array's/slice's length
-func EveryElement(expects ...*gocrest.Matcher) *gocrest.Matcher {
-	match := new(gocrest.Matcher)
+func EveryElement[A any](expects ...*gocrest.Matcher[A]) *gocrest.Matcher[[]A] {
+	match := new(gocrest.Matcher[[]A])
 	match.Describe = fmt.Sprintf("elements to match %s", describe(expects, "and"))
 
 	for _, e := range expects {
 		match.AppendActual(e.Actual)
 	}
 
-	match.Matches = func(actual interface{}) bool {
+	match.Matches = func(actual []A) bool {
+		if len(actual) != len(expects) {
+			return false
+		}
 
-		actualValue := reflect.ValueOf(actual)
-		switch actualValue.Kind() {
-		case reflect.Array, reflect.Slice:
-
-			if actualValue.Len() != len(expects) {
+		for i := 0; i < len(actual); i++ {
+			result := expects[i].Matches(actual[i])
+			if !result {
 				return false
 			}
-
-			for i := 0; i < actualValue.Len(); i++ {
-				result := expects[i].Matches(actualValue.Index(i).Interface())
-
-				if !result {
-					return false
-				}
-			}
-
-			return true
-
-		default:
-			panic("cannot determine type of variadic actual, " + actualValue.String())
 		}
+
+		return true
 	}
 
 	return match
 }
 
-func describe(matchers []*gocrest.Matcher, conjunction string) string {
+func describe[A any](matchers []*gocrest.Matcher[A], conjunction string) string {
 	var description string
 	for x := 0; x < len(matchers); x++ {
 		description += fmt.Sprintf("[%v]:%v", x, matchers[x].Describe)

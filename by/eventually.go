@@ -3,18 +3,17 @@ package by
 import (
 	"bufio"
 	"io"
-	"reflect"
 )
 
-func Channelling(actual interface{}) interface{} {
-	var selectCase = make([]reflect.SelectCase, 1)
-	selectCase[0].Dir = reflect.SelectRecv
-	selectCase[0].Chan = reflect.ValueOf(actual)
-	_, recv, _ := reflect.Select(selectCase)
-	return recv.Interface()
+func Channelling[T any](actual chan T) T {
+	return <-actual
 }
-func Reading(actual io.Reader, len int) interface{} {
+func Reading(actual io.Reader, len int) []byte {
 	reader := bufio.NewReader(actual.(io.Reader))
 	peek, _ := reader.Peek(len)
 	return peek
+}
+
+func Calling[K any, T any](actual func(T) K, value T) K {
+	return actual(value)
 }

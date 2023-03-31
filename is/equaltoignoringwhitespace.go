@@ -12,12 +12,11 @@ import (
 // "a b c" is EqualToIgnoringWhitespace when compared with "a \nb \tc"
 // "ab\tc" is EqualToIgnoringWhitespace when compared with "a \nb \tc"
 // .. and so on.
-func EqualToIgnoringWhitespace(expected string) (matcher *gocrest.Matcher) {
-	matcher = new(gocrest.Matcher)
-	matcher.Matches = func(actual interface{}) bool {
-		actualString := actual.(string)
+func EqualToIgnoringWhitespace(expected string) (matcher *gocrest.Matcher[string]) {
+	matcher = new(gocrest.Matcher[string])
+	matcher.Matches = func(actual string) bool {
 		expectedFields := strings.Join(strings.Fields(expected), "")
-		actualFields := strings.Join(strings.Fields(actualString), "")
+		actualFields := strings.Join(strings.Fields(actual), "")
 
 		equalToMatcher := EqualTo(expectedFields)
 		matcher.Describe = "ignoring whitespace value equal to <" + expected + ">"

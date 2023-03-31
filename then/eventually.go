@@ -101,7 +101,7 @@ func Eventually(t gocrest.TestingT, waitFor time.Duration, tick time.Duration, a
 		select {
 		case <-timer.C:
 			latestRecordingT := latestValue.Get()
-			t.Errorf("Eventually Failed: \n" + strings.Join(latestRecordingT.FailedTestOutputs(), "\n"))
+			t.Errorf(fmt.Sprintf("Eventually Failed after %s: \n", waitFor) + strings.Join(latestRecordingT.FailedTestOutputs(), "\n"))
 			return
 		case <-tick:
 			tick = nil

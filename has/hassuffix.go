@@ -10,11 +10,11 @@ import (
 // Panics if the actual is not a string.
 // Uses strings.HasSuffix(act,exp) to evaluate strings.
 // Returns a matcher that returns true if the above conditions are met.
-func Suffix(expected string) *gocrest.Matcher {
-	matcher := new(gocrest.Matcher)
+func Suffix(expected string) *gocrest.Matcher[string] {
+	matcher := new(gocrest.Matcher[string])
 	matcher.Describe = fmt.Sprintf("value with suffix %s", expected)
-	matcher.Matches = func(actual interface{}) bool {
-		return strings.HasSuffix(actual.(string), expected)
+	matcher.Matches = func(actual string) bool {
+		return strings.HasSuffix(actual, expected)
 	}
 	return matcher
 }
