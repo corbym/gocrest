@@ -9,7 +9,7 @@ import (
 // Returns a matcher that matches when a map has key == expected
 func Key[K comparable, V any](expected K) *gocrest.Matcher[map[K]V] {
 	matcher := new(gocrest.Matcher[map[K]V])
-	matcher.Describe = fmt.Sprintf("map has key '%s'", expected)
+	matcher.Describe = fmt.Sprintf("map has key '%v'", expected)
 	matcher.Matches = func(actual map[K]V) bool {
 		return hasKey(actual, expected)
 	}
@@ -20,7 +20,7 @@ func Key[K comparable, V any](expected K) *gocrest.Matcher[map[K]V] {
 // Returns a matcher that matches when a map has all keys == all expected.
 func AllKeys[K comparable, V any](expected ...K) *gocrest.Matcher[map[K]V] {
 	matcher := new(gocrest.Matcher[map[K]V])
-	matcher.Describe = fmt.Sprintf("map has keys '%s'", expected)
+	matcher.Describe = fmt.Sprintf("map has keys '%v'", expected)
 	matcher.Matches = func(actual map[K]V) bool {
 		for _, k := range expected {
 			if !hasKey(actual, k) {

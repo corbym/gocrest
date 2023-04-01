@@ -159,7 +159,7 @@ func listMatches[T comparable](expected []*gocrest.Matcher[T], actualValue []T) 
 func descriptionFor[T any, A []T](expected A) string {
 	var description = ""
 	for x := 0; x < len(expected); x++ {
-		description += fmt.Sprintf("<%s>", expected[x])
+		description += fmt.Sprintf("<%v>", expected[x])
 		if x < len(expected)-1 {
 			description += " and "
 		}
