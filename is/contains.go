@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// StringContaining finds if all x's are contained as value in y.
+// Acts like "ContainsAll", all elements given must be present (or must match) in actual in the same order as the expected values.
 func StringContaining(expected ...string) *gocrest.Matcher[string] {
 	match := new(gocrest.Matcher[string])
 	match.Describe = fmt.Sprintf("something that contains %v", expected)
@@ -20,28 +22,34 @@ func StringContaining(expected ...string) *gocrest.Matcher[string] {
 	return match
 }
 
-// MapContaining finds if x is contained as value in y.
-// Acts like "ContainsAll", all elements given must be present (or must match) in actual in the same order as the expected values.
-func MapContaining[K comparable, V comparable, A map[K]V](expected A) *gocrest.Matcher[A] {
-	match := new(gocrest.Matcher[A])
+// MapContaining finds if all map[k] 's value V is contained as a value of actual[k]
+// Acts like "ContainsAll", all elements given must be present in actual in the same order as the expected values.
+func MapContaining[K comparable, V comparable](expected map[K]V) *gocrest.Matcher[map[K]V] {
+	match := new(gocrest.Matcher[map[K]V])
 	match.Describe = fmt.Sprintf("something that contains %v", expected)
-	match.Matches = func(actual A) bool {
+	match.Matches = func(actual map[K]V) bool {
 		return mapActualContainsExpected(expected, actual)
 	}
 	return match
 }
-func MapContainingValues[K comparable, V comparable, A map[K]V](expected ...V) *gocrest.Matcher[A] {
-	match := new(gocrest.Matcher[A])
+
+// MapContainingValues finds if all values V is contained as a value of actual[k]
+// Acts like "ContainsAll", all elements given must be present in actual in the same order as the expected values.
+func MapContainingValues[K comparable, V comparable](expected ...V) *gocrest.Matcher[map[K]V] {
+	match := new(gocrest.Matcher[map[K]V])
 	match.Describe = fmt.Sprintf("something that contains %v", expected)
-	match.Matches = func(actual A) bool {
+	match.Matches = func(actual map[K]V) bool {
 		return mapActualContainsExpectedValues(expected, actual)
 	}
 	return match
 }
-func MapMatchingValues[K comparable, V comparable, A map[K]V](expected ...*gocrest.Matcher[V]) *gocrest.Matcher[A] {
-	match := new(gocrest.Matcher[A])
+
+// MapMatchingValues finds if all values V is match a value of actual[k]
+// Acts like "ContainsAll", all elements given must match in actual in the same order as the expected values.
+func MapMatchingValues[K comparable, V comparable](expected ...*gocrest.Matcher[V]) *gocrest.Matcher[map[K]V] {
+	match := new(gocrest.Matcher[map[K]V])
 	match.Describe = descriptionForMatchers(expected)
-	match.Matches = func(actual A) bool {
+	match.Matches = func(actual map[K]V) bool {
 		return mapActualMatchesExpected(expected, actual)
 	}
 	return match
@@ -58,20 +66,23 @@ func descriptionForMatchers[A any](expected []*gocrest.Matcher[A]) string {
 	return description
 }
 
-// ArrayContaining finds if x is contained in y.
-// Acts like "ContainsAll", all elements given must be present (or must match) in actual in the same order as the expected values.
-func ArrayContaining[T comparable, A []T](expected ...T) *gocrest.Matcher[A] {
-	match := new(gocrest.Matcher[A])
+// ArrayContaining finds if all x's are contained in y.
+// Acts like "ContainsAll", all elements given must be present in actual in the same order as the expected values.
+func ArrayContaining[A comparable](expected ...A) *gocrest.Matcher[[]A] {
+	match := new(gocrest.Matcher[[]A])
 	match.Describe = fmt.Sprintf("something that contains %v", descriptionFor(expected))
-	match.Matches = func(actual A) bool {
+	match.Matches = func(actual []A) bool {
 		return listContains(expected, actual)
 	}
 	return match
 }
-func ArrayMatching[T comparable, A []T](expected ...*gocrest.Matcher[T]) *gocrest.Matcher[A] {
-	match := new(gocrest.Matcher[A])
+
+// ArrayMatching finds if all x's are matched in y.
+// Acts like "ContainsAll", all elements given must be present in actual in the same order as the expected values.
+func ArrayMatching[A comparable](expected ...*gocrest.Matcher[A]) *gocrest.Matcher[[]A] {
+	match := new(gocrest.Matcher[[]A])
 	match.Describe = fmt.Sprintf("something that contains %v", descriptionFor(expected))
-	match.Matches = func(actual A) bool {
+	match.Matches = func(actual []A) bool {
 		return listMatches(expected, actual)
 	}
 	return match

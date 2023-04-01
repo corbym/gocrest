@@ -7,7 +7,6 @@ import (
 )
 
 // Prefix returns a matcher that matches if the given string is prefixed with the expected string
-// Function panics if the actual is not a string.
 // Uses strings.Prefix(act, exp) to evaluate strings.
 // Returns a matcher that returns true if the above conditions are met
 func Prefix(expected string) *gocrest.Matcher[string] {

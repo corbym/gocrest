@@ -55,7 +55,7 @@ func TestHasLengthStringMatchesOrNot(testing *testing.T) {
 	}
 }
 func TestMapHasLengthOne(t *testing.T) {
-	then.AssertThat(t, map[string]bool{"hello": true}, has.MapLength[string, bool, map[string]bool](1))
+	then.AssertThat(t, map[string]bool{"hello": true}, has.MapLength[string, bool](1))
 }
 func TestHasLengthMapMatchesOrNot(testing *testing.T) {
 	var hasLengthItems = []struct {
@@ -70,7 +70,7 @@ func TestHasLengthMapMatchesOrNot(testing *testing.T) {
 	}
 	for _, test := range hasLengthItems {
 		stubTestingT = new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, has.MapLengthMatching[string, bool, map[string]bool](test.expected))
+		then.AssertThat(stubTestingT, test.actual, has.MapLengthMatching[string, bool](test.expected))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, has.Length(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -684,11 +684,11 @@ func TestHasKeyMatches(testing *testing.T) {
 }
 
 func TestHasKeysMatches(testing *testing.T) {
-	then.AssertThat(testing, map[string]bool{"hi": true, "bye": true}, has.AllKeys[string, bool, map[string]bool]("hi", "bye"))
+	then.AssertThat(testing, map[string]bool{"hi": true, "bye": true}, has.AllKeys[string, bool]("hi", "bye"))
 	type T struct{}
 	expectedT := new(T)
 	secondExpectedT := new(T)
-	then.AssertThat(testing, map[*T]bool{expectedT: true, secondExpectedT: true}, has.AllKeys[*T, bool, map[*T]bool](expectedT, secondExpectedT))
+	then.AssertThat(testing, map[*T]bool{expectedT: true, secondExpectedT: true}, has.AllKeys[*T, bool](expectedT, secondExpectedT))
 }
 
 func TestBoolMatcherDescription(t *testing.T) {
@@ -764,8 +764,8 @@ func TestSizeMapMatcherDescription(t *testing.T) {
 		expected    string
 	}{
 		{description: "Empty", actual: map[string]bool{"foo": true}, matcher: is.Empty[string, bool, map[string]bool](), expected: "empty value"},
-		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key[string, bool, map[string]bool]("foo"), expected: "map has key 'foo'"},
-		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys[string, bool, map[string]bool]("hi", "foo"), expected: "map has keys '[hi foo]'"},
+		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key[string, bool]("foo"), expected: "map has key 'foo'"},
+		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys[string, bool]("hi", "foo"), expected: "map has keys '[hi foo]'"},
 	}
 	for _, test := range equalsItems {
 		t.Run(test.description, func(innerT *testing.T) {
@@ -942,7 +942,7 @@ func TestEveryStringElement(t *testing.T) {
 	}
 	for _, test := range tests {
 		stubTestingT := new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, has.EveryElement[string](test.expected...))
+		then.AssertThat(stubTestingT, test.actual, has.EveryElement(test.expected...))
 
 		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
 	}
@@ -976,7 +976,7 @@ func TestEveryIntElement(t *testing.T) {
 	}
 	for _, test := range tests {
 		stubTestingT := new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, has.EveryElement[int](test.expected...))
+		then.AssertThat(stubTestingT, test.actual, has.EveryElement(test.expected...))
 
 		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
 	}

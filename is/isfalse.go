@@ -2,7 +2,7 @@ package is
 
 import "github.com/corbym/gocrest"
 
-// False returns true if the actual matches false. Confusing but true.
+// False returns true if the actual equals false. Confusing but true.
 func False() *gocrest.Matcher[bool] {
 	return &gocrest.Matcher[bool]{
 		Describe: "is false",

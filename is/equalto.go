@@ -6,7 +6,7 @@ import (
 	"reflect"
 )
 
-// EqualTo checks if two values are equal. Uses DeepEqual (could be slow) or Compare for byte arrays.
+// EqualTo checks if two values are equal. Uses DeepEqual (could be slow).
 // Like DeepEquals, if the types are not the same the matcher returns false.
 // Returns a matcher that will return true if two values are equal.
 func EqualTo[A any](expected A) *gocrest.Matcher[A] {

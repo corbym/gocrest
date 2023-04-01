@@ -6,8 +6,6 @@ import (
 )
 
 // EveryElement Checks whether the nth element of the array/slice matches the nth expectation passed
-// Panics if the actual is not an array/slice
-// Panics if the count of the expectations does not match the array's/slice's length
 func EveryElement[A any](expects ...*gocrest.Matcher[A]) *gocrest.Matcher[[]A] {
 	match := new(gocrest.Matcher[[]A])
 	match.Describe = fmt.Sprintf("elements to match %s", describe(expects, "and"))

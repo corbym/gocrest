@@ -5,8 +5,8 @@ import (
 	"reflect"
 )
 
-// TypeName returns true if the expected matches the actual Type's Name. Expected can be a matcher or a string.
-// E.g. has.TypeName(EqualTo("pkg.Type")) would be true with instance of `type Type struct{}` in package name 'pkg'.
+// TypeName returns true if the expected matches the actual Type's Name.
+// E.g. has.TypeName("pkg.Type") would be true with instance of `type Type struct{}` in package name 'pkg'.
 func TypeName[A any](expected string) *gocrest.Matcher[A] {
 	matcher := new(gocrest.Matcher[A])
 	matcher.Matches = func(actual A) bool {
@@ -19,6 +19,9 @@ func TypeName[A any](expected string) *gocrest.Matcher[A] {
 	}
 	return matcher
 }
+
+// TypeNameMatches returns true if the expected matches the actual Type's Name using the given matcher.
+// E.g. has.TypeName(is.EqualTo("pkg.Type")) would be true with instance of `type Type struct{}` in package name 'pkg'.
 func TypeNameMatches[A any](expected *gocrest.Matcher[string]) *gocrest.Matcher[A] {
 	matcher := new(gocrest.Matcher[A])
 	matcher.Matches = func(actual A) bool {

@@ -6,24 +6,22 @@ import (
 )
 
 // Key is a matcher that checks if actual has a key == expected.
-// Panics when actual's Kind is not a map.
 // Returns a matcher that matches when a map has key == expected
-func Key[K comparable, V any, A map[K]V](expected K) *gocrest.Matcher[A] {
-	matcher := new(gocrest.Matcher[A])
+func Key[K comparable, V any](expected K) *gocrest.Matcher[map[K]V] {
+	matcher := new(gocrest.Matcher[map[K]V])
 	matcher.Describe = fmt.Sprintf("map has key '%s'", expected)
-	matcher.Matches = func(actual A) bool {
+	matcher.Matches = func(actual map[K]V) bool {
 		return hasKey(actual, expected)
 	}
 	return matcher
 }
 
 // AllKeys is a matcher that checks if map actual has all keys == expecteds.
-// Panics when actual's Kind is not a map.
 // Returns a matcher that matches when a map has all keys == all expected.
-func AllKeys[K comparable, V any, A map[K]V](expected ...K) *gocrest.Matcher[A] {
-	matcher := new(gocrest.Matcher[A])
+func AllKeys[K comparable, V any](expected ...K) *gocrest.Matcher[map[K]V] {
+	matcher := new(gocrest.Matcher[map[K]V])
 	matcher.Describe = fmt.Sprintf("map has keys '%s'", expected)
-	matcher.Matches = func(actual A) bool {
+	matcher.Matches = func(actual map[K]V) bool {
 		for _, k := range expected {
 			if !hasKey(actual, k) {
 				return false
@@ -34,8 +32,8 @@ func AllKeys[K comparable, V any, A map[K]V](expected ...K) *gocrest.Matcher[A] 
 	return matcher
 }
 
-func hasKey[K comparable, V any, A map[K]V](actual A, expected K) bool {
-	for k, _ := range actual {
+func hasKey[K comparable, V any](actual map[K]V, expected K) bool {
+	for k := range actual {
 		if k == expected {
 			return true
 		}
