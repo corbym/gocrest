@@ -26,7 +26,7 @@ func TestEqualTo(t *testing.T) {
 	then.AssertThat(t, []string{"a"}, is.EqualTo([]string{"a"}))
 }
 
-func TestLengthMatches(testing *testing.T) {
+func TestNil(testing *testing.T) {
 	values := struct {
 		actual *string
 	}{
@@ -76,7 +76,7 @@ func TestHasLengthMapMatchesOrNot(testing *testing.T) {
 		}
 	}
 }
-func TestHasLengthMatchesArrayMatchesOrNot(testing *testing.T) {
+func TestHasLengthArrayMatchesOrNot(testing *testing.T) {
 	var hasLengthItems = []struct {
 		actual     []int
 		expected   int
@@ -90,6 +90,25 @@ func TestHasLengthMatchesArrayMatchesOrNot(testing *testing.T) {
 	for _, test := range hasLengthItems {
 		stubTestingT = new(StubTestingT)
 		then.AssertThat(stubTestingT, test.actual, has.Length[int, []int](test.expected))
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("assertThat(%v, has.Length(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
+func TestHasLengthMatchesArrayMatchesOrNot(testing *testing.T) {
+	var hasLengthItems = []struct {
+		actual     []int
+		expected   int
+		shouldFail bool
+	}{
+		{actual: []int{}, expected: 0, shouldFail: false},
+		{actual: []int{1}, expected: 1, shouldFail: false},
+		{actual: []int{1}, expected: 2, shouldFail: true},
+		{actual: []int{1, 2}, expected: 2, shouldFail: false},
+	}
+	for _, test := range hasLengthItems {
+		stubTestingT = new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, has.LengthMatching[int, []int](is.EqualTo(test.expected)))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, has.Length(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -116,26 +135,26 @@ func TestHasLengthArrayStringMatchesOrNot(testing *testing.T) {
 	}
 }
 
-//func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
-//	var equalsItems = []struct {
-//		actual     interface{}
-//		expected   interface{}
-//		shouldFail bool
-//	}{
-//		{actual: 1, expected: 1, shouldFail: false},
-//		{actual: 1.12, expected: 1.12, shouldFail: false},
-//		{actual: 1, expected: 2, shouldFail: true},
-//		{actual: "hi", expected: "bees", shouldFail: true},
-//		{actual: map[string]bool{"hello": true}, expected: map[string]bool{"hello": true}, shouldFail: false},
-//	}
-//	for _, test := range equalsItems {
-//		stubTestingT = new(StubTestingT)
-//		then.AssertThat(stubTestingT, test.actual, is.EqualTo(test.expected))
-//		if stubTestingT.HasFailed() != test.shouldFail {
-//			testing.Errorf("assertThat(%v, EqualTo(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
-//		}
-//	}
-//}
+func TestAssertThatTwoValuesAreEqualOrNot(testing *testing.T) {
+	var equalsItems = []struct {
+		actual     any
+		expected   any
+		shouldFail bool
+	}{
+		{actual: 1, expected: 1, shouldFail: false},
+		{actual: 1.12, expected: 1.12, shouldFail: false},
+		{actual: 1, expected: 2, shouldFail: true},
+		{actual: "hi", expected: "bees", shouldFail: true},
+		{actual: map[string]bool{"hello": true}, expected: map[string]bool{"hello": true}, shouldFail: false},
+	}
+	for _, test := range equalsItems {
+		stubTestingT = new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, is.EqualTo(test.expected))
+		if stubTestingT.HasFailed() != test.shouldFail {
+			testing.Errorf("assertThat(%v, EqualTo(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
+		}
+	}
+}
 
 func TestEmptyStringIsEmptyPasses(testing *testing.T) {
 	var equalsItems = []struct {
@@ -790,7 +809,7 @@ func TestStringMatchersDescription(t *testing.T) {
 		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
 		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.StringContaining("e", "f")), expected: "something that contains [e f]"},
 		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.StringContaining("e")), expected: "any of (value equal to <efg> or something that contains [e])"},
-		{description: "LengthOf Composed", actual: "a", matcher: has.LengthMatching[string](is.GreaterThan(2)), expected: "value with length value greater than <2>"},
+		{description: "LengthOf Composed", actual: "a", matcher: has.LengthMatching[string, string](is.GreaterThan(2)), expected: "value with length value greater than <2>"},
 		{description: "EqualToIgnoringWhitespace", actual: "a b c", matcher: is.EqualToIgnoringWhitespace("b c d"), expected: "ignoring whitespace value equal to <b c d>"},
 	}
 	for _, test := range equalsItems {
@@ -963,91 +982,90 @@ func TestEveryIntElement(t *testing.T) {
 	}
 }
 
-//
-//func TestStructValues(t *testing.T) {
-//	tests := []struct {
-//		actual     interface{}
-//		expected   has.StructMatchers
-//		shouldFail bool
-//	}{
-//		{
-//			actual: struct {
-//				Id string
-//			}{Id: "Id"},
-//			expected: has.StructMatchers{
-//				"Id": has.Prefix("Id"),
-//			},
-//			shouldFail: false,
-//		},
-//		{
-//			actual: struct {
-//				Id  string
-//				Id2 string
-//			}{Id: "Id", Id2: "Id2"},
-//			expected: has.StructMatchers{
-//				"Id": has.Prefix("Id"),
-//			},
-//			shouldFail: false,
-//		},
-//		{
-//			actual: struct {
-//				Id string
-//			}{},
-//			expected: has.StructMatchers{
-//				"Id": is.Empty(),
-//			},
-//			shouldFail: false,
-//		},
-//		{
-//			actual: struct {
-//				Id string
-//			}{},
-//			expected: has.StructMatchers{
-//				"Id": is.EqualTo("something"),
-//			},
-//			shouldFail: true,
-//		},
-//		{
-//			actual: struct {
-//				Id  string
-//				Id2 string
-//			}{},
-//			expected: has.StructMatchers{
-//				"Id2": is.EqualTo("something"),
-//			},
-//			shouldFail: true,
-//		},
-//		{
-//			actual: struct {
-//				Id  string
-//				Id2 string
-//			}{},
-//			expected: has.StructMatchers{
-//				"Id":  is.EqualTo("Id"),
-//				"Id2": is.EqualTo("something"),
-//			},
-//			shouldFail: true,
-//		},
-//	}
-//	for _, test := range tests {
-//		stubTestingT := new(StubTestingT)
-//		then.AssertThat(stubTestingT, test.actual, has.StructWithValues(test.expected))
-//
-//		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
-//	}
-//}
-//
-//func TestStructValuesPanicsWithStringActual(t *testing.T) {
-//	actual := "not a struct"
-//	expected := has.StructMatchers{
-//		"Id": is.Empty(),
-//	}
-//	defer func() {
-//		recover := recover()
-//		then.AssertThat(t, recover, is.Not(is.Nil()))
-//	}()
-//	then.AssertThat(stubTestingT, actual, has.StructWithValues(expected))
-//}
+func TestStructValues(t *testing.T) {
+	tests := []struct {
+		actual     any
+		expected   has.StructMatchers[string]
+		shouldFail bool
+	}{
+		{
+			actual: struct {
+				Id string
+			}{Id: "Id"},
+			expected: has.StructMatchers[string]{
+				"Id": has.Prefix("Id"),
+			},
+			shouldFail: false,
+		},
+		{
+			actual: struct {
+				Id  string
+				Id2 string
+			}{Id: "Id", Id2: "Id2"},
+			expected: has.StructMatchers[string]{
+				"Id": has.Prefix("Id"),
+			},
+			shouldFail: false,
+		},
+		{
+			actual: struct {
+				Id string
+			}{},
+			expected: has.StructMatchers[string]{
+				"Id": is.Empty[string, string, string](),
+			},
+			shouldFail: false,
+		},
+		{
+			actual: struct {
+				Id string
+			}{},
+			expected: has.StructMatchers[string]{
+				"Id": is.EqualTo("something"),
+			},
+			shouldFail: true,
+		},
+		{
+			actual: struct {
+				Id  string
+				Id2 string
+			}{},
+			expected: has.StructMatchers[string]{
+				"Id2": is.EqualTo("something"),
+			},
+			shouldFail: true,
+		},
+		{
+			actual: struct {
+				Id  string
+				Id2 string
+			}{},
+			expected: has.StructMatchers[string]{
+				"Id":  is.EqualTo("Id"),
+				"Id2": is.EqualTo("something"),
+			},
+			shouldFail: true,
+		},
+	}
+	for _, test := range tests {
+		stubTestingT := new(StubTestingT)
+		then.AssertThat(stubTestingT, test.actual, has.StructWithValues[any](test.expected))
+
+		then.AssertThat(t, stubTestingT.HasFailed(), is.EqualTo(test.shouldFail).Reason(stubTestingT.MockTestOutput))
+	}
+}
+
+func TestStructValuesPanicsWithStringActual(t *testing.T) {
+	actual := "not a struct"
+	expected := has.StructMatchers[string]{
+		"Id": is.Empty[string, string, string](),
+	}
+	defer func() {
+		recover := recover()
+		then.AssertThat(t, recover, is.Not(is.Nil[any]()))
+	}()
+	then.AssertThat(stubTestingT, actual, has.StructWithValues[string](expected))
+}
 
 func TestConformsToStringer(t *testing.T) {
 	then.AssertThat(t, is.Nil[any]().String(), is.EqualTo("value that is <nil>"))
@@ -1095,31 +1113,30 @@ func TestEventuallyChannelsShouldFail(t *testing.T) {
 	))
 }
 
-//TODO: uncomment and fix StructWithValues
-//func TestEventuallyChannelInterface(t *testing.T) {
-//	type MyType struct {
-//		F string
-//		B string
-//	}
-//
-//	channel := make(chan *MyType, 1)
-//	go func() {
-//		defer close(channel)
-//		for i := 0; i < 10; i++ {
-//			time.Sleep(time.Millisecond * 500)
-//			m := new(MyType)
-//			m.F = fmt.Sprintf("hi - %d", i)
-//			m.B = fmt.Sprintf("bye - %d", i)
-//			channel <- m
-//		}
-//	}()
-//	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
-//		then.AssertThat(eventually, by.Channelling(channel), has.StructWithValues(has.StructMatchers{
-//			"F": is.EqualTo("hi - 3"),
-//			"B": is.EqualTo("bye - 3"),
-//		}))
-//	})
-//}
+func TestEventuallyChannelInterface(t *testing.T) {
+	type MyType struct {
+		F string
+		B string
+	}
+
+	channel := make(chan *MyType, 1)
+	go func() {
+		defer close(channel)
+		for i := 0; i < 10; i++ {
+			time.Sleep(time.Millisecond * 500)
+			m := new(MyType)
+			m.F = fmt.Sprintf("hi - %d", i)
+			m.B = fmt.Sprintf("bye - %d", i)
+			channel <- m
+		}
+	}()
+	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
+		then.AssertThat(eventually, by.Channelling(channel), has.StructWithValues[*MyType](has.StructMatchers[string]{
+			"F": is.EqualTo("hi - 3"),
+			"B": is.EqualTo("bye - 3"),
+		}))
+	})
+}
 
 func TestCallingFunctionEventually(t *testing.T) {
 	function := func(a string) string {

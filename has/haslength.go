@@ -5,8 +5,7 @@ import (
 	"github.com/corbym/gocrest"
 )
 
-// Length can be called with arrays, maps, *gocrest.Matcher and strings but not numeric types.
-// has.Length(is.GreaterThan(x)) is a valid call.
+// Length can be called with arrays and strings but not numeric types.
 // Returns a matcher that matches if the length matches the given criteria
 func Length[V any, A []V | string](expected int) *gocrest.Matcher[A] {
 	const description = "value with length %v"
@@ -30,7 +29,7 @@ func MapLength[K comparable, V any, A map[K]V](expected int) *gocrest.Matcher[A]
 	}
 	return matcher
 }
-func LengthMatching[A []any | string](expected *gocrest.Matcher[int]) *gocrest.Matcher[A] {
+func LengthMatching[V any, A []V | string](expected *gocrest.Matcher[int]) *gocrest.Matcher[A] {
 	const description = "value with length %v"
 	matcher := new(gocrest.Matcher[A])
 	matcher.Describe = fmt.Sprintf(description, expected)
