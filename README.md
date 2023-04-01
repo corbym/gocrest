@@ -36,7 +36,7 @@ Expected: value equal to <bye>
 Composed with AllOf:
 
 ```go
-then.AssertThat(t, "abcdef", is.AllOf(is.ValueContaining("abc"), is.LessThan("ghi")))
+then.AssertThat(t, "abcdef", is.AllOf(is.StringContaining("abc"), is.LessThan("ghi")))
 ```
 
 Asynchronous Matching (v1.0.8 onwards):
@@ -60,12 +60,36 @@ then.WithinTenSeconds(t, func(eventually gocrest.TestingT) {
 	then.AssertThat(eventually, by.Channelling(channelTwo), is.EqualTo("11").Reason("This is unreachable"))
 })
 ```
+# v.1.1.0 - generics
+
+Changes all the matchers to use generics instead of reflection. Some still use a bit of reflection, e.g. TypeName etc.
+
+## Other major changes:
+
+* ValueContaining has been split into StringContaining, MapContaining, MapContainingValues, MapMatchingValues, ArrayContaining and ArrayMatching.
+* No longer panics with unknown types, as types will fail at compile time.
+Some idiosyncrasies with the generic types do exist, but this is language specific;
+
+* Map matchers generally need to know the type of the map key values explicitly or the compiler will complain, e.g.
+```
+then.AssertThat(testing, map[string]bool{"hi": true, "bye": true}, has.AllKeys[string, bool]("hi", "bye"))
+```
+* `has.Length()` is likewise pernickety about types being explicit, mainly because it works on both strings and arrays. It needs to know both the type of the array and the array/string type. Confused? me too.
+* `is.LessThan()` and `is.GreaterThan()` (and by extension `is.GreaterThanOrEqualTo` and `is.LessThanOrEqualTo`) no longer work on complex types. This is because the complex types do not support the comparison operators (yet, somehow, they could be compared by reflection 🤷 )
+
+See the matcher_test.go file for full usage.
+
 # Matchers so far..
 
 - is.EqualTo(x)
 - is.EqualToIgnoringWhitespace(string) - compares two strings without comparing their whitespace characters.
 - is.Nil() - value must be nil
-- is.ValueContaining(expected) -- acts like containsAll
+- is.StringContaining(expected) -- acts like containsAll
+- is.MapContaining(expected) -- acts like containsAll
+- is.MapContainingValues(expected) -- acts like containsAll
+- is.MapMatchingValues(expected) -- acts like containsAll
+- is.ArrayContaining(expected) -- acts like containsAll
+- is.ArrayMatching(expected) -- acts like containsAll
 - is.Not(m *Matcher) -- logical not of matcher's result
 - is.MatchForPattern(regex string) -- a string regex expression
 - has.FunctionNamed(string x) - checks if an interface has a function (method)

@@ -8,10 +8,10 @@ import (
 
 // FunctionNamed implementation for testing if a Type has a particular method name. Does not check parameters.
 // Returns a matcher that will use reflect to check if the actual has the method given by expected.
-func FunctionNamed(expected string) *gocrest.Matcher {
-	matcher := new(gocrest.Matcher)
+func FunctionNamed[A any](expected string) *gocrest.Matcher[A] {
+	matcher := new(gocrest.Matcher[A])
 	matcher.Describe = fmt.Sprintf("interface with function %s", expected)
-	matcher.Matches = func(actual interface{}) bool {
+	matcher.Matches = func(actual A) bool {
 		typeOfActual := reflect.TypeOf(actual)
 		matcher.Actual = actualStringValue(typeOfActual)
 		expectedName := reflect.ValueOf(expected).String()

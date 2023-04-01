@@ -6,10 +6,10 @@ import (
 
 // Not negates the given matcher.
 // Returns a matcher that returns logical not of the matcher given.
-func Not(matcher *gocrest.Matcher) *gocrest.Matcher {
-	match := new(gocrest.Matcher)
+func Not[A any](matcher *gocrest.Matcher[A]) *gocrest.Matcher[A] {
+	match := new(gocrest.Matcher[A])
 	match.Describe = "not(" + matcher.Describe + ")"
-	match.Matches = func(actual interface{}) bool {
+	match.Matches = func(actual A) bool {
 		matches := !matcher.Matches(actual)
 		match.Actual = matcher.Actual
 		return matches
