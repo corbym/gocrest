@@ -36,7 +36,7 @@ Expected: value equal to <bye>
 Composed with AllOf:
 
 ```go
-then.AssertThat(t, "abcdef", is.AllOf(is.ValueContaining("abc"), is.LessThan("ghi")))
+then.AssertThat(t, "abcdef", is.AllOf(is.StringContaining("abc"), is.LessThan("ghi")))
 ```
 
 Asynchronous Matching (v1.0.8 onwards):

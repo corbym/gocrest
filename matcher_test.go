@@ -26,6 +26,10 @@ func TestEqualTo(t *testing.T) {
 	then.AssertThat(t, []string{"a"}, is.EqualTo([]string{"a"}))
 }
 
+func TestMixedMatcher(t *testing.T) {
+	then.AssertThat(t, "abcdef", is.AllOf(is.StringContaining("abc"), is.LessThan("ghi")))
+}
+
 func TestNil(testing *testing.T) {
 	values := struct {
 		actual *string
@@ -434,7 +438,7 @@ func TestNotReturnsTheSubMatcherActual(testing *testing.T) {
 }
 
 func TestAnyofReturnsTheSubMatcherActual(testing *testing.T) {
-	anyOf := is.AnyOf[string](has.Length[string, string](1), is.EqualTo[string]("a"))
+	anyOf := is.AnyOf[string](has.Length[string, string](1), is.EqualTo("a"))
 	anyOf.Matches("a")
 	then.AssertThat(testing, anyOf.Actual,
 		is.EqualTo("actual <a> length was 1"))
