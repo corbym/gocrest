@@ -119,7 +119,7 @@ func descriptionFor(expected ...interface{}) interface{} {
 		if ok {
 			description += matcher.Describe
 		} else {
-			description += fmt.Sprintf("%s", "<"+expected[x].(string)+">")
+			description += fmt.Sprintf("<%v>", expected[x])
 		}
 		if x < len(expected)-1 {
 			description += " and "
