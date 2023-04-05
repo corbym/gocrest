@@ -4,13 +4,34 @@ import (
 	"github.com/corbym/gocrest"
 )
 
-// Empty matches if the actual is "empty".
-// 'string' values are empty if they are "", maps, arrays and slices are empty if len(actual) is 0.
+// Empty matches if the actual array or slice is len(actual) is 0.
 // Returns a matcher that evaluates true if actual is "empty".
-func Empty[K comparable, T any, A string | []T | map[K]T]() *gocrest.Matcher[A] {
-	matcher := new(gocrest.Matcher[A])
+func Empty[A any]() *gocrest.Matcher[[]A] {
+	matcher := new(gocrest.Matcher[[]A])
 	matcher.Describe = "empty value"
-	matcher.Matches = func(actual A) bool {
+	matcher.Matches = func(actual []A) bool {
+		return len(actual) == 0
+	}
+	return matcher
+}
+
+// EmptyString matches if the actual string if they are "" (==len(0))
+// Returns a matcher that evaluates true if actual is "empty".
+func EmptyString() *gocrest.Matcher[string] {
+	matcher := new(gocrest.Matcher[string])
+	matcher.Describe = "empty value"
+	matcher.Matches = func(actual string) bool {
+		return len(actual) == 0
+	}
+	return matcher
+}
+
+// EmptyMap matches if the actual maps if len(actual) is 0.
+// Returns a matcher that evaluates true if actual is "empty".
+func EmptyMap[K comparable, V any]() *gocrest.Matcher[map[K]V] {
+	matcher := new(gocrest.Matcher[map[K]V])
+	matcher.Describe = "empty value"
+	matcher.Matches = func(actual map[K]V) bool {
 		return len(actual) == 0
 	}
 	return matcher
