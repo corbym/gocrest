@@ -180,7 +180,7 @@ func TestEmptyStringIsEmptyPasses(testing *testing.T) {
 	}
 	for _, test := range equalsItems {
 		stubTestingT := new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, is.Empty[string, string, string]())
+		then.AssertThat(stubTestingT, test.actual, is.EmptyString())
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, Empty()) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -196,9 +196,9 @@ func TestEmptyMapIsEmptyPasses(testing *testing.T) {
 	}
 	for _, test := range equalsItems {
 		stubTestingT := new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, is.Empty[string, bool, map[string]bool]())
+		then.AssertThat(stubTestingT, test.actual, is.EmptyMap[string, bool]())
 		if stubTestingT.HasFailed() != test.shouldFail {
-			testing.Errorf("assertThat(%v, Empty()) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.shouldFail, stubTestingT.HasFailed())
+			testing.Errorf("assertThat(%v, EmptyMap()) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.shouldFail, stubTestingT.HasFailed())
 		}
 	}
 }
@@ -212,7 +212,7 @@ func TestEmptyArrayIsEmptyPasses(testing *testing.T) {
 	}
 	for _, test := range equalsItems {
 		stubTestingT := new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, is.Empty[string, string, []string]())
+		then.AssertThat(stubTestingT, test.actual, is.Empty[string]())
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, Empty()) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -791,7 +791,7 @@ func TestSizeMapMatcherDescription(t *testing.T) {
 		matcher     *gocrest.Matcher[map[string]bool]
 		expected    string
 	}{
-		{description: "Empty", actual: map[string]bool{"foo": true}, matcher: is.Empty[string, bool, map[string]bool](), expected: "empty value"},
+		{description: "Empty", actual: map[string]bool{"foo": true}, matcher: is.EmptyMap[string, bool](), expected: "empty value"},
 		{description: "HasKey", actual: map[string]bool{"hi": true}, matcher: has.Key[string, bool]("foo"), expected: "map has key 'foo'"},
 		{description: "HasKeys", actual: map[string]bool{"hi": true, "bye": false}, matcher: has.AllKeys[string, bool]("hi", "foo"), expected: "map has keys '[hi foo]'"},
 	}
@@ -856,7 +856,7 @@ func TestAllOfDescribesOnlyMismatches(testing *testing.T) {
 	then.AssertThat(stubTestingT, "abc", is.AllOf(
 		is.EqualTo("abc"),
 		is.StringContaining("e", "f"),
-		is.Empty[string, string, string](),
+		is.EmptyString(),
 	))
 	if !strings.Contains(stubTestingT.MockTestOutput, "Expected: something that contains [e f] and empty value\n") {
 		testing.Errorf("incorrect description:%s", stubTestingT.MockTestOutput)
@@ -1040,7 +1040,7 @@ func TestStructValues(t *testing.T) {
 				Id string
 			}{},
 			expected: has.StructMatchers[string]{
-				"Id": is.Empty[string, string, string](),
+				"Id": is.EmptyString(),
 			},
 			shouldFail: false,
 		},
