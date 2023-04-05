@@ -143,7 +143,7 @@ func listContains[T comparable, A []T](expected A, actualValue A) bool {
 	return len(contains) == len(expected)
 }
 func listMatches[T comparable](expected []*gocrest.Matcher[T], actualValue []T) bool {
-	contains := make(map[interface{}]bool)
+	contains := make(map[T]bool)
 	for i := 0; i < len(expected); i++ {
 		for y := 0; y < len(actualValue); y++ {
 			exp := expected[i]

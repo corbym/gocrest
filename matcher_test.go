@@ -36,8 +36,18 @@ func TestNil(testing *testing.T) {
 	}{
 		actual: nil,
 	}
-	then.AssertThat(testing, values.actual, is.Nil[*string]())
+	then.AssertThat(testing, values.actual, is.NilPtr[string]())
 }
+
+func TestError(testing *testing.T) {
+	values := struct {
+		actual error
+	}{
+		actual: nil,
+	}
+	then.AssertThat(testing, values.actual, is.Nil())
+}
+
 func TestHasLengthStringMatchesOrNot(testing *testing.T) {
 	var hasLengthItems = []struct {
 		actual     string
@@ -51,8 +61,8 @@ func TestHasLengthStringMatchesOrNot(testing *testing.T) {
 	}
 	for _, test := range hasLengthItems {
 		stubTestingT = new(StubTestingT)
-		then.AssertThat(testing, "a", has.Length[string, string](1))
-		then.AssertThat(stubTestingT, test.actual, has.Length[string, string](test.expected))
+		then.AssertThat(testing, "a", has.StringLength(1))
+		then.AssertThat(stubTestingT, test.actual, has.StringLength(test.expected))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, has.Length(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -93,7 +103,7 @@ func TestHasLengthArrayMatchesOrNot(testing *testing.T) {
 	}
 	for _, test := range hasLengthItems {
 		stubTestingT = new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, has.Length[int, []int](test.expected))
+		then.AssertThat(stubTestingT, test.actual, has.Length[int](test.expected))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, has.Length(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -112,7 +122,7 @@ func TestHasLengthMatchesArrayMatchesOrNot(testing *testing.T) {
 	}
 	for _, test := range hasLengthItems {
 		stubTestingT = new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, has.LengthMatching[int, []int](is.EqualTo(test.expected)))
+		then.AssertThat(stubTestingT, test.actual, has.LengthMatching[int](is.EqualTo(test.expected)))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, has.Length(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -132,7 +142,7 @@ func TestHasLengthArrayStringMatchesOrNot(testing *testing.T) {
 	}
 	for _, test := range hasLengthItems {
 		stubTestingT = new(StubTestingT)
-		then.AssertThat(stubTestingT, test.actual, has.Length[string, []string](test.expected))
+		then.AssertThat(stubTestingT, test.actual, has.Length[string](test.expected))
 		if stubTestingT.HasFailed() != test.shouldFail {
 			testing.Errorf("assertThat(%v, has.Length(%v)) gave unexpected test result (wanted failed %v, got failed %v)", test.actual, test.expected, test.shouldFail, stubTestingT.HasFailed())
 		}
@@ -255,7 +265,7 @@ func TestAssertThatTwoIntsValuesAreGreaterThanOrNot(testing *testing.T) {
 	then.AssertThat(testing, int64(12), is.GreaterThan(int64(1)))
 }
 func TestAssertThatHasLengthFailsWithDescriptionTest(testing *testing.T) {
-	then.AssertThat(stubTestingT, "a", has.Length[string, string](2))
+	then.AssertThat(stubTestingT, "a", has.StringLength(2))
 	if !strings.Contains(stubTestingT.MockTestOutput, "value with length 2") {
 		testing.Errorf("did not get expected description, got: %s", stubTestingT.MockTestOutput)
 	}
@@ -431,33 +441,47 @@ func TestNotReturnsTheOppositeOfGivenMatcher(testing *testing.T) {
 }
 
 func TestNotReturnsTheSubMatcherActual(testing *testing.T) {
-	not := is.Not[string](has.Length[string, string](1))
+	not := is.Not(has.StringLength(1))
 	not.Matches("a")
 	then.AssertThat(testing, not.Actual,
 		is.EqualTo("length was 1"))
 }
 
 func TestAnyofReturnsTheSubMatcherActual(testing *testing.T) {
-	anyOf := is.AnyOf[string](has.Length[string, string](1), is.EqualTo("a"))
+	anyOf := is.AnyOf(has.StringLength(1), is.EqualTo("a"))
 	anyOf.Matches("a")
 	then.AssertThat(testing, anyOf.Actual,
 		is.EqualTo("actual <a> length was 1"))
 }
 
 func TestAllofReturnsTheSubMatcherActual(testing *testing.T) {
-	anyOf := is.AllOf[string](has.Length[string, string](1), is.EqualTo("a"))
+	anyOf := is.AllOf(has.StringLength(1), is.EqualTo("a"))
 	anyOf.Matches("a")
 	then.AssertThat(testing, anyOf.Actual,
 		is.EqualTo("actual <a> length was 1"))
 }
 
 func TestIsNilMatches(testing *testing.T) {
-	then.AssertThat(testing, nil, is.Nil[any]())
+	then.AssertThat(testing, nil, is.Nil())
 }
 
 func TestIsNilFails(testing *testing.T) {
 	var actual = 2
-	then.AssertThat(stubTestingT, &actual, is.Nil[*int]())
+	then.AssertThat(stubTestingT, &actual, is.NilPtr[int]())
+	if !stubTestingT.HasFailed() {
+		testing.Fail()
+	}
+}
+func TestIsNilArrayFails(testing *testing.T) {
+	var actual = []int{1, 2}
+	then.AssertThat(stubTestingT, actual, is.NilArray[int]())
+	if !stubTestingT.HasFailed() {
+		testing.Fail()
+	}
+}
+func TestIsNilMapFails(testing *testing.T) {
+	var actual = map[string]string{"a": "b"}
+	then.AssertThat(stubTestingT, actual, is.NilMap[string, string]())
 	if !stubTestingT.HasFailed() {
 		testing.Fail()
 	}
@@ -813,7 +837,7 @@ func TestStringMatchersDescription(t *testing.T) {
 		{description: "Prefix", actual: "blarney stone", matcher: has.Prefix("123"), expected: "value with prefix 123"},
 		{description: "AllOf", actual: "abc", matcher: is.AllOf(is.EqualTo("abc"), is.StringContaining("e", "f")), expected: "something that contains [e f]"},
 		{description: "AnyOf", actual: "abc", matcher: is.AnyOf(is.EqualTo("efg"), is.StringContaining("e")), expected: "any of (value equal to <efg> or something that contains [e])"},
-		{description: "LengthOf Composed", actual: "a", matcher: has.LengthMatching[string, string](is.GreaterThan(2)), expected: "value with length value greater than <2>"},
+		{description: "LengthOf Composed", actual: "a", matcher: has.StringLengthMatching(is.GreaterThan(2)), expected: "value with length value greater than <2>"},
 		{description: "EqualToIgnoringWhitespace", actual: "a b c", matcher: is.EqualToIgnoringWhitespace("b c d"), expected: "ignoring whitespace value equal to <b c d>"},
 	}
 	for _, test := range equalsItems {
@@ -922,13 +946,13 @@ func TestTypeName(t *testing.T) {
 	}
 }
 
-func TestNilArrayInterface(t *testing.T) {
+func TestNilError(t *testing.T) {
 	actual := nilResponse()
 
-	then.AssertThat(t, actual, is.Nil[[]any]())
+	then.AssertThat(t, actual, is.Nil())
 }
 
-func nilResponse() []any {
+func nilResponse() error {
 	return nil
 }
 
@@ -1059,20 +1083,8 @@ func TestStructValues(t *testing.T) {
 	}
 }
 
-func TestStructValuesPanicsWithStringActual(t *testing.T) {
-	actual := "not a struct"
-	expected := has.StructMatchers[string]{
-		"Id": is.Empty[string, string, string](),
-	}
-	defer func() {
-		recover := recover()
-		then.AssertThat(t, recover, is.Not(is.Nil[any]()))
-	}()
-	then.AssertThat(stubTestingT, actual, has.StructWithValues[string](expected))
-}
-
 func TestConformsToStringer(t *testing.T) {
-	then.AssertThat(t, is.Nil[any]().String(), is.EqualTo("value that is <nil>"))
+	then.AssertThat(t, is.Nil().String(), is.EqualTo("value that is <nil>"))
 }
 
 type DelayedReader struct {
