@@ -1160,7 +1160,7 @@ func TestCallingFunctionEventually(t *testing.T) {
 		return a
 	}
 	then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
-		then.AssertThat(eventually, by.Calling[string, string](function, "hi"), is.EqualTo("hi"))
+		then.AssertThat(eventually, by.Calling(function, "hi"), is.EqualTo("hi"))
 	})
 }
 func firstTestChannel() chan int {
