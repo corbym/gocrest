@@ -7,7 +7,7 @@ import (
 )
 
 // StringContaining finds if all x's are contained as value in y.
-// Acts like "ContainsAll", all elements given must be present (or must match) in actual in the same order as the expected values.
+// Acts like "ContainsAll", all elements given must be present.
 func StringContaining(expected ...string) *gocrest.Matcher[string] {
 	match := new(gocrest.Matcher[string])
 	match.Describe = fmt.Sprintf("something that contains %v", expected)

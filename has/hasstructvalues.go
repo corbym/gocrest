@@ -13,8 +13,8 @@ type StructMatchers[A any] map[string]*gocrest.Matcher[A]
 // This method can be used to check single struct fields in different ways or omit checking some struct fields at all.
 // Will automatically de-reference pointers.
 // Panics if the actual value is not a struct.
-// Panics if Structmatchers contains a key that can not be found in the actual struct.
-// Panics if Structmatchers contains a key that is unexported.
+// Panics if StructMatchers contains a key that can not be found in the actual struct.
+// Panics if StructMatchers contains a key that is unexported.
 func StructWithValues[A any, B any](expects StructMatchers[B]) *gocrest.Matcher[A] {
 	match := new(gocrest.Matcher[A])
 	match.Describe = fmt.Sprintf("struct values to match {%s}", describeStructMatchers(expects))
