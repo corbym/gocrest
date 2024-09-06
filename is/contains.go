@@ -67,7 +67,7 @@ func descriptionForMatchers[A any](expected []*gocrest.Matcher[A]) string {
 }
 
 // ArrayContaining finds if all x's are contained in y.
-// Acts like "ContainsAll", all elements given must be present in actual in the same order as the expected values.
+// Acts like "ContainsAll", all elements given must be present in actual.
 func ArrayContaining[A comparable](expected ...A) *gocrest.Matcher[[]A] {
 	match := new(gocrest.Matcher[[]A])
 	match.Describe = fmt.Sprintf("something that contains %v", descriptionFor(expected))
@@ -78,7 +78,7 @@ func ArrayContaining[A comparable](expected ...A) *gocrest.Matcher[[]A] {
 }
 
 // ArrayMatching finds if all x's are matched in y.
-// Acts like "ContainsAll", all elements given must be present in actual in the same order as the expected values.
+// Acts like "ContainsAll", all elements given must be present in actual.
 func ArrayMatching[A comparable](expected ...*gocrest.Matcher[A]) *gocrest.Matcher[[]A] {
 	match := new(gocrest.Matcher[[]A])
 	match.Describe = fmt.Sprintf("something that contains %v", descriptionFor(expected))
