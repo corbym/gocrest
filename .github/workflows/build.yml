@@ -3,12 +3,13 @@
 
 name: Build
 
-on:
+on: 
   push:
     branches: [ master, pre-generics ]
   pull_request:
     branches: [ master ]
-
+  workflow_dispatch:
+  
 jobs:
 
   build:
@@ -39,14 +40,14 @@ jobs:
         uses: shogo82148/actions-goveralls@v1
         with:
           path-to-profile: profile.cov
-          flag-name: Go-${{ matrix.go }}
+          flag-name: Go-${{ matrix["go-version"] }}
           parallel: true
           
       - name: Upload Go test results
         uses: actions/upload-artifact@v3
         with:
-          name: Go-results-${{ matrix.go-version }}
-          path: TestResults-${{ matrix.go-version }}.json
+          name: Go-results-${{ matrix["go-version"] }}
+          path: TestResults-${{ matrix["go-version"] }}.json
           
   finish:
     needs: build
