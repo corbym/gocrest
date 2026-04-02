@@ -72,12 +72,12 @@ func (t *RecordingTestingT) Failing() bool {
 // Only used with Eventually
 type Latest struct {
 	sync.Mutex
-	latestValue RecordingTestingT
+	latestValue *RecordingTestingT
 }
 
 // Get is used internally by Eventually to Get the last recorded test output from assertions passed into it
 // Only used with Eventually
-func (l *Latest) Get() RecordingTestingT {
+func (l *Latest) Get() *RecordingTestingT {
 	l.Lock()
 	defer l.Unlock()
 	return l.latestValue
@@ -85,9 +85,12 @@ func (l *Latest) Get() RecordingTestingT {
 
 // Merge is used internally by Eventually to Merge the latest recorded test output from assertions passed into it with the last one
 // Only used with Eventually
-func (l *Latest) Merge(updated RecordingTestingT) RecordingTestingT {
+func (l *Latest) Merge(updated *RecordingTestingT) *RecordingTestingT {
 	l.Lock()
 	defer l.Unlock()
+	if l.latestValue == nil {
+		return updated
+	}
 	var mergedFailures []FailureLog
 	for i, failure := range l.latestValue.failures {
 		if failure.failed {
@@ -101,7 +104,7 @@ func (l *Latest) Merge(updated RecordingTestingT) RecordingTestingT {
 	if l.latestValue.failures == nil {
 		mergedFailures = updated.failures
 	}
-	merged := RecordingTestingT{
+	merged := &RecordingTestingT{
 		failures: mergedFailures,
 		TestingT: l.latestValue.TestingT,
 	}
@@ -123,7 +126,7 @@ func (l *Latest) Merge(updated RecordingTestingT) RecordingTestingT {
 func Eventually(t gocrest.TestingT, waitFor, tick time.Duration, assertions func(eventually gocrest.TestingT)) {
 
 	t.Helper()
-	channel := make(chan RecordingTestingT, 1)
+	channel := make(chan *RecordingTestingT, 1)
 	defer close(channel)
 
 	timer := time.NewTimer(waitFor)
@@ -137,7 +140,11 @@ func Eventually(t gocrest.TestingT, waitFor, tick time.Duration, assertions func
 		select {
 		case <-timer.C:
 			latestRecordingT := latestValue.Get()
-			t.Errorf(fmt.Sprintf("Eventually Failed after %s: \n", waitFor) + strings.Join(latestRecordingT.FailedTestOutputs(), "\n"))
+			var failedOutputs []string
+			if latestRecordingT != nil {
+				failedOutputs = latestRecordingT.FailedTestOutputs()
+			}
+			t.Errorf(fmt.Sprintf("Eventually Failed after %s: \n", waitFor) + strings.Join(failedOutputs, "\n"))
 			return
 		case <-tick:
 			tick = nil
@@ -147,7 +154,7 @@ func Eventually(t gocrest.TestingT, waitFor, tick time.Duration, assertions func
 					failures: []FailureLog{},
 				}
 				assertions(&recordedTesting)
-				channel <- recordedTesting
+				channel <- &recordedTesting
 			}()
 		case value := <-channel:
 			if !value.Failing() {
