@@ -12,8 +12,8 @@ func StringContaining(expected ...string) *gocrest.Matcher[string] {
 	match := new(gocrest.Matcher[string])
 	match.Describe = fmt.Sprintf("something that contains %v", expected)
 	match.Matches = func(actual string) bool {
-		for i := 0; i < len(expected); i++ {
-			if !strings.Contains(actual, expected[i]) {
+		for _, e := range expected {
+			if !strings.Contains(actual, e) {
 				return false
 			}
 		}
@@ -57,8 +57,8 @@ func MapMatchingValues[K comparable, V comparable](expected ...*gocrest.Matcher[
 
 func descriptionForMatchers[A any](expected []*gocrest.Matcher[A]) string {
 	var description = ""
-	for x := 0; x < len(expected); x++ {
-		description += expected[x].Describe
+	for x, m := range expected {
+		description += m.Describe
 		if x < len(expected)-1 {
 			description += " and "
 		}
@@ -93,9 +93,9 @@ func mapActualContainsExpected[K comparable, V comparable](expected map[K]V, act
 		expectedKeys = append(expectedKeys, k)
 	}
 	contains := make(map[V]bool)
-	for i := 0; i < len(expectedKeys); i++ {
-		val := actual[expectedKeys[i]]
-		if val == expected[expectedKeys[i]] {
+	for _, k := range expectedKeys {
+		val := actual[k]
+		if val == expected[k] {
 			contains[val] = true
 		}
 	}
@@ -103,9 +103,9 @@ func mapActualContainsExpected[K comparable, V comparable](expected map[K]V, act
 }
 func mapActualContainsExpectedValues[K comparable, V comparable](expected []V, actual map[K]V) bool {
 	contains := make(map[V]bool)
-	for i := 0; i < len(expected); i++ {
+	for _, e := range expected {
 		for k, v := range actual {
-			if actual[k] == expected[i] {
+			if actual[k] == e {
 				contains[v] = true
 				break
 			}
@@ -114,14 +114,10 @@ func mapActualContainsExpectedValues[K comparable, V comparable](expected []V, a
 	return len(contains) == len(expected)
 }
 func mapActualMatchesExpected[K comparable, V comparable, A map[K]V](expected []*gocrest.Matcher[V], actual A) bool {
-	actualKeys := make([]K, 0, len(actual))
-	for k := range actual {
-		actualKeys = append(actualKeys, k)
-	}
-	contains := make(map[interface{}]bool)
-	for i := 0; i < len(expected); i++ {
+	contains := make(map[V]bool)
+	for _, exp := range expected {
 		for _, v := range actual {
-			if expected[i].Matches(v) {
+			if exp.Matches(v) {
 				contains[v] = true
 			}
 		}
@@ -130,11 +126,9 @@ func mapActualMatchesExpected[K comparable, V comparable, A map[K]V](expected []
 }
 
 func listContains[T comparable, A []T](expected A, actualValue A) bool {
-	contains := make(map[interface{}]bool)
-	for i := 0; i < len(expected); i++ {
-		for y := 0; y < len(actualValue); y++ {
-			exp := expected[i]
-			act := actualValue[y]
+	contains := make(map[T]bool)
+	for _, exp := range expected {
+		for _, act := range actualValue {
 			if exp == act {
 				contains[act] = true
 			}
@@ -144,10 +138,8 @@ func listContains[T comparable, A []T](expected A, actualValue A) bool {
 }
 func listMatches[T comparable](expected []*gocrest.Matcher[T], actualValue []T) bool {
 	contains := make(map[T]bool)
-	for i := 0; i < len(expected); i++ {
-		for y := 0; y < len(actualValue); y++ {
-			exp := expected[i]
-			act := actualValue[y]
+	for _, exp := range expected {
+		for _, act := range actualValue {
 			if exp.Matches(act) {
 				contains[act] = true
 			}
@@ -158,8 +150,8 @@ func listMatches[T comparable](expected []*gocrest.Matcher[T], actualValue []T) 
 
 func descriptionFor[T any, A []T](expected A) string {
 	var description = ""
-	for x := 0; x < len(expected); x++ {
-		description += fmt.Sprintf("<%v>", expected[x])
+	for x, e := range expected {
+		description += fmt.Sprintf("<%v>", e)
 		if x < len(expected)-1 {
 			description += " and "
 		}

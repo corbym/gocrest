@@ -18,11 +18,11 @@ func anyMatcherMatches[A any](allMatchers []*gocrest.Matcher[A], anyOf *gocrest.
 	return func(actual A) bool {
 		matches := false
 		anyOf.AppendActual(fmt.Sprintf("actual <%v>", actual))
-		for x := 0; x < len(allMatchers); x++ {
-			if allMatchers[x].Matches(actual) {
+		for _, m := range allMatchers {
+			if m.Matches(actual) {
 				matches = true
 			}
-			anyOf.AppendActual(allMatchers[x].Actual)
+			anyOf.AppendActual(m.Actual)
 		}
 		return matches
 	}

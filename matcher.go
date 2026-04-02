@@ -32,7 +32,7 @@ func (matcher *Matcher[A]) String() string {
 }
 
 // Reasonf allows a formatted reason for the mismatch.
-func (matcher *Matcher[A]) Reasonf(format string, args ...interface{}) *Matcher[A] {
+func (matcher *Matcher[A]) Reasonf(format string, args ...any) *Matcher[A] {
 	return matcher.Reason(fmt.Sprintf(format, args...))
 }
 

@@ -921,7 +921,7 @@ func TestTypeName(t *testing.T) {
 	pub := new(Foo)
 
 	tests := []struct {
-		actual     interface{}
+		actual     any
 		expected   string
 		shouldFail bool
 	}{
