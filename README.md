@@ -42,19 +42,23 @@ then.AssertThat(t, "abcdef", is.AllOf(is.StringContaining("abc"), is.LessThan("g
 Asynchronous Matching (v1.0.8 onwards):
 
 ```go
-//Reader
+// Reader
 then.WithinFiveSeconds(t, func(eventually gocrest.TestingT) {
 	then.AssertThat(eventually, by.Reading(slowReader, 1024), is.EqualTo([]byte("abcdefghijklmnopqrstuv")))
 })
 ```
 ```go
-//channels
+// Channels
 then.Eventually(t, time.Second*5, time.Second, func(eventually gocrest.TestingT) {
 	then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
 })
 ```
 ```go
-// multiple assertions
+// Calling a function
+then.AssertThat(t, by.Calling(myFunc, inputValue), is.EqualTo(expectedOutput))
+```
+```go
+// Multiple assertions
 then.WithinTenSeconds(t, func(eventually gocrest.TestingT) {
 	then.AssertThat(eventually, by.Channelling(channel), is.EqualTo(3).Reason("should not fail"))
 	then.AssertThat(eventually, by.Channelling(channelTwo), is.EqualTo("11").Reason("This is unreachable"))
@@ -74,7 +78,7 @@ Some idiosyncrasies with the generic types do exist, but this is language specif
 ```
 then.AssertThat(testing, map[string]bool{"hi": true, "bye": true}, has.AllKeys[string, bool]("hi", "bye"))
 ```
-* `has.Length()` is likewise pernickety about types being explicit, mainly because it works on both strings and arrays. It needs to know both the type of the array and the array/string type. Confused? me too.
+* Length matchers are type-specific: use `has.Length[T]()` for arrays/slices, `has.StringLength()` for strings, and `has.MapLength[K, V]()` for maps. Matcher variants (`has.LengthMatching`, `has.StringLengthMatching`, `has.MapLengthMatching`) accept a `*Matcher[int]` instead of a plain int.
 * `is.LessThan()` and `is.GreaterThan()` (and by extension `is.GreaterThanOrEqualTo` and `is.LessThanOrEqualTo`) no longer work on complex types. This is because the complex types do not support the comparison operators (yet, somehow, they could be compared by reflection 🤷 )
 
 See the matcher_test.go file for full usage.
@@ -83,7 +87,12 @@ See the matcher_test.go file for full usage.
 
 - is.EqualTo(x)
 - is.EqualToIgnoringWhitespace(string) - compares two strings without comparing their whitespace characters.
-- is.Nil() - value must be nil
+- is.Nil() - error value must be nil
+- is.NilArray() - array/slice value must be nil
+- is.NilMap() - map value must be nil
+- is.NilPtr() - pointer value must be nil
+- is.True() - boolean value must be true
+- is.False() - boolean value must be false
 - is.StringContaining(expected) -- acts like containsAll
 - is.MapContaining(expected) -- acts like containsAll
 - is.MapContainingValues(expected) -- acts like containsAll
@@ -92,23 +101,30 @@ See the matcher_test.go file for full usage.
 - is.ArrayMatching(expected) -- acts like containsAll
 - is.Not(m *Matcher) -- logical not of matcher's result
 - is.MatchForPattern(regex string) -- a string regex expression
-- has.FunctionNamed(string x) - checks if an interface has a function (method)
-- has.FieldNamed(string x) - checks if a struct has a field named x
 - is.AllOf(... *Matcher) - returns true if all matchers match
-- is.AnyOf(... *Matcher) - return true if any matcher matches
+- is.AnyOf(... *Matcher) - returns true if any matcher matches
 - is.GreaterThan(expected) - checks if actual > expected
-- is.LessThan(expected)
-- is.Empty() - matches if the actual is "", nil or len(actual)==0
-- is.LessThan(x)
-- is.LessThanOrEqualTo(x)
-- is.GreaterThan(x)
-- is.GreaterThanOrEqualTo(x)
-- has.Length(x) - matcher if given value (int or matcher) matches the len of the given
+- is.GreaterThanOrEqualTo(expected)
+- is.LessThan(expected) - checks if actual < expected
+- is.LessThanOrEqualTo(expected)
+- is.Empty() - matches if the actual slice has len == 0
+- is.EmptyString() - matches if the actual string is ""
+- is.EmptyMap() - matches if the actual map has len == 0
+- has.FunctionNamed(x string) - checks if an interface has a function (method) named x
+- has.FieldNamed(x string) - checks if a struct has a field named x
+- has.Length[T](expected int) - matches if the length of an array/slice equals expected
+- has.StringLength(expected int) - matches if the length of a string equals expected
+- has.MapLength(expected int) - matches if the length of a map equals expected
+- has.LengthMatching[A](expected *Matcher[int]) - matches if the length of an array/slice satisfies expected matcher
+- has.StringLengthMatching(expected *Matcher[int]) - matches if the length of a string satisfies expected matcher
+- has.MapLengthMatching(expected *Matcher[int]) - matches if the length of a map satisfies expected matcher
 - has.Prefix(x) - string starts with x
 - has.Suffix(x) - string ends with x
 - has.Key(x) - map has key x
-- has.AllKeys(T x, T y) (or has.AllKeys([]T{x,y})) - finds key of type T in map
+- has.AllKeys(x ...K) - matches if all given keys are present in the map
+- has.TypeName(expected string) - matches if the actual value's type name equals expected
+- has.TypeNameMatches(expected *Matcher[string]) - matches if the actual value's type name satisfies expected matcher
 - has.EveryElement(x1...xn) - checks if actual[i] matches corresponding expectation (x[i])
-- has.StructWithValues(map[string]*gocrest.Matcher) - checks if actual[key] matches corresponding expectation (x[key])
+- has.StructWithValues(expects StructMatchers[B]) - checks if actual struct fields match their corresponding matchers
 
 For more comprehensive documentation see [godoc](http://godoc.org/github.com/corbym/gocrest).
