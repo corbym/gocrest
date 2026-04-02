@@ -9,12 +9,12 @@ type StubTestingT struct {
 	MockTestOutput string
 }
 
-func (t *StubTestingT) Logf(format string, args ...interface{}) {
+func (t *StubTestingT) Logf(format string, args ...any) {
 	t.MockTestOutput = fmt.Sprintf(format, args...)
 	t.failed = true
 }
 
-func (t *StubTestingT) Errorf(format string, args ...interface{}) {
+func (t *StubTestingT) Errorf(format string, args ...any) {
 	t.MockTestOutput = fmt.Sprintf(format, args...)
 	t.failed = true
 }

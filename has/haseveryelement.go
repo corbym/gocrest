@@ -19,9 +19,8 @@ func EveryElement[A any](expects ...*gocrest.Matcher[A]) *gocrest.Matcher[[]A] {
 			return false
 		}
 
-		for i := 0; i < len(actual); i++ {
-			result := expects[i].Matches(actual[i])
-			if !result {
+		for i, act := range actual {
+			if !expects[i].Matches(act) {
 				return false
 			}
 		}

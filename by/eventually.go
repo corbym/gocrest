@@ -12,7 +12,7 @@ func Channelling[T any](actual chan T) T {
 
 // Reading peeks at the value of a reader by reading `len` bytes ahead.
 func Reading(actual io.Reader, len int) []byte {
-	reader := bufio.NewReader(actual.(io.Reader))
+	reader := bufio.NewReader(actual)
 	peek, _ := reader.Peek(len)
 	return peek
 }

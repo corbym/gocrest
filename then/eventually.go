@@ -22,7 +22,7 @@ type RecordingTestingT struct {
 }
 
 // Errorf appends an error message into the failure buffer. Only used with Eventually
-func (t *RecordingTestingT) Errorf(format string, args ...interface{}) {
+func (t *RecordingTestingT) Errorf(format string, args ...any) {
 	t.Lock()
 	defer t.Unlock()
 	t.failures = append(t.failures, FailureLog{
@@ -162,10 +162,10 @@ func Eventually(t gocrest.TestingT, waitFor, tick time.Duration, assertions func
 
 // WithinTenSeconds is a shortcut for a ten-second Eventually call with one second tick
 func WithinTenSeconds(t gocrest.TestingT, assertions func(eventually gocrest.TestingT)) {
-	Eventually(t, time.Duration(10)*time.Second, time.Duration(1)*time.Second, assertions)
+	Eventually(t, 10*time.Second, time.Second, assertions)
 }
 
 // WithinFiveSeconds is a shortcut for a five-second Eventually call with one second tick
 func WithinFiveSeconds(t gocrest.TestingT, assertions func(eventually gocrest.TestingT)) {
-	Eventually(t, time.Duration(10)*time.Second, time.Duration(1)*time.Second, assertions)
+	Eventually(t, 5*time.Second, time.Second, assertions)
 }
