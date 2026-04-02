@@ -7,7 +7,7 @@ Inspired by [Hamcrest](https://github.com/hamcrest).
 
 [![Build](https://github.com/corbym/gocrest/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/corbym/gocrest/actions/workflows/build.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/corbym/gocrest)](https://goreportcard.com/report/github.com/corbym/gocrest)
-[![GoDoc](https://godoc.org/github.com/corbym/gocrest?status.svg)](http://godoc.org/github.com/corbym/gocrest)
+[![GoDoc](https://pkg.go.dev/badge/github.com/corbym/gocrest.svg)](https://pkg.go.dev/github.com/corbym/gocrest)
 [![Coverage Status](https://coveralls.io/repos/github/corbym/gocrest/badge.svg?branch=master)](https://coveralls.io/github/corbym/gocrest?branch=master)
 ## Package import
 
