@@ -127,4 +127,10 @@ See the matcher_test.go file for full usage.
 - has.EveryElement(x1...xn) - checks if actual[i] matches corresponding expectation (x[i])
 - has.StructWithValues(expects StructMatchers[B]) - checks if actual struct fields match their corresponding matchers
 
-For more comprehensive documentation see [godoc](http://godoc.org/github.com/corbym/gocrest).
+## Matcher documentation
+
+- [is package matchers](docs/is-matchers.md) — equality, nil, boolean, string/array/map containment, comparisons, patterns, AllOf/AnyOf, Not, Empty
+- [has package matchers](docs/has-matchers.md) — keys, length, prefix/suffix, type name, struct fields and methods, element and struct value matching
+- [then and by packages](docs/then-and-by.md) — AssertThat, Eventually, WithinFiveSeconds, WithinTenSeconds, Channelling, Reading, Calling
+
+For generated API documentation see [pkg.go.dev](https://pkg.go.dev/github.com/corbym/gocrest).
