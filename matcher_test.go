@@ -271,6 +271,40 @@ func TestAssertThatHasLengthFailsWithDescriptionTest(testing *testing.T) {
 	}
 }
 
+func TestEqualToStructShowsDiffOnFailure(testing *testing.T) {
+	type myStruct struct {
+		Name  string
+		Value string
+	}
+
+	// struct: differs in the Name field
+	stubTestingT = new(StubTestingT)
+	then.AssertThat(stubTestingT, myStruct{Name: "actual", Value: "same"}, is.EqualTo(myStruct{Name: "expected", Value: "same"}))
+	if !strings.Contains(stubTestingT.MockTestOutput, "Name") ||
+		!strings.Contains(stubTestingT.MockTestOutput, "expected") ||
+		!strings.Contains(stubTestingT.MockTestOutput, "actual") {
+		testing.Errorf("struct diff: did not get expected description, got: %s", stubTestingT.MockTestOutput)
+	}
+
+	// slice: differs at index 0
+	stubTestingT = new(StubTestingT)
+	then.AssertThat(stubTestingT, []string{"actual"}, is.EqualTo([]string{"expected"}))
+	if !strings.Contains(stubTestingT.MockTestOutput, "[0]") ||
+		!strings.Contains(stubTestingT.MockTestOutput, "expected") ||
+		!strings.Contains(stubTestingT.MockTestOutput, "actual") {
+		testing.Errorf("slice diff: did not get expected description, got: %s", stubTestingT.MockTestOutput)
+	}
+
+	// map: differs for a specific key
+	stubTestingT = new(StubTestingT)
+	then.AssertThat(stubTestingT, map[string]string{"key": "actual"}, is.EqualTo(map[string]string{"key": "expected"}))
+	if !strings.Contains(stubTestingT.MockTestOutput, "key") ||
+		!strings.Contains(stubTestingT.MockTestOutput, "expected") ||
+		!strings.Contains(stubTestingT.MockTestOutput, "actual") {
+		testing.Errorf("map diff: did not get expected description, got: %s", stubTestingT.MockTestOutput)
+	}
+}
+
 func TestAssertThatTwoIntsAreLessThanOrNot(testing *testing.T) {
 	var equalsItems = []struct {
 		actual     int
