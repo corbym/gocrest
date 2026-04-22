@@ -51,9 +51,6 @@ func diffDescription(expected, actual reflect.Value, path string) string {
 
 	switch expected.Kind() {
 	case reflect.Struct:
-		if actual.Kind() != reflect.Struct {
-			break
-		}
 		var diffs []string
 		t := expected.Type()
 		for i := 0; i < t.NumField(); i++ {
@@ -73,9 +70,6 @@ func diffDescription(expected, actual reflect.Value, path string) string {
 		}
 
 	case reflect.Slice, reflect.Array:
-		if actual.Kind() != reflect.Slice && actual.Kind() != reflect.Array {
-			break
-		}
 		var diffs []string
 		maxLen := expected.Len()
 		if actual.Len() > maxLen {
@@ -100,9 +94,6 @@ func diffDescription(expected, actual reflect.Value, path string) string {
 		}
 
 	case reflect.Map:
-		if actual.Kind() != reflect.Map {
-			break
-		}
 		// Collect diffs keyed by a sortable string label.
 		type mapDiff struct {
 			label string
